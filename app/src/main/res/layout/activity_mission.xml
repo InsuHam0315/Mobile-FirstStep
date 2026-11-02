@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/mission_scroll"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:fillViewport="true" android:background="#FAF7EF">
+    <LinearLayout android:id="@+id/mission_body"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical" android:paddingStart="24dp"
+        android:paddingTop="24dp" android:paddingEnd="24dp" android:paddingBottom="32dp" />
+</ScrollView>

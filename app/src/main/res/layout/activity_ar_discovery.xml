@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ar_root" android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" android:background="#FAF7F0">
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:text="기억 조각 발견" android:textSize="24sp" android:textStyle="bold"
+        android:textColor="#202C42" android:padding="20dp" />
+    <android.opengl.GLSurfaceView android:id="@+id/ar_surface"
+        android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
+        android:contentDescription="주변 공간에서 기억 조각을 찾는 AR 카메라" />
+    <TextView android:id="@+id/ar_status" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:padding="20dp" android:textSize="16sp" android:textColor="#202C42"
+        android:text="안전한 곳에 멈춰 주변 바닥을 천천히 비춰 주세요." />
+    <Button android:id="@+id/ar_start" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp" android:text="AR로 찾기" />
+    <Button android:id="@+id/ar_fallback" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp" android:text="일반 카드로 기억 발견하기" />
+    <Button android:id="@+id/ar_cancel" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp" android:text="돌아가기" />
+</LinearLayout>
