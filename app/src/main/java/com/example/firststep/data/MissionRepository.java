@@ -51,7 +51,7 @@ public final class MissionRepository {
     public interface CompletionsCallback { void onResult(List<MissionCompletion> completions); }
     public interface CompletionCallback { void onComplete(boolean success); }
 
-    private static final Migration MIGRATION_1_2 = new Migration(1, 2) {
+    static final Migration MIGRATION_1_2 = new Migration(1, 2) {
         @Override public void migrate(@NonNull SupportSQLiteDatabase database) {
             database.execSQL("ALTER TABLE mission_completions ADD COLUMN completionMethod TEXT NOT NULL DEFAULT 'LEGACY'");
         }

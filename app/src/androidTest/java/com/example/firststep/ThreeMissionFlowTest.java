@@ -1,8 +1,5 @@
 package com.example.firststep;
 
-import android.Manifest;
-import android.os.Build;
-
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
@@ -12,8 +9,10 @@ import static androidx.test.espresso.matcher.ViewMatchers.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
+import android.Manifest;
 import android.content.Context;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.SystemClock;
 import android.view.MotionEvent;
 import android.view.View;
@@ -46,6 +45,7 @@ public class ThreeMissionFlowTest {
     MissionRepository repo = MissionRepository.getInstance(context);
     repo.setNickname("기능 검증");
     repo.setMode(AppMode.DEMO);
+    MissionCheckpointStore.clearMode(context, true);
     CountDownLatch reset = new CountDownLatch(1);
     repo.resetProgress(AppMode.DEMO, ok -> reset.countDown());
     assertTrue("Demo reset timed out", reset.await(10, TimeUnit.SECONDS));
@@ -65,19 +65,28 @@ public class ThreeMissionFlowTest {
       waitFor(allOf(withText("촬영하기"), isEnabled()));
       clickText("촬영하기");
       waitFor(withText("사진 확인하고 계속"));
+      recreateResumedActivity();
+      waitFor(withText("사진 확인하고 계속"));
       clickText("사진 확인하고 계속");
       clickText("수업과 학습");
       finishMission();
 
       startNextMission();
       clickText("미션 시작하기");
-      onView(withText("길게 눌러 기억 열기")).perform(scrollTo(), holdFor(3200));
+      onView(withText("길게 눌러 기억 열기")).perform(scrollTo(), holdFor(1000));
+      recreateResumedActivity();
+      waitFor(withText("길게 눌러 기억 열기"));
+      onView(withText("길게 눌러 기억 열기")).perform(scrollToFallback(), holdFor(3200));
       waitFor(withText("학습과 자료 이용"));
       clickText("학습과 자료 이용");
       finishMission();
 
       startNextMission();
       clickText("미션 시작하기");
+      onView(withHint("빈칸에 들어갈 두 글자")).perform(scrollTo(), replaceText("생"));
+      closeSoftKeyboard();
+      recreateResumedActivity();
+      waitFor(withText("생"));
       onView(withHint("빈칸에 들어갈 두 글자")).perform(scrollTo(), replaceText("생활"));
       closeSoftKeyboard();
       clickText("답 확인");
@@ -113,7 +122,53 @@ public class ThreeMissionFlowTest {
           });
       waitFor(withText(containsString("3 / 5 완료")));
       assertEquals(3, records(repo, AppMode.DEMO).size());
+      startNextMission();
+      clickText("미션 시작하기");
+      onView(withText("길게 눌러 기억 열기")).perform(scrollToFallback(), holdFor(3200));
+      waitFor(withText("주변 시설의 상대적 방향"));
+      clickText("주변 시설의 상대적 방향");
+      finishMission();
+      startNextMission();
+      clickText("미션 시작하기");
+      onView(withText("길게 눌러 기억 열기")).perform(scrollToFallback(), holdFor(3200));
+      waitFor(withText("활동과 휴식 공간의 이용 안내"));
+      clickText("활동과 휴식 공간의 이용 안내");
+      finishMission();
+      List<MissionCompletion> all = records(repo, AppMode.DEMO);
+      assertEquals(5, all.size());
+      assertEquals("HOLD", all.get(3).completionMethod);
+      assertEquals("HOLD", all.get(4).completionMethod);
+      assertTrue(records(repo, AppMode.FIELD).isEmpty());
+      // A restored saving checkpoint must reconcile the existing award rather than add one.
+      MissionCheckpointStore checkpointStore = new MissionCheckpointStore(context, true, "M01");
+      MissionCheckpointStore.State saving = new MissionCheckpointStore.State();
+      saving.stage = "SAVING";
+      saving.photo = all.get(0).photoUri;
+      saving.discovery = "CARD";
+      saving.completion = "PHOTO";
+      checkpointStore.save(saving);
+      context.startActivity(
+          new android.content.Intent(context, MissionActivity.class)
+              .addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+              .putExtra("missionIndex", 0)
+              .putExtra("demo", true));
+      waitFor(withText("기억 조각을 찾았어요"));
+      List<MissionCompletion> afterRestore = records(repo, AppMode.DEMO);
+      assertEquals(5, afterRestore.size());
+      assertEquals(all.get(0).savedAt, afterRestore.get(0).savedAt);
+      assertEquals(all.get(0).photoUri, afterRestore.get(0).photoUri);
+      clickText("코스로 돌아가기");
     }
+  }
+
+  private void recreateResumedActivity() {
+    InstrumentationRegistry.getInstrumentation()
+        .runOnMainSync(() -> {
+          java.util.Collection<android.app.Activity> activities =
+              androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry.getInstance()
+                  .getActivitiesInStage(androidx.test.runner.lifecycle.Stage.RESUMED);
+          for (android.app.Activity activity : activities) activity.recreate();
+        });
   }
 
   private void startNextMission() {
@@ -171,6 +226,34 @@ public class ThreeMissionFlowTest {
                 throw new AssertionError("View did not appear: " + matcher);
               }
             });
+  }
+
+  private ViewAction scrollToFallback() {
+    return new ViewAction() {
+      public Matcher<View> getConstraints() {
+        return isAssignableFrom(View.class);
+      }
+
+      public String getDescription() {
+        return "Scroll fallback control into view";
+      }
+
+      public void perform(UiController ui, View view) {
+        android.view.ViewParent parent = view.getParent();
+        while (parent != null && !(parent instanceof android.widget.ScrollView))
+          parent = parent.getParent();
+        if (parent instanceof android.widget.ScrollView) {
+          android.widget.ScrollView scroll = (android.widget.ScrollView) parent;
+          android.graphics.Rect rectangle = new android.graphics.Rect();
+          view.getDrawingRect(rectangle);
+          scroll.offsetDescendantRectToMyCoords(view, rectangle);
+          scroll.scrollTo(
+              0,
+              Math.max(0, rectangle.bottom - scroll.getHeight() + scroll.getPaddingBottom() + 24));
+          ui.loopMainThreadForAtLeast(100);
+        }
+      }
+    };
   }
 
   private ViewAction holdFor(long millis) {

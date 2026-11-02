@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     repo = MissionRepository.getInstance(this);
     mode = repo.getMode();
     missions = repo.getMissions();
+    if(b!=null)tab=b.getString("tab","home");
     if (repo.getNickname().isEmpty()) onboarding();
     else refresh();
   }
@@ -33,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     repo.getCompletions(
         requested,
         list -> {
-          if (requested != mode) return;
+          if (requested != mode || isDestroyed() || isFinishing()) return;
           completions = list;
           render();
         });
@@ -43,6 +44,9 @@ public class MainActivity extends AppCompatActivity {
     for (MissionCompletion c : completions) if (c.missionId.equals(id)) return true;
     return false;
   }
+
+  @Override protected void onResume(){super.onResume();if(repo!=null&&!repo.getNickname().isEmpty())refresh();}
+  @Override protected void onSaveInstanceState(Bundle state){state.putString("tab",tab);super.onSaveInstanceState(state);}
 
   private void shell() {
     setContentView(R.layout.activity_main);
@@ -129,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
             this,
             mode == AppMode.DEMO
                 ? "위치 확인을 건너뛰며, 기록은 현장 기록과 따로 저장됩니다."
-                : "현재 장소 좌표는 현장 검증 전이라 미션을 시작할 수 없습니다.",
+                : "현장 확인이 끝난 지점에서만 위치를 확인하고 시작할 수 있어요.",
             14,
             Ui.MUTED,
             false));
@@ -208,6 +212,10 @@ public class MainActivity extends AppCompatActivity {
       Ui.gap(c, 8);
       c.addView(Ui.text(this, "이제 낯설었던 캠퍼스에 나만의 발자국이 생겼어요.", 15, Ui.MUTED, false));
       page.addView(c);
+      Ui.gap(page,12);
+      Button ending=Ui.button(this,"완성된 탐방 기록 보기",true);
+      page.addView(ending);
+      ending.setOnClickListener(v->startActivity(new Intent(this,EndingActivity.class).putExtra("demo",mode==AppMode.DEMO)));
     }
   }
 
@@ -322,10 +330,12 @@ public class MainActivity extends AppCompatActivity {
             .setMessage((mode == AppMode.DEMO ? "테스트" : "현장") + " 모드의 완료 기록과 연결된 사진이 삭제됩니다.")
             .setPositiveButton(
                 "초기화",
-                (d, w) ->
+                (d, w) -> {
+                    final AppMode resetMode=mode;
                     repo.resetProgress(
-                        mode,
+                        resetMode,
                         ok -> {
+                          MissionCheckpointStore.clearMode(this,resetMode==AppMode.DEMO);
                           refresh();
                           if (!ok)
                             Toast.makeText(
@@ -333,7 +343,7 @@ public class MainActivity extends AppCompatActivity {
                                     "기록 초기화 또는 사진 정리에 문제가 있어요. 현재 기록을 다시 확인해 주세요.",
                                     Toast.LENGTH_LONG)
                                 .show();
-                        }))
+                        });})
             .setNegativeButton("취소", null)
             .show());
     Ui.gap(page, 24);
@@ -361,6 +371,8 @@ public class MainActivity extends AppCompatActivity {
         return "직접 입력";
       case "ACCELEROMETER":
         return "가속도센서";
+      case "COMPASS":
+        return "방향센서";
       default:
         return "이전 버전 기록";
     }
