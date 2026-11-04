@@ -9,6 +9,8 @@ import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.firststep.data.*;
 import java.util.*;
+import com.example.firststep.auth.AuthSession;
+import com.example.firststep.auth.CloudApi;
 
 public class MainActivity extends AppCompatActivity {
   private MissionRepository repo;
@@ -17,11 +19,16 @@ public class MainActivity extends AppCompatActivity {
   private List<MissionCompletion> completions = new ArrayList<>();
   private LinearLayout page, nav;
   private String tab = "home";
+  private String accountNamespace;
+  private boolean accountBusy;
 
   @Override
   protected void onCreate(Bundle b) {
     super.onCreate(b);
     repo = MissionRepository.getInstance(this);
+    accountNamespace = AuthSession.namespace(this);
+    AuthSession session = new AuthSession(this);
+    if (!"guest".equals(session.currentUserId()) && repo.getNickname().isEmpty()) repo.setNickname(session.userNickname());
     mode = repo.getMode();
     missions = repo.getMissions();
     if(b!=null)tab=b.getString("tab","home");
@@ -31,10 +38,12 @@ public class MainActivity extends AppCompatActivity {
 
   private void refresh() {
     AppMode requested = mode;
-    repo.getCompletions(
+    MissionRepository requestedRepository = repo;
+    String requestedAccount = accountNamespace;
+    requestedRepository.getCompletions(
         requested,
         list -> {
-          if (requested != mode || isDestroyed() || isFinishing()) return;
+          if (requested != mode || requestedRepository != repo || !Objects.equals(requestedAccount, AuthSession.namespace(this)) || isDestroyed() || isFinishing()) return;
           completions = list;
           render();
         });
@@ -45,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
     return false;
   }
 
-  @Override protected void onResume(){super.onResume();if(repo!=null&&!repo.getNickname().isEmpty())refresh();}
+  @Override protected void onResume(){super.onResume();if(repo!=null){if(!Objects.equals(accountNamespace,AuthSession.namespace(this)))selectCurrentAccount();else if(!repo.getNickname().isEmpty())refresh();}}
   @Override protected void onSaveInstanceState(Bundle state){state.putString("tab",tab);super.onSaveInstanceState(state);}
 
   private void shell() {
@@ -107,6 +116,9 @@ public class MainActivity extends AppCompatActivity {
       tab = "home";
       refresh();
     });
+    Ui.gap(page, 12);
+    Button accountLogin = Ui.button(this, "계정으로 로그인", false);
+    page.addView(accountLogin);accountLogin.setOnClickListener(v -> openAuthentication());
   }
 
   private void header(String small, String title, String subtitle) {
@@ -292,7 +304,30 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void profile() {
-    header("MY JOURNAL", repo.getNickname() + "의 기록", "기억은 이 기기에 저장됩니다.");
+    AuthSession account = new AuthSession(this);
+    boolean guest = "guest".equals(account.currentUserId());
+    header("MY JOURNAL", repo.getNickname() + "의 기록", guest ? "계정 없이 이 기기에 기록하고 있어요." : "완료 기록과 사진을 이 기기에 보관하고 계정별로 서버와 동기화합니다.");
+    LinearLayout accountCard = Ui.card(this);
+    accountCard.addView(Ui.label(this, guest ? "기기에서 이용 중" : "계정에 연결됨"));Ui.gap(accountCard, 8);
+    accountCard.addView(Ui.text(this, guest ? "로그인 없이도 탐방할 수 있어요" : account.userNickname(), 20, Ui.INK, true));Ui.gap(accountCard, 8);
+    accountCard.addView(Ui.text(this, guest ? "로그인하면 완료 기록과 사진을 계정별로 서버와 동기화합니다. 기존 기록은 직접 가져오기를 선택해야 복사됩니다." : ("GOOGLE".equalsIgnoreCase(account.provider()) ? "Google 계정 · 학교 인증 아님" : "개발용 계정 · Google 또는 학교 인증 아님"), 14, Ui.MUTED, false));
+    Ui.gap(accountCard, 12);
+    if (guest) {
+      Button signIn = Ui.button(this, "계정으로 로그인", true);accountCard.addView(signIn);signIn.setEnabled(!accountBusy);signIn.setOnClickListener(v -> openAuthentication());
+    } else {
+      accountCard.addView(Ui.text(this, repo.getSyncStatus(), 13, Ui.MUTED, false));Ui.gap(accountCard, 8);
+      Button sync = Ui.button(this, "서버와 동기화", true);accountCard.addView(sync);sync.setEnabled(!accountBusy);
+      sync.setOnClickListener(v -> synchronizeAccount(false));Ui.gap(accountCard, 8);
+      Button importGuest = Ui.button(this, "이 기기의 기존 기록 가져오기", false);accountCard.addView(importGuest);importGuest.setEnabled(!accountBusy);
+      importGuest.setOnClickListener(v -> new AlertDialog.Builder(this).setTitle("기존 기기 기록을 가져올까요?")
+          .setMessage("계정 없이 남긴 이 기기의 완료 기록과 사진을 현재 계정에 복사하고 서버와 동기화합니다. 원래 기기 기록은 유지됩니다.")
+          .setPositiveButton("가져오기",(d,w)->synchronizeAccount(true)).setNegativeButton("취소",null).show());Ui.gap(accountCard, 8);
+      Button signOut = Ui.button(this, "로그아웃", false);accountCard.addView(signOut);signOut.setEnabled(!accountBusy);
+      signOut.setOnClickListener(v -> new AlertDialog.Builder(this).setTitle("이 기기에서 로그아웃할까요?")
+          .setMessage("계정 기록은 별도로 보관하고, 로그인 전에 사용하던 기기 기록으로 돌아갑니다.")
+          .setPositiveButton("로그아웃",(d,w)->signOut()).setNegativeButton("취소",null).show());
+    }
+    page.addView(accountCard);Ui.gap(page, 20);
     LinearLayout c = Ui.card(this);
     c.addView(Ui.label(this, mode == AppMode.DEMO ? "DEMO 기록" : "현장 기록"));
     Ui.gap(c, 10);
@@ -322,25 +357,33 @@ public class MainActivity extends AppCompatActivity {
           .show();
     });
     Ui.gap(page, 10);
-    Button reset = Ui.button(this, "현재 모드 기록 초기화", false);
+    Button reset = Ui.button(this, guest ? "현재 모드 기록 초기화" : "서버·기기의 현재 모드 기록 삭제", false);
     page.addView(reset);
+    reset.setEnabled(!accountBusy);
     reset.setOnClickListener(v ->
         new AlertDialog.Builder(this)
             .setTitle("기록을 초기화할까요?")
-            .setMessage((mode == AppMode.DEMO ? "테스트" : "현장") + " 모드의 완료 기록과 연결된 사진이 삭제됩니다.")
+            .setMessage((mode == AppMode.DEMO ? "테스트" : "현장") + (guest ? " 모드의 기기 기록과 연결된 사진이 삭제됩니다." : " 모드의 완료 기록과 사진을 서버와 이 기기에서 삭제합니다. 서버 연결에 실패하면 기기 기록도 유지됩니다."))
             .setPositiveButton(
                 "초기화",
                 (d, w) -> {
+                    if(accountBusy)return;
                     final AppMode resetMode=mode;
-                    repo.resetProgress(
+                    final MissionRepository resetRepository=repo;
+                    final String resetAccount=accountNamespace;
+                    accountBusy=true;render();
+                    resetRepository.resetProgress(
                         resetMode,
                         ok -> {
-                          MissionCheckpointStore.clearMode(this,resetMode==AppMode.DEMO);
+                          if(!Objects.equals(resetAccount,AuthSession.namespace(this))||repo!=resetRepository)return;
+                          if(ok)MissionCheckpointStore.clearMode(getApplicationContext(),resetMode==AppMode.DEMO);
+                          if(isFinishing()||isDestroyed())return;
+                          accountBusy=false;
                           refresh();
                           if (!ok)
                             Toast.makeText(
                                     this,
-                                    "기록 초기화 또는 사진 정리에 문제가 있어요. 현재 기록을 다시 확인해 주세요.",
+                                    resetRepository.isAccountRepository()?resetRepository.getSyncStatus():"기록 초기화 또는 사진 정리에 문제가 있어요. 현재 기록을 다시 확인해 주세요.",
                                     Toast.LENGTH_LONG)
                                 .show();
                         });})
@@ -361,6 +404,8 @@ public class MainActivity extends AppCompatActivity {
     switch (method) {
       case "PHOTO":
         return "사진 촬영";
+      case "DEMO_PHOTO":
+        return "테스트 이미지 · 실제 촬영 아님";
       case "LIGHT":
         return "조도센서";
       case "HOLD":
@@ -378,9 +423,40 @@ public class MainActivity extends AppCompatActivity {
     }
   }
 
+  private void openAuthentication() { if(!accountBusy)startActivityForResult(new Intent(this, AuthActivity.class), 200); }
+  private void selectCurrentAccount() {
+    accountNamespace=AuthSession.namespace(this);repo=MissionRepository.getInstance(this);mode=repo.getMode();missions=repo.getMissions();completions=new ArrayList<>();accountBusy=false;
+    AuthSession account=new AuthSession(this);
+    if(!"guest".equals(account.currentUserId())&&!account.userNickname().isEmpty())repo.setNickname(account.userNickname());
+    tab="profile";
+    if(repo.getNickname().isEmpty())onboarding();else refresh();
+  }
+  private void synchronizeAccount(boolean importGuest) {
+    if(accountBusy||"guest".equals(new AuthSession(this).currentUserId()))return;
+    accountBusy=true;MissionRepository target=repo;String targetAccount=accountNamespace;render();
+    MissionRepository.CompletionCallback callback=ok->{
+      if(isFinishing()||isDestroyed()||target!=repo||!Objects.equals(targetAccount,AuthSession.namespace(this)))return;
+      accountBusy=false;Toast.makeText(this,target.getSyncStatus(),Toast.LENGTH_LONG).show();refresh();
+    };
+    if(importGuest)target.importGuestProgress(callback);else target.syncAccount(callback);
+  }
+  private void signOut() {
+    AuthSession session=new AuthSession(this);String capturedToken=session.getAccessToken();session.clear();selectCurrentAccount();
+    java.util.concurrent.ExecutorService logoutWorker=java.util.concurrent.Executors.newSingleThreadExecutor();
+    logoutWorker.execute(()->{
+      boolean revoked=true;try{if(!capturedToken.isEmpty())new CloudApi(getApplicationContext(),capturedToken).request("POST","/v1/auth/logout",new org.json.JSONObject());}catch(Exception error){revoked=false;}
+      final boolean serverRevoked=revoked;runOnUiThread(()->{if(!isDestroyed()&&!isFinishing()&&"guest".equals(new AuthSession(this).currentUserId()))Toast.makeText(this,serverRevoked?"로그아웃했어요.":"이 기기에서 로그아웃했어요. 서버 연결은 확인하지 못했습니다.",Toast.LENGTH_LONG).show();});
+      logoutWorker.shutdown();
+    });
+    try {androidx.credentials.CredentialManager.create(this).clearCredentialStateAsync(new androidx.credentials.ClearCredentialStateRequest(),null,androidx.core.content.ContextCompat.getMainExecutor(this),new androidx.credentials.CredentialManagerCallback<Void,androidx.credentials.exceptions.ClearCredentialException>(){
+      public void onResult(Void value){} public void onError(androidx.credentials.exceptions.ClearCredentialException error){}
+    });}catch(RuntimeException unavailable){/* Local session is already removed even without a provider. */}
+  }
+
   @Override
   protected void onActivityResult(int request, int result, Intent data) {
     super.onActivityResult(request, result, data);
     if (request == 100) refresh();
+    if (request == 200 && result == RESULT_OK) {selectCurrentAccount();synchronizeAccount(false);}
   }
 }

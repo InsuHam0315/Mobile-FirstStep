@@ -52,6 +52,20 @@ public class CompletionPolicyTest {
   }
 
   @Test
+  public void demoPhotoCannotBeUsedForFieldAwardsOrOtherMissionTypes() {
+    assertTrue(allowed("PHOTO_QUIZ", "DEMO_PHOTO"));
+    assertFalse(allowed("LIGHT_QUIZ", "DEMO_PHOTO"));
+    Mission original = typedMission("PHOTO_QUIZ");
+    Mission verified = new Mission(original.id, original.title, original.place, original.type,
+        original.story, original.question, original.answer, original.acceptedAnswers,
+        original.options, original.explanation, original.order, true, 1.0, 2.0);
+    assertFalse(CompletionPolicy.canComplete(AppMode.FIELD, verified, Collections.emptySet(),
+        "CARD", "DEMO_PHOTO", Collections.singletonList(verified)));
+    assertTrue(CompletionPolicy.canComplete(AppMode.FIELD, verified, Collections.emptySet(),
+        "CARD", "PHOTO", Collections.singletonList(verified)));
+  }
+
+  @Test
   public void legacyMetadataCanPreserveExistingAwardsButCannotCreateNewOnes() {
     Mission mission = typedMission("LIGHT_QUIZ");
     assertFalse(allowed("LIGHT_QUIZ", "LEGACY"));

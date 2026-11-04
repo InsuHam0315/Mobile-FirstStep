@@ -1,6 +1,14 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
 }
+
+val firstStepSettings = Properties().apply {
+    val settingsFile = rootProject.file("firststep.local.properties")
+    if (settingsFile.isFile) settingsFile.inputStream().use { load(it) }
+}
+fun configString(value: String): String = "\"" + value.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "").replace("\r", "") + "\""
 
 android {
     namespace = "com.example.firststep"
@@ -19,12 +27,19 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "API_BASE_URL", configString(firstStepSettings.getProperty("apiBaseUrl", "http://10.0.2.2:8787")))
+            buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", configString(firstStepSettings.getProperty("googleWebClientId", "")))
+        }
         release {
+            buildConfigField("String", "API_BASE_URL", configString(firstStepSettings.getProperty("releaseApiBaseUrl", "")))
+            buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", configString(firstStepSettings.getProperty("googleWebClientId", "")))
             optimization {
                 enable = false
             }
         }
     }
+    buildFeatures { buildConfig = true }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -32,6 +47,9 @@ android {
 }
 
 dependencies {
+    implementation("androidx.credentials:credentials:1.6.0")
+    implementation("androidx.credentials:credentials-play-services-auth:1.6.0")
+    implementation("com.google.android.libraries.identity.googleid:googleid:1.2.1")
     implementation("androidx.camera:camera-core:1.4.2")
     implementation("androidx.camera:camera-camera2:1.4.2")
     implementation("androidx.camera:camera-lifecycle:1.4.2")

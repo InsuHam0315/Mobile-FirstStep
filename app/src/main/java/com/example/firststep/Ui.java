@@ -132,7 +132,7 @@ final class Ui {
       bitmap = corrected;
     }
     view.setImageBitmap(bitmap);
-    view.setContentDescription("직접 촬영한 탐방 사진");
+    view.setContentDescription("저장된 탐방 이미지");
   }
 
   static void applyInsets(View view) {

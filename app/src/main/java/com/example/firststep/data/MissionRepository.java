@@ -20,6 +20,7 @@ import androidx.room.RoomDatabase;
 import androidx.room.Transaction;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
+import com.example.firststep.auth.AuthSession;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -38,12 +39,18 @@ import java.util.concurrent.Executors;
 
 /** Local mission catalog, mode-isolated progress, and lightweight profile settings. */
 public final class MissionRepository {
-    private static volatile MissionRepository instance;
-    private final Context appContext;
-    private final CompletionDao dao;
-    private final ProgressDatabase db;
+    private static final java.util.Map<String, MissionRepository> INSTANCES = new java.util.HashMap<>();
+    final Context appContext;
+    final CompletionDao dao;
+    final ProgressDatabase db;
+    final String ownerId;
+    final String namespace;
     private final SharedPreferences preferences;
+    final SharedPreferences syncPreferences;
+    final ExecutorService syncExecutor;
+    volatile String syncStatus = "아직 서버와 동기화하지 않았어요.";
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final ExecutorService readExecutor = Executors.newSingleThreadExecutor();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
     private volatile List<Mission> catalog;
 
@@ -57,19 +64,47 @@ public final class MissionRepository {
         }
     };
 
-    private MissionRepository(Context context) {
+    private MissionRepository(Context context, String ownerId) {
         appContext = context.getApplicationContext();
+        this.ownerId = ownerId;
+        syncExecutor = executor;
+        namespace = AccountStorage.namespace(ownerId);
         db = Room.databaseBuilder(appContext, ProgressDatabase.class,
-                "firststep-progress.db").addMigrations(MIGRATION_1_2).build();
+                "guest".equals(ownerId) ? "firststep-progress.db" : "firststep-account-" + namespace + ".db")
+                .addMigrations(MIGRATION_1_2).build();
         dao = db.completionDao();
-        preferences = appContext.getSharedPreferences("firststep-settings", Context.MODE_PRIVATE);
+        preferences = appContext.getSharedPreferences("guest".equals(ownerId) ? "firststep-settings" : "firststep-settings-" + namespace, Context.MODE_PRIVATE);
+        syncPreferences = appContext.getSharedPreferences("firststep-sync-" + namespace, Context.MODE_PRIVATE);
     }
 
-    public static MissionRepository getInstance(Context context) {
-        if (instance == null) synchronized (MissionRepository.class) {
-            if (instance == null) instance = new MissionRepository(context);
+    public static synchronized MissionRepository getInstance(Context context) {
+        return forOwner(context, new AuthSession(context).currentUserId());
+    }
+
+    static synchronized MissionRepository forOwner(Context context, String ownerId) {
+        MissionRepository repository = INSTANCES.get(ownerId);
+        if (repository == null) {
+            repository = new MissionRepository(context, ownerId);
+            INSTANCES.put(ownerId, repository);
         }
-        return instance;
+        return repository;
+    }
+
+    public boolean isAccountRepository() { return !"guest".equals(ownerId); }
+    public String getOwnerId() { return ownerId; }
+    public boolean isCurrentAccount() { return ownerId.equals(new AuthSession(appContext).currentUserId()); }
+    public String getSyncStatus() { return syncStatus; }
+
+    public void syncAccount(CompletionCallback callback) {
+        new AccountSync(this).sync(callback);
+    }
+
+    public void importGuestProgress(CompletionCallback callback) {
+        new AccountSync(this).importGuest(callback);
+    }
+
+    void postCloudResult(CompletionCallback callback, boolean success) {
+        if (callback != null) mainHandler.post(() -> callback.onComplete(success));
     }
 
     public List<Mission> getMissions() {
@@ -91,7 +126,7 @@ public final class MissionRepository {
     }
 
     public void getCompletions(AppMode mode, CompletionsCallback callback) {
-        executor.execute(() -> {
+        readExecutor.execute(() -> {
             List<MissionCompletion> result = new ArrayList<>();
             for (CompletionRow row : dao.byMode(mode.name())) result.add(row.toModel());
             mainHandler.post(() -> callback.onResult(Collections.unmodifiableList(result)));
@@ -125,10 +160,15 @@ public final class MissionRepository {
             } catch (RuntimeException ignored) { }
             boolean result = success;
             mainHandler.post(() -> { if (callback != null) callback.onComplete(result); });
+            if (result && isAccountRepository() && isCurrentAccount()) syncAccount(null);
         });
     }
 
     public void resetProgress(AppMode mode, CompletionCallback callback) {
+        if (isAccountRepository()) {
+            new AccountSync(this).reset(mode, callback);
+            return;
+        }
         executor.execute(() -> {
             boolean success = false;
             try {
@@ -233,6 +273,7 @@ public final class MissionRepository {
 
     @Dao public interface CompletionDao {
         @Insert(onConflict = OnConflictStrategy.IGNORE) long completeIfAbsent(CompletionRow row);
+        @Insert(onConflict = OnConflictStrategy.REPLACE) void replace(CompletionRow row);
         @Query("SELECT * FROM mission_completions WHERE mode = :mode ORDER BY savedAt, missionId")
         List<CompletionRow> byMode(String mode);
         @Query("SELECT missionId FROM mission_completions WHERE mode = :mode")

@@ -40,6 +40,50 @@ import org.junit.runner.RunWith;
 @RunWith(AndroidJUnit4.class)
 public class ThreeMissionFlowTest {
   @Test
+  public void demoPhotoFallbackRestoresAndPersistsWithoutCameraCapture() throws Exception {
+    Context context = ApplicationProvider.getApplicationContext();
+    MissionRepository repo = MissionRepository.getInstance(context);
+    int fieldBefore = records(repo, AppMode.FIELD).size();
+    MissionCheckpointStore.clearMode(context, true);
+    CountDownLatch reset = new CountDownLatch(1);
+    repo.resetProgress(AppMode.DEMO, ok -> reset.countDown());
+    assertTrue(reset.await(10, TimeUnit.SECONDS));
+    repo.setNickname("대체 이미지 검증");
+    repo.setMode(AppMode.DEMO);
+    MissionCheckpointStore store = new MissionCheckpointStore(context, true, "M01");
+    MissionCheckpointStore.State checkpoint = new MissionCheckpointStore.State();
+    checkpoint.stage = "GAME";
+    store.save(checkpoint);
+    try (androidx.test.core.app.ActivityScenario<MissionActivity> scenario =
+        androidx.test.core.app.ActivityScenario.launch(new android.content.Intent(context, MissionActivity.class)
+        .addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK | android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        .putExtra("missionIndex", 0).putExtra("demo", true))) {
+    waitFor(withText("테스트 이미지로 진행"));
+    clickText("테스트 이미지로 진행");
+    waitFor(withText("테스트 이미지 확인"));
+    scenario.recreate();
+    waitFor(withText("테스트 이미지 확인"));
+    assertEquals("DEMO_PHOTO", store.load().completion);
+    clickText("사진 확인하고 계속");
+    clickText("수업과 학습");
+    waitFor(withText("기억 조각을 찾았어요"));
+    List<MissionCompletion> saved = records(repo, AppMode.DEMO);
+    assertEquals(1, saved.size());
+    assertEquals("DEMO_PHOTO", saved.get(0).completionMethod);
+    assertTrue(new File(saved.get(0).photoUri).isFile());
+    assertNotNull(BitmapFactory.decodeFile(saved.get(0).photoUri));
+    assertEquals(fieldBefore, records(repo, AppMode.FIELD).size());
+    }
+    try (androidx.test.core.app.ActivityScenario<MainActivity> scenario =
+        androidx.test.core.app.ActivityScenario.launch(new android.content.Intent(context, MainActivity.class)
+        .addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK | android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK))) {
+    waitFor(withText(containsString("1 / 5 완료")));
+    onView(allOf(withText("시설 도감"), withParent(withId(R.id.navigation)))).perform(click());
+    waitFor(withText(containsString("테스트 이미지 · 실제 촬영 아님")));
+    }
+  }
+
+  @Test
   public void cameraLightAndVoicePersistSeparatelyFromFieldAfterRelaunch() throws Exception {
     Context context = ApplicationProvider.getApplicationContext();
     MissionRepository repo = MissionRepository.getInstance(context);
@@ -188,7 +232,7 @@ public class ThreeMissionFlowTest {
   }
 
   private void clickText(String text) {
-    onView(withText(text)).perform(scrollTo(), click());
+    onView(withText(text)).perform(scrollToFallback(), click());
   }
 
   private List<MissionCompletion> records(MissionRepository repo, AppMode mode) throws Exception {

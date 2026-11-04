@@ -24,7 +24,7 @@ public final class EndingActivity extends AppCompatActivity {
                 for(Mission mission:repository.getMissions())for(MissionCompletion record:records)if(record.missionId.equals(mission.id)){
                     LinearLayout card=Ui.card(this);card.addView(Ui.label(this,"기억 "+mission.order));Ui.gap(card,8);
                     card.addView(Ui.text(this,mission.place,22,Ui.INK,true));Ui.gap(card,8);card.addView(Ui.text(this,mission.explanation,15,Ui.MUTED,false));
-                    if(record.photoUri!=null){ImageView photo=new ImageView(this);Ui.loadPhoto(photo,record.photoUri);photo.setScaleType(ImageView.ScaleType.CENTER_CROP);Ui.gap(card,12);card.addView(photo,new LinearLayout.LayoutParams(-1,Ui.dp(this,180)));}
+                    if(record.photoUri!=null){ImageView photo=new ImageView(this);Ui.loadPhoto(photo,record.photoUri);photo.setScaleType(ImageView.ScaleType.CENTER_CROP);Ui.gap(card,12);if("DEMO_PHOTO".equals(record.completionMethod)){card.addView(Ui.label(this,"테스트 이미지 · 실제 촬영 아님"));Ui.gap(card,8);}card.addView(photo,new LinearLayout.LayoutParams(-1,Ui.dp(this,180)));}
                     body.addView(card);Ui.gap(body,16);
                 }
             }

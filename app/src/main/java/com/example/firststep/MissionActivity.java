@@ -30,6 +30,8 @@ public class MissionActivity extends AppCompatActivity implements SensorEventLis
   private final com.example.firststep.location.ArrivalPolicy arrivalPolicy =
       new com.example.firststep.location.ArrivalPolicy();
   private com.example.firststep.data.Mission mission;
+  private com.example.firststep.data.MissionRepository missionRepository;
+  private String missionOwner;
   private int index;
   private boolean demo,
       checkingArrival,
@@ -158,10 +160,12 @@ public class MissionActivity extends AppCompatActivity implements SensorEventLis
   @Override
   public void onCreate(Bundle b) {
     super.onCreate(b);
+    missionRepository = com.example.firststep.data.MissionRepository.getInstance(this);
+    missionOwner = missionRepository.getOwnerId();
     index = Math.max(0, Math.min(4, getIntent().getIntExtra("missionIndex", 0)));
     demo = getIntent().getBooleanExtra("demo", false);
     mission =
-        com.example.firststep.data.MissionRepository.getInstance(this).getMissions().get(index);
+        missionRepository.getMissions().get(index);
     checkpoints = new MissionCheckpointStore(this, demo, mission.id);
     checkpoint = checkpoints.load();
     resumeStage = checkpoint.stage;
@@ -266,6 +270,11 @@ public class MissionActivity extends AppCompatActivity implements SensorEventLis
   }
 
   private void screen(String eyebrow, String title, String desc) {
+    // Ignore late camera callbacks after a retry, fallback, or screen change.
+    captureGeneration++;
+    capture = null;
+    capturePending = false;
+    if (provider != null) provider.unbindAll();
     voiceActive = false;
     locationGateVisible = false;
     setContentView(R.layout.activity_mission);
@@ -369,38 +378,92 @@ public class MissionActivity extends AppCompatActivity implements SensorEventLis
   private void photo() {
     checkpoint("GAME");
     screen("MISSION 01  ·  관찰", "이름을 한 장에", "건물 이름 표식이나 촬영이 허용된 안내판을 담아 주세요.");
+    if (demo) {
+      LinearLayout fallback = Ui.card(this);
+      fallback.addView(Ui.label(this, "카메라 없이 테스트"));
+      Ui.gap(fallback, 8);
+      fallback.addView(Ui.text(this, "카메라가 없어도 테스트 이미지로 사진 확인과 질문·저장을 진행할 수 있어요. 실제 촬영 기록과는 구분됩니다.", 14, Ui.MUTED, false));
+      Ui.gap(fallback, 12);
+      Button sample = Ui.button(this, "테스트 이미지로 진행", false);
+      sample.setOnClickListener(v -> useDemoPhoto());
+      fallback.addView(sample);
+      body.addView(fallback);
+      Ui.gap(body, 20);
+    }
     if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
         != PackageManager.PERMISSION_GRANTED) {
       action(
           "카메라 권한 허용", () -> requestPermissions(new String[] {Manifest.permission.CAMERA}, CAMERA));
       return;
     }
+    TextView cameraStatus = Ui.text(this, "카메라를 연결하고 있어요…", 14, Ui.MUTED, false);
+    body.addView(cameraStatus);
+    Ui.gap(body, 10);
     PreviewView preview = new PreviewView(this);
+    preview.setImplementationMode(PreviewView.ImplementationMode.COMPATIBLE);
     body.addView(preview, new LinearLayout.LayoutParams(-1, Ui.dp(this, 280)));
     Ui.gap(body, 16);
     Button take = Ui.button(this, "촬영하기", true);
     captureButton = take;
     take.setEnabled(false);
     body.addView(take);
+    Ui.gap(body, 10);
+    Button retryCamera = Ui.button(this, "카메라 다시 연결", false);
+    retryCamera.setOnClickListener(v -> photo());
+    body.addView(retryCamera);
+    final long generation = captureGeneration;
     ListenableFuture<ProcessCameraProvider> future = ProcessCameraProvider.getInstance(this);
     future.addListener(
         () -> {
-          if (isFinishing() || isDestroyed()) return;
+          if (generation != captureGeneration || isFinishing() || isDestroyed()) return;
           try {
             provider = future.get();
             provider.unbindAll();
+            CameraSelector camera;
+            if (provider.hasCamera(CameraSelector.DEFAULT_BACK_CAMERA))
+              camera = CameraSelector.DEFAULT_BACK_CAMERA;
+            else if (provider.hasCamera(CameraSelector.DEFAULT_FRONT_CAMERA))
+              camera = CameraSelector.DEFAULT_FRONT_CAMERA;
+            else {
+              preview.setVisibility(android.view.View.GONE);
+              cameraStatus.setText(demo ? "사용할 수 있는 카메라가 없어요. 위의 테스트 이미지로 계속해 주세요." : "사용할 수 있는 카메라가 없어요. 촬영 가능한 기기에서 진행해 주세요.");
+              return;
+            }
             Preview p = new Preview.Builder().build();
             p.setSurfaceProvider(preview.getSurfaceProvider());
             capture = new ImageCapture.Builder().build();
-            provider.bindToLifecycle(this, CameraSelector.DEFAULT_BACK_CAMERA, p, capture);
+            provider.bindToLifecycle(this, camera, p, capture);
             if (isFinishing() || isDestroyed()) return;
             take.setEnabled(true);
+            cameraStatus.setText("카메라가 연결됐어요. 안내판이나 표식을 담아 주세요.");
             take.setOnClickListener(v -> capturePhoto());
           } catch (Exception e) {
-            Toast.makeText(this, "카메라를 열 수 없습니다. 권한과 기기를 확인해 주세요.", Toast.LENGTH_LONG).show();
+            capture = null;
+            preview.setVisibility(android.view.View.GONE);
+            cameraStatus.setText(demo ? "카메라를 열지 못했어요. 연결을 다시 시도하거나 위의 테스트 이미지로 계속해 주세요." : "카메라를 열지 못했어요. 다른 앱의 카메라 사용을 종료하고 카메라 연결을 다시 시도해 주세요.");
+            android.util.Log.w("FirstStepCamera", "Camera binding failed", e);
           }
         },
         ContextCompat.getMainExecutor(this));
+  }
+
+  private void useDemoPhoto() {
+    if (!demo || saving || isFinishing() || isDestroyed()) return;
+    // A stalled camera capture must not block the explicit test-only escape path.
+    captureGeneration++;
+    capturePending = false;
+    capture = null;
+    if (provider != null) provider.unbindAll();
+    try {
+      File sample = DemoPhoto.create(this);
+      discardDraftPhoto();
+      photoPath = sample.getAbsolutePath();
+      photoPersisted = false;
+      completionMethod = "DEMO_PHOTO";
+      photoPreview();
+    } catch (java.io.IOException e) {
+      Toast.makeText(this, "테스트 이미지를 저장하지 못했어요. 저장 공간을 확인하고 다시 시도해 주세요.", Toast.LENGTH_LONG).show();
+    }
   }
 
   private void capturePhoto() {
@@ -423,6 +486,7 @@ public class MissionActivity extends AppCompatActivity implements SensorEventLis
             discardDraftPhoto();
             photoPath = f.getAbsolutePath();
             photoPersisted = false;
+            completionMethod = "PHOTO";
             if (provider != null) provider.unbindAll();
             photoPreview();
           }
@@ -449,16 +513,18 @@ public class MissionActivity extends AppCompatActivity implements SensorEventLis
 
   private void photoPreview() {
     checkpoint("PHOTO_PREVIEW");
-    screen("MISSION 01  ·  확인", "잘 담겼나요?", "표식이 보이는지 확인한 뒤 다음으로 넘어가세요.");
+    boolean sample = demo && "DEMO_PHOTO".equals(completionMethod);
+    screen("MISSION 01  ·  확인", sample ? "테스트 이미지 확인" : "잘 담겼나요?", sample ? "실제 촬영한 사진이 아니에요. 이미지 확인 후 질문과 저장 흐름을 테스트합니다." : "표식이 보이는지 확인한 뒤 다음으로 넘어가세요.");
     ImageView image = new ImageView(this);
     Ui.loadPhoto(image, photoPath);
+    if (sample) image.setContentDescription("테스트용 캠퍼스 그림. 실제 촬영 사진이 아님");
     image.setScaleType(ImageView.ScaleType.CENTER_CROP);
     body.addView(image, new LinearLayout.LayoutParams(-1, Ui.dp(this, 300)));
     Ui.gap(body, 16);
     action(
         "사진 확인하고 계속",
         () -> {
-          completionMethod = "PHOTO";
+          completionMethod = sample ? "DEMO_PHOTO" : "PHOTO";
           quiz();
         });
     Ui.gap(body, 10);
@@ -466,6 +532,7 @@ public class MissionActivity extends AppCompatActivity implements SensorEventLis
     body.addView(retry);
     retry.setOnClickListener(v -> {
       discardDraftPhoto();
+      completionMethod = null;
       checkpoint("GAME");
       photo();
     });
@@ -867,6 +934,11 @@ public class MissionActivity extends AppCompatActivity implements SensorEventLis
 
   private void complete() {
     if (saving) return;
+    if (!missionOwner.equals(new com.example.firststep.auth.AuthSession(this).currentUserId()) || !checkpoints.isCurrentGeneration()) {
+      Toast.makeText(this, "계정이나 서버 기록이 변경됐어요. 코스에서 미션을 다시 열어 주세요.", Toast.LENGTH_LONG).show();
+      finish();
+      return;
+    }
     if (completionMethod == null) {
       Toast.makeText(this, "미션 조작을 먼저 완료해 주세요.", Toast.LENGTH_LONG).show();
       game();
@@ -880,7 +952,7 @@ public class MissionActivity extends AppCompatActivity implements SensorEventLis
     saving = true;
     checkpoint("SAVING");
     screen("SAVE", "기억을 저장하고 있어요", "이 기기에 탐방 기록을 안전하게 남기고 있어요.");
-    com.example.firststep.data.MissionRepository.getInstance(this)
+    missionRepository
         .completeMission(
             demo
                 ? com.example.firststep.data.AppMode.DEMO
@@ -964,6 +1036,11 @@ public class MissionActivity extends AppCompatActivity implements SensorEventLis
   @Override
   protected void onResume() {
     super.onResume();
+    if (missionOwner != null && !missionOwner.equals(new com.example.firststep.auth.AuthSession(this).currentUserId())) {
+      finish();
+      return;
+    }
+    if (checkpoints != null && !checkpoints.isCurrentGeneration()) { finish(); return; }
     if (!demo
         && wasBackgrounded
         && !fieldArrived

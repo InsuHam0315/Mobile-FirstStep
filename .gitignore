@@ -16,3 +16,10 @@ local.properties
 /.idea/
 /tmp/
 /output/
+/.local/
+/backend/.env
+/backend/.venv/
+/backend/__pycache__/
+/backend/.pytest_cache/
+/backend/tests/__pycache__/
+/firststep.local.properties

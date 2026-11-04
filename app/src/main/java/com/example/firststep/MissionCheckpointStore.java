@@ -14,7 +14,7 @@ public final class MissionCheckpointStore {
    */
   public static void clearMode(Context context, boolean demo) {
     Context app = context.getApplicationContext();
-    SharedPreferences prefs = app.getSharedPreferences("mission_checkpoints", Context.MODE_PRIVATE);
+    SharedPreferences prefs = app.getSharedPreferences(com.example.firststep.data.AccountStorage.checkpointPreferences(app), Context.MODE_PRIVATE);
     String mode = (demo ? "DEMO" : "FIELD") + ":";
     java.util.List<String> candidates = new java.util.ArrayList<>();
     SharedPreferences.Editor editor = prefs.edit();
@@ -76,10 +76,21 @@ public final class MissionCheckpointStore {
 
   private final SharedPreferences prefs;
   private final String prefix;
+  private final SharedPreferences syncPreferences;
+  private final String mode;
+  private final int initialGeneration;
 
   MissionCheckpointStore(Context context, boolean demo, String missionId) {
-    prefs = context.getSharedPreferences("mission_checkpoints", Context.MODE_PRIVATE);
-    prefix = (demo ? "DEMO" : "FIELD") + ":" + missionId + ":";
+    prefs = context.getSharedPreferences(com.example.firststep.data.AccountStorage.checkpointPreferences(context), Context.MODE_PRIVATE);
+    mode = demo ? "DEMO" : "FIELD";
+    prefix = mode + ":" + missionId + ":";
+    syncPreferences = context.getSharedPreferences("firststep-sync-" + com.example.firststep.auth.AuthSession.namespace(context), Context.MODE_PRIVATE);
+    initialGeneration = syncPreferences.getInt(mode, -1);
+  }
+
+  boolean isCurrentGeneration() {
+    int current = syncPreferences.getInt(mode, -1);
+    return initialGeneration < 0 ? current <= 0 : current == initialGeneration;
   }
 
   State load() {
@@ -96,6 +107,7 @@ public final class MissionCheckpointStore {
   }
 
   void save(State s) {
+    if (!isCurrentGeneration()) return;
     prefs
         .edit()
         .putString(prefix + "stage", s.stage)

@@ -15,7 +15,9 @@ public final class CompletionPolicy {
       Iterable<Mission> catalog) {
     if (mode == null || mission == null || completedIds == null || catalog == null) return false;
     if (!"AR".equals(discoveryMethod) && !"CARD".equals(discoveryMethod)) return false;
-    if ("LEGACY".equals(completionMethod)) {
+    if ("DEMO_PHOTO".equals(completionMethod)) {
+      if (mode != AppMode.DEMO || !"PHOTO_QUIZ".equals(mission.type)) return false;
+    } else if ("LEGACY".equals(completionMethod)) {
       if (!completedIds.contains(mission.id)) return false;
     } else if (!supportsMethod(mission.type, completionMethod)) return false;
     if (mode == AppMode.FIELD && !mission.coordinateVerified) return false;
