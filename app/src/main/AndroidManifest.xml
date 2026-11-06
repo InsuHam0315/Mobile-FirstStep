@@ -10,6 +10,9 @@
     <application android:allowBackup="false" android:dataExtractionRules="@xml/data_extraction_rules" android:fullBackupContent="@xml/backup_rules" android:icon="@mipmap/ic_launcher" android:label="@string/app_name" android:roundIcon="@mipmap/ic_launcher_round" android:supportsRtl="true" android:theme="@style/Theme.FirstStep">
         <meta-data android:name="com.google.ar.core" android:value="optional" />
         <activity android:name=".AuthActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".FacilityDirectoryActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".DeviceLabActivity" android:exported="false" />
+        <activity android:name=".CameraCheckActivity" android:exported="false" />
         <activity android:name=".ArDiscoveryActivity" android:exported="false" />
         <activity android:name=".RouteMapActivity" android:exported="false" />
         <activity android:name=".EndingActivity" android:exported="false" />

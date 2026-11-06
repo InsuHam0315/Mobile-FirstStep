@@ -10,7 +10,7 @@ import java.util.*;
 
 /** Native tile rendering. Campus center is public map metadata, never a verified mission coordinate. */
 public final class CampusMapView extends View {
-    public interface Listener { void status(String message); void selected(Mission mission); }
+    public interface Listener { void status(String message); void selected(Mission mission); default void panned() {} }
     private final Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
     private final TileStore store;
     private Listener listener;
@@ -65,7 +65,7 @@ public final class CampusMapView extends View {
         switch(event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN: previousX=downX=x;previousY=downY=y;moved=false;getParent().requestDisallowInterceptTouchEvent(true);return true;
             case MotionEvent.ACTION_MOVE:
-                if(Math.hypot(x-downX,y-downY)>8*scale)moved=true;
+                if(Math.hypot(x-downX,y-downY)>8*scale){moved=true;if(listener!=null)listener.panned();}
                 cx=Mercator.wrapX(cx-(x-previousX)/scale,zoom);cy=Math.max(0,Math.min((1<<zoom)*256.0,cy-(y-previousY)/scale));previousX=x;previousY=y;invalidate();return true;
             case MotionEvent.ACTION_UP:
                 getParent().requestDisallowInterceptTouchEvent(false);performClick();

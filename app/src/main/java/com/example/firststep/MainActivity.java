@@ -159,9 +159,13 @@ public class MainActivity extends AppCompatActivity {
     });
     page.addView(modeCard);
     Ui.gap(page, 12);
-    Button routeMap = Ui.button(this, "코스 안내도", false);
+    Button routeMap = Ui.button(this, "국립군산대 캠퍼스 지도", false);
     page.addView(routeMap);
     routeMap.setOnClickListener(v -> startActivity(new Intent(this, RouteMapActivity.class)));
+    Ui.gap(page, 12);
+    Button facilities = Ui.button(this, "학교생활 길잡이 · 시설 찾기", false);
+    page.addView(facilities);
+    facilities.setOnClickListener(v -> startActivity(new Intent(this, FacilityDirectoryActivity.class)));
     Ui.gap(page, 26);
     page.addView(Ui.label(this, "YOUR ROUTE"));
     Ui.gap(page, 8);
@@ -233,6 +237,9 @@ public class MainActivity extends AppCompatActivity {
 
   private void catalog() {
     header("CAMPUS GUIDE", "시설 도감", "탐방 전에도 시설 안내를 살펴볼 수 있어요.");
+    Button directory = Ui.button(this, "학교생활 길잡이 · 시설 찾기", true);
+    page.addView(directory);Ui.gap(page,16);
+    directory.setOnClickListener(v -> startActivity(new Intent(this, FacilityDirectoryActivity.class)));
     EditText search = new EditText(this);
     search.setSingleLine(true);
     search.setHint("시설 또는 이야기 검색");
@@ -328,6 +335,11 @@ public class MainActivity extends AppCompatActivity {
           .setPositiveButton("로그아웃",(d,w)->signOut()).setNegativeButton("취소",null).show());
     }
     page.addView(accountCard);Ui.gap(page, 20);
+    if (BuildConfig.DEBUG) {
+      Button lab = Ui.button(this, "카메라 · AR · 위치 확인 (개발용)", false);
+      page.addView(lab);Ui.gap(page,20);
+      lab.setOnClickListener(v -> startActivity(new Intent(this, DeviceLabActivity.class)));
+    }
     LinearLayout c = Ui.card(this);
     c.addView(Ui.label(this, mode == AppMode.DEMO ? "DEMO 기록" : "현장 기록"));
     Ui.gap(c, 10);

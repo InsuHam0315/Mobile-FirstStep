@@ -14,7 +14,7 @@ public final class RouteMapActivity extends AppCompatActivity {
     private com.example.firststep.location.LocationController location;
     private android.widget.TextView status;
     private final android.os.Handler handler=new android.os.Handler(android.os.Looper.getMainLooper());
-    private boolean following;
+    private boolean following, followCenter, locationWanted;
     @Override protected void onCreate(Bundle state) {
         super.onCreate(state); geographic();
     }
@@ -23,36 +23,39 @@ public final class RouteMapActivity extends AppCompatActivity {
         map=findViewById(R.id.campus_map);status=findViewById(R.id.map_status);
         map.configure(com.example.firststep.data.MissionRepository.getInstance(this).getMissions(),new com.example.firststep.map.CampusMapView.Listener(){
             public void status(String text){if(!following)status.setText(text);}
+            public void panned(){followCenter=false;}
             public void selected(com.example.firststep.data.Mission m){new androidx.appcompat.app.AlertDialog.Builder(RouteMapActivity.this).setTitle(m.place).setMessage(m.explanation+"\n\n도착 확인과 미션 시작은 코스 화면에서 진행해 주세요.").setPositiveButton("확인",null).show();}
         });
         findViewById(R.id.map_zoom_in).setOnClickListener(v->map.zoom(1));
         findViewById(R.id.map_zoom_out).setOnClickListener(v->map.zoom(-1));
-        findViewById(R.id.map_campus).setOnClickListener(v->map.campus());
+        findViewById(R.id.map_campus).setOnClickListener(v->{followCenter=false;map.campus();});
         findViewById(R.id.map_retry).setOnClickListener(v->map.retry());
         findViewById(R.id.map_attribution).setOnClickListener(v->startActivity(new android.content.Intent(android.content.Intent.ACTION_VIEW,android.net.Uri.parse("https://www.openstreetmap.org/copyright"))));
         findViewById(R.id.map_location).setOnClickListener(v->locate());
-        findViewById(R.id.map_route).setOnClickListener(v->{stopLocation();map.close();map=null;route();});
+        findViewById(R.id.map_route).setOnClickListener(v->{locationWanted=false;stopLocation();map.close();map=null;route();});
         findViewById(R.id.map_back).setOnClickListener(v->finish());
     }
     private void locate() {
         if(!com.example.firststep.location.LocationController.hasPermission(this)) {
             requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION,android.Manifest.permission.ACCESS_COARSE_LOCATION},730);return;
         }
-        stopLocation();following=true;
+        stopLocation();following=true;followCenter=true;locationWanted=true;
         location=new com.example.firststep.location.LocationController(this,(fix,message)->{
             if(map==null)return;
             if(fix==null){map.current(null);status.setText(message);return;}
             long age=android.os.SystemClock.elapsedRealtime()-fix.getElapsedRealtimeNanos()/1000000;
             if(!fix.hasAccuracy()||age<0||age>10000){map.current(null);status.setText("최신 위치를 기다리고 있어요.");return;}
-            map.current(fix);map.center(fix.getLatitude(),fix.getLongitude());
-            status.setText("현재 위치 · 정확도 약 "+Math.round(fix.getAccuracy())+"m · 도착 판정은 코스에서 확인하세요.");
-            handler.removeCallbacksAndMessages(null);handler.postDelayed(()->{if(map!=null){map.current(null);status.setText("위치가 오래되어 표시를 지웠어요. 다시 내 위치를 눌러 주세요.");}stopLocation();},Math.max(0,10000-age));
+            map.current(fix);if(followCenter)map.center(fix.getLatitude(),fix.getLongitude());
+            boolean emulator=android.os.Build.HARDWARE.contains("ranchu")||android.os.Build.HARDWARE.contains("goldfish");
+            String origin=emulator?"에뮬레이터 위치 · 가상 좌표":fix.isFromMockProvider()?"모의 위치 · 시험용 좌표":"현재 위치";
+            status.setText(String.format(java.util.Locale.KOREA,"%s\n위도 %.6f · 경도 %.6f · 정확도 약 %dm",origin,fix.getLatitude(),fix.getLongitude(),Math.round(fix.getAccuracy())));
+            handler.removeCallbacksAndMessages(null);handler.postDelayed(()->{if(map!=null){map.current(null);status.setText("최신 위치 수신 대기 중 · 오래된 위치 표시는 지웠어요.");}},Math.max(0,10000-age));
         });location.start();
     }
     private void stopLocation(){following=false;if(location!=null)location.stop();handler.removeCallbacksAndMessages(null);}
     @Override public void onRequestPermissionsResult(int request,String[] permissions,int[] results){super.onRequestPermissionsResult(request,permissions,results);if(request==730&&com.example.firststep.location.LocationController.hasPermission(this))locate();else if(request==730)status.setText("위치 권한 없이도 지도를 둘러볼 수 있어요.");}
     @Override protected void onPause(){stopLocation();if(map!=null){map.current(null);map.active(false);}super.onPause();}
-    @Override protected void onResume(){super.onResume();if(map!=null)map.active(true);}
+    @Override protected void onResume(){super.onResume();if(map!=null){map.active(true);if(locationWanted){boolean keepFollowing=followCenter;locate();followCenter=keepFollowing;}}}
     @Override protected void onDestroy(){if(map!=null)map.close();super.onDestroy();}
     private void route(){setContentView(R.layout.activity_route_map);
         Ui.applyInsets(findViewById(R.id.route_root));

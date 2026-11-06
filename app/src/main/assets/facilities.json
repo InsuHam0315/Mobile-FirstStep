@@ -1,0 +1,206 @@
+[
+  {
+    "id": "library-central",
+    "name": "중앙도서관",
+    "category": "학습",
+    "summary": "자료 대출·반납과 학습·자료 검색 안내를 찾아볼 수 있어요.",
+    "useCases": [
+      "전공책 빌리기",
+      "자료 대출·반납 방법 보기",
+      "과제에 쓸 자료 검색"
+    ],
+    "aliases": [
+      "중도",
+      "도서관",
+      "도서",
+      "대출",
+      "반납",
+      "공부",
+      "library"
+    ],
+    "officialUrl": "https://library.kunsan.ac.kr/main/sub.php?mno=37",
+    "sourceLabel": "국립군산대학교 도서관 · 자료실 이용안내",
+    "sourceCheckedOn": "2026-11-05",
+    "locationStatus": "좌표·출입구는 현장 확인 전이에요.",
+    "hoursStatus": "운영시간과 이용 조건은 방문 전 공식 안내에서 확인해 주세요."
+  },
+  {
+    "id": "library-hwangryong",
+    "name": "황룡도서관",
+    "category": "학습",
+    "summary": "자유열람실과 학습 공간 안내를 확인하고 공부할 곳을 알아보세요.",
+    "useCases": [
+      "조용히 공부할 공간 찾기",
+      "열람실 이용 안내 확인",
+      "스터디 공간 안내 보기"
+    ],
+    "aliases": [
+      "황도",
+      "황룡",
+      "자유열람실",
+      "열람실",
+      "스터디",
+      "공부",
+      "study"
+    ],
+    "officialUrl": "https://library.kunsan.ac.kr/main/sub.php?mno=37",
+    "sourceLabel": "국립군산대학교 도서관 · 자유열람실 이용안내",
+    "sourceCheckedOn": "2026-11-05",
+    "locationStatus": "좌표·출입구는 현장 확인 전이에요.",
+    "hoursStatus": "운영시간과 이용 조건은 방문 전 공식 안내에서 확인해 주세요."
+  },
+  {
+    "id": "student-counseling",
+    "name": "학생상담센터",
+    "category": "학생지원",
+    "summary": "개인·집단상담, 심리검사와 학교생활 성장 프로그램의 안내를 확인할 수 있어요.",
+    "useCases": [
+      "학교생활 고민 상담 알아보기",
+      "심리검사 안내 확인",
+      "대인관계 프로그램 찾아보기"
+    ],
+    "aliases": [
+      "상담",
+      "마음",
+      "심리",
+      "고민",
+      "적응",
+      "관계",
+      "counseling"
+    ],
+    "officialUrl": "https://counsel.kunsan.ac.kr/",
+    "sourceLabel": "국립군산대학교 학생상담센터",
+    "sourceCheckedOn": "2026-11-05",
+    "locationStatus": "좌표·출입구는 현장 확인 전이에요.",
+    "hoursStatus": "운영시간과 이용 조건은 방문 전 공식 안내에서 확인해 주세요."
+  },
+  {
+    "id": "career-plus",
+    "name": "대학일자리플러스센터",
+    "category": "진로·취업",
+    "summary": "진로·취업 상담과 재학생 취업지원 프로그램을 살펴볼 수 있어요.",
+    "useCases": [
+      "진로 상담 알아보기",
+      "취업 준비 프로그램 확인",
+      "포트폴리오 준비 안내 보기"
+    ],
+    "aliases": [
+      "대플",
+      "취업",
+      "취직",
+      "진로",
+      "인턴",
+      "자소서",
+      "이력서",
+      "포트폴리오",
+      "job",
+      "career"
+    ],
+    "officialUrl": "https://www.kunsan.ac.kr/job/index.kunsan",
+    "sourceLabel": "국립군산대학교 대학일자리플러스센터",
+    "sourceCheckedOn": "2026-11-05",
+    "locationStatus": "좌표·출입구는 현장 확인 전이에요.",
+    "hoursStatus": "운영시간과 이용 조건은 방문 전 공식 안내에서 확인해 주세요."
+  },
+  {
+    "id": "health-center",
+    "name": "보건진료소",
+    "category": "학생지원",
+    "summary": "학내 건강상담과 보건 서비스를 알아보고 이용 전 안내를 확인할 수 있어요.",
+    "useCases": [
+      "건강 상담 안내 보기",
+      "보건진료소 업무 알아보기",
+      "방문 전 공식 안내 확인"
+    ],
+    "aliases": [
+      "보건",
+      "건강",
+      "건강상담",
+      "진료소",
+      "보건실",
+      "health"
+    ],
+    "officialUrl": "https://www.kunsan.ac.kr/index.kunsan?menuCd=DOM_000000105006005000&sso=ok",
+    "sourceLabel": "국립군산대학교 · 보건진료소 안내",
+    "sourceCheckedOn": "2026-11-05",
+    "locationStatus": "좌표·출입구는 현장 확인 전이에요.",
+    "hoursStatus": "운영시간과 이용 조건은 방문 전 공식 안내에서 확인해 주세요."
+  },
+  {
+    "id": "student-dormitory",
+    "name": "학생생활관",
+    "category": "생활",
+    "summary": "입·퇴사, 공지와 식단 등 기숙사 생활에 필요한 안내를 모아볼 수 있어요.",
+    "useCases": [
+      "생활관 입·퇴사 안내 확인",
+      "기숙사 공지 찾아보기",
+      "생활관 식단 확인"
+    ],
+    "aliases": [
+      "기숙사",
+      "생활관",
+      "입사",
+      "퇴사",
+      "식단",
+      "dormitory",
+      "dorm"
+    ],
+    "officialUrl": "https://www.kunsan.ac.kr/dormi/index.kunsan?contentsSid=327&sso=ok",
+    "sourceLabel": "국립군산대학교 학생생활관",
+    "sourceCheckedOn": "2026-11-05",
+    "locationStatus": "좌표·출입구는 현장 확인 전이에요.",
+    "hoursStatus": "운영시간과 이용 조건은 방문 전 공식 안내에서 확인해 주세요."
+  },
+  {
+    "id": "academic-certificates",
+    "name": "제증명발급 안내",
+    "category": "학생지원",
+    "summary": "재학·성적 등 학적 증명서의 인터넷 발급과 자동발급기 이용 안내를 확인할 수 있어요.",
+    "useCases": [
+      "재학증명서 준비",
+      "성적증명서 발급 안내",
+      "온라인 발급 방법 확인"
+    ],
+    "aliases": [
+      "증명서",
+      "재학증명서",
+      "성적증명서",
+      "졸업증명서",
+      "증명",
+      "발급",
+      "학사",
+      "certificate"
+    ],
+    "officialUrl": "https://www.kunsan.ac.kr/index.kunsan?menuCd=DOM_000000103007002000&sso=ok",
+    "sourceLabel": "국립군산대학교 · 제증명발급 안내",
+    "sourceCheckedOn": "2026-11-05",
+    "locationStatus": "좌표·출입구는 현장 확인 전이에요.",
+    "hoursStatus": "운영시간과 이용 조건은 방문 전 공식 안내에서 확인해 주세요."
+  },
+  {
+    "id": "campus-dining",
+    "name": "교내 식당 안내",
+    "category": "생활",
+    "summary": "학교 공식 식당 게시판에서 교내 식사 관련 공지와 안내를 확인해 보세요.",
+    "useCases": [
+      "교내 식사 안내 찾기",
+      "식당 공지 확인",
+      "방문 전 최신 안내 살펴보기"
+    ],
+    "aliases": [
+      "학식",
+      "식당",
+      "밥",
+      "점심",
+      "식사",
+      "학생식당",
+      "dining",
+      "lunch"
+    ],
+    "officialUrl": "https://www.kunsan.ac.kr/board/list.kunsan?boardId=BBS_0000641&contentsSid=4369&cpath=&menuCd=DOM_000000105006001000",
+    "sourceLabel": "국립군산대학교 · 교내 식당 게시판",
+    "sourceCheckedOn": "2026-11-05",
+    "locationStatus": "좌표·출입구는 현장 확인 전이에요.",
+    "hoursStatus": "운영시간과 이용 조건은 방문 전 공식 안내에서 확인해 주세요."
+  }
+]
