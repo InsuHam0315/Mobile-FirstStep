@@ -1,12 +1,12 @@
 # H01 management acceptance review
 
-Date: 2026-11-06. Verdict: CHANGES_REQUIRED (P2 test isolation).
+Date: 2026-11-06. Current verdict: PASS after repair e21c2a6. The original P2 finding and its initial review below are preserved as history.
 
 Reviewed feature: codex/game-foundation, worktree C:/Users/InsuHam/FirstStep-worktrees/h01-game-foundation.
 Base: 8f239756486075b37aeca343ac73f51e2b6d9452.
 Implementation: 0a4328e89c206a856c7ce8d931b48341506c0d40.
 Handoff tip: ce6857da8160a144d4cb7daefdfd23cd8a1e37f7.
-Feature not pushed or integrated. Management made no app changes.
+Initial review snapshot: feature not pushed or integrated. Management made no app changes. See the acceptance update below for integration validation.
 
 ## Confirmed evidence
 
@@ -35,3 +35,11 @@ Repair only in the existing feature worktree. Preserve newer management policy o
 Notion branch journal: https://www.notion.so/410ed980d97e819db87ac527355f5786
 Status: implementation reported complete, management review open pending test-isolation repair.
 After repair acceptance, integration and core-game decision gates must be addressed before H02. New module branch will be progress under the current naming rule.
+
+## Acceptance update after repair
+
+Reviewed repair e21c2a645e5f5fea77a7029b74fc8dc5573b1bbb and handoff tip f4570678756a23af2a29cdd986b318b958c2b5a0. Read-only independent verification PM returned PASS: previous P2 closed, no actionable findings. The general test preserves initial permissions. Retained logs show two successful tests in each mixed, all-granted and all-denied condition; active-instrumentation setup is refused. Production code did not change in the repair. The permission runner supports dedicated API35/user 0 testing and cannot coordinate an unrelated concurrent test launcher.
+
+Management prepared integration in C:/Users/InsuHam/FirstStep-worktrees/management-h01-integration against main fa2a56fd4d984987be14242c85f5fc3eb1682b53. The only merge conflict was tasks.json: retained current module names and decision gates, imported H01 verifiedSha and acceptance status. No app or permission-runner differences exist relative to f457067.
+
+On this combined tree, scripts/verify.ps1 passed using the Studio JDK and Android SDK. All 51 Gradle tasks executed; retained XML shows 44 unit tests, zero failures/errors/skips. Lint: zero errors/fatal, 94 existing warnings. No emulator/instrumentation or physical-device rerun was performed by management; those results are the feature run evidence reviewed above. Integration log is .local/harness/H01-integration/verify.log in the integration worktree. Harness validation and staged whitespace checks passed.
