@@ -1,0 +1,51 @@
+{
+  "parentPageId": "3cded980-d97e-808b-b86d-c8db842ef22c",
+  "databaseId": "410ed980-d97e-801d-bd3c-e4f854c92a90",
+  "dataSourceUrl": "collection://410ed980-d97e-808c-a4e1-000bccda66d9",
+  "viewUrl": "view://410ed980-d97e-8053-8bef-000ccf0d9b10",
+  "titleProperty": "이름",
+  "statusProperty": "상태",
+  "taskIdProperty": "Task ID",
+  "tasks": {
+    "H00": {
+      "pageId": "410ed980-d97e-819b-98d9-ccfe96112722",
+      "url": "https://app.notion.com/p/410ed980d97e819b98d9ccfe96112722?pvs=204"
+    },
+    "H01": {
+      "pageId": "410ed980-d97e-8112-b811-d8591461a8c2",
+      "url": "https://app.notion.com/p/410ed980d97e8112b811d8591461a8c2?pvs=204"
+    },
+    "H02": {
+      "pageId": "410ed980-d97e-81f6-9c51-cb5542e70688",
+      "url": "https://app.notion.com/p/410ed980d97e81f69c51cb5542e70688?pvs=204"
+    },
+    "H03": {
+      "pageId": "410ed980-d97e-818f-a3fc-c79f4b93188b",
+      "url": "https://app.notion.com/p/410ed980d97e818fa3fcc79f4b93188b?pvs=204"
+    },
+    "H04": {
+      "pageId": "410ed980-d97e-8190-a864-ff37e84a7254",
+      "url": "https://app.notion.com/p/410ed980d97e8190a864ff37e84a7254?pvs=204"
+    },
+    "H05": {
+      "pageId": "410ed980-d97e-81b0-ab43-e1517d67b8a0",
+      "url": "https://app.notion.com/p/410ed980d97e81b0ab43e1517d67b8a0?pvs=204"
+    },
+    "H06": {
+      "pageId": "410ed980-d97e-81c4-acd4-fa1949fc021d",
+      "url": "https://app.notion.com/p/410ed980d97e81c4acd4fa1949fc021d?pvs=204"
+    },
+    "H07": {
+      "pageId": "410ed980-d97e-8164-b57b-e8cc07f5cae0",
+      "url": "https://app.notion.com/p/410ed980d97e8164b57be8cc07f5cae0?pvs=204"
+    },
+    "H08": {
+      "pageId": "410ed980-d97e-8161-a48b-d2a95768a2bd",
+      "url": "https://app.notion.com/p/410ed980d97e8161a48bd2a95768a2bd?pvs=204"
+    },
+    "H09": {
+      "pageId": "410ed980-d97e-81d1-abeb-f9b8dfe83910",
+      "url": "https://app.notion.com/p/410ed980d97e81d1abebf9b8dfe83910?pvs=204"
+    }
+  }
+}

@@ -5,11 +5,11 @@ Status: harness setup only. The new game is not implemented. Date: 2026-11-06.
 ## Start here
 
 1. Read this file and `tasks.json`; select one authorized task, not the whole backlog.
-2. Read `ROUTING.md`, then only its task packet and relevant code. Use `PROMPTS.md` for short dispatches.
+2. Read `ROUTING.md` and `NOTION_WORKFLOW.md`, then only its task packet and relevant code. Use `PROMPTS.md` for short dispatches; `NEW_CHAT_PROMPT.md` is the H01 entry prompt.
 3. Use the reviewed baseline SHA in `tasks.json`. If new uncommitted app work exists, review/checkpoint it and advance the baseline before branching. Do not silently omit facilities, camera, or map improvements.
 4. Create the task branch/worktree using `scripts/harness.py new-worktree TASK_ID`. The command fails on dirty checkouts, inactive tasks, missing dependencies, or an unrecorded baseline.
 5. Implement within ownership, run relevant checks, obtain an independent review, then let the coordinator integrate. Only the coordinator changes shared build/manifest/navigation contracts or the task board.
-6. Record a short handoff. A task is complete only when its acceptance criteria and required checks pass; preserve unresolved device/field limitations.
+6. Record a short handoff and update the existing Notion task row using `notion.json`. A task is complete only when its acceptance criteria and required checks pass; preserve unresolved device/field limitations. Verified feature work is not automatically merged into main.
 
 No continuous background agent or paid API service is started by these files. Native `.codex/agents/*.toml` profiles supply role instructions when a supporting Codex session loads them. Current-session dispatch can instead use the built-in collaboration tools with the same model and task instructions. Profile discovery/model access must be checked in the actual session; parsing TOML alone does not establish runtime loading.
 

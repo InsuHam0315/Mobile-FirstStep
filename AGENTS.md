@@ -12,6 +12,8 @@
 - Work one authorized vertical slice at a time. Do not implement the entire backlog. Firebase, authentication, cloud photos, and Gemini RAG remain pending user selection.
 - Keep replaceable Java/XML presentation separate from game rules, storage, clocks, and device APIs. Follow `docs/harness/UI_BOUNDARIES.md`.
 - Use the requested coordinator -> Sol PM -> Terra/Luna specialist hierarchy only for bounded useful work. Read `docs/harness/ROUTING.md`; do not silently invent model IDs.
-- Assign one branch/worktree and an explicit write scope per implementation task. Workers are not alone: preserve others' edits, and request a PM-owned change for shared files.
+- Assign one branch/worktree and an explicit write scope per implementation task. Workers are not alone: preserve others' edits; escalate shared-file changes through the PM to the coordinator, who owns those edits.
 - New Git worktrees do not include uncommitted edits. Use the recorded reviewed baseline in the task board, checkpoint any later pre-existing app changes before branching, and never reset/stash/delete them automatically.
 - A written agent profile is configuration, not evidence that the role ran. Record the actual model, base SHA, commands, outcomes, and remaining limits in each handoff.
+- Track each module in the existing Notion board inside AI기반모바일프로그래밍. Follow `docs/harness/NOTION_WORKFLOW.md`; resolve the exact row with `docs/harness/notion.json`. The coordinator alone updates the board at start, material blockers, and verified completion. Never create a duplicate board or treat a planned row as implementation authorization.
+- Keep `tasks.json`, the task handoff, and its Notion record consistent. Distinguish verified feature commits from integration into main. If Notion is unavailable, preserve a pending-sync record locally and disclose it; never claim a successful update.
