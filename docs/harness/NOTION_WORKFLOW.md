@@ -62,5 +62,5 @@ Implementation chats mark their handoff `Journal update: pending management revi
 - main: integration baseline and next-step journal.
 - codex/midpoint: previous app implementation journal; branch tip af0d3a2 is on origin and included in main.
 - codex/game-harness: preparation/verification journal; local branch tip 6dc8af1 is included in main, with no separate remote branch observed.
-- codex/game-foundation does not yet exist. H01 remains ready/unimplemented; create its journal when actual feature work starts.
+- codex/game-foundation now exists locally at ce6857d; its branch journal records implemented H01 and a management-requested test-isolation repair. It is not pushed/integrated. See reviews/H01-management.md.
 - Firebase/auth/Firestore/cloud photos/Gemini RAG and game/legacy choices retain their existing gates.
