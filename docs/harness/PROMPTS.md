@@ -14,7 +14,9 @@ Append milestones to the same branch page, never create per-task/session pages.
 Create a missing branch journal only after the actual branch exists; specialists return evidence only.
 In two-chat mode, this Notion authority belongs only to the management chat.
 The implementation chat follows NEW_CHAT_PROMPT.md and returns evidence without Notion writes.
-Do not expand into pending Firebase/chatbot choices or later backlog tasks.
+Follow INTEGRATION.md: after acceptance and independent review pass, management integrates,
+validates, pushes main and dispatches exactly one next eligible module without routine approval.
+Do not bypass pending product choices or begin the next module before integration succeeds.
 Verify the exact patch, obtain independent review, and report changed behavior, evidence,
 remaining limitations, and the next bounded step. Do not claim configured roles have run.
 ```

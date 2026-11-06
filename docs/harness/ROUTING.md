@@ -28,7 +28,7 @@ The user assigns planning, rules, Notion journals and human-facing reports to th
 
 ### Delegated roles within an authorized slice
 
-- Management coordinator: product decisions, backlog and baseline/integration ownership, durable architecture contracts and journal publication. Implementation lead: authorized feature-worktree coordination, scoped shared app/build files, active-task evidence and the Korean implementation completion report. Integration requires separate authorization.
+- Management coordinator: product decisions, backlog and baseline/integration ownership, durable architecture contracts and journal publication. Implementation lead: authorized feature-worktree coordination, scoped shared app/build files, active-task evidence and the Korean implementation completion report. The user's standing authorization permits management to integrate/push passing modules and advance sequentially under INTEGRATION.md without repeated approval.
 - Implementation PM: decompose the active slice; dispatch one bounded task; reconcile interfaces. No full-chat forwarding or automatic backlog execution.
 - Verification PM: review exact patch and evidence, independently of its author. Reject unsupported completion claims.
 - Terra implementer: modify only assigned paths; never switch a shared checkout or edit another worktree. Return tests, diff scope, limitations.

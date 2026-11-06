@@ -1,6 +1,6 @@
 # FirstStep Codex implementation harness
 
-Status: harness setup only. The new game is not implemented. Date: 2026-11-06.
+Status (2026-11-06): H01 feature implementation is awaiting a test-isolation repair and management acceptance; it is not integrated. The full new game is not implemented.
 
 ## Start here
 
@@ -10,8 +10,8 @@ For module work after the currently running H01, also read `BRANCH_COMMITS.md` f
 2. Read `ROUTING.md` and `NOTION_WORKFLOW.md`, then only its task packet and relevant code. Use `PROMPTS.md` for short dispatches; `NEW_CHAT_PROMPT.md` is the H01 entry prompt.
 3. Use the reviewed baseline SHA in `tasks.json`. If new uncommitted app work exists, review/checkpoint it and advance the baseline before branching. Do not silently omit facilities, camera, or map improvements.
 4. Create the task branch/worktree using `scripts/harness.py new-worktree TASK_ID`. The command fails on dirty checkouts, inactive tasks, missing dependencies, or an unrecorded baseline.
-5. Implement within ownership and run relevant checks with independent review. In two-chat mode, the implementation lead owns scoped shared app/build/manifest changes and the active task's factual status inside its feature worktree. Management owns project-wide decisions and integration; follow ROUTING.md. Do not merge automatically.
-6. The implementation chat records an English evidence handoff; the management chat reviews it and writes the Korean branch journal using `notion.json`. Implementation agents must not write Notion. Create at most one journal per actual branch, not one page per task. A task is complete only when its acceptance criteria and required checks pass; preserve unresolved device/field limitations. Verified feature work is not automatically merged into main.
+5. Implement within ownership and run relevant checks with independent review. In two-chat mode, the implementation lead owns scoped shared app/build/manifest changes and the active task's factual status inside its feature worktree. Management owns project-wide decisions and integration; follow ROUTING.md and INTEGRATION.md. The user authorizes management to integrate and push a passing module and advance sequentially without routine approval.
+6. The implementation chat records an English evidence handoff; management reviews it, integrates under INTEGRATION.md and writes the Korean branch journal using `notion.json`. Implementation agents must not write Notion. Create at most one journal per actual branch, not one page per task. A task is complete only when its acceptance criteria and required checks pass; preserve unresolved device/field limitations. Integration and next-module dispatch require passed gates, not another routine user approval.
 
 No continuous background agent or paid API service is started by these files. Native `.codex/agents/*.toml` profiles supply role instructions when a supporting Codex session loads them. Current-session dispatch can instead use the built-in collaboration tools with the same model and task instructions. Profile discovery/model access must be checked in the actual session; parsing TOML alone does not establish runtime loading.
 
@@ -49,7 +49,7 @@ The initial harness branch is `codex/game-harness`. At the user's explicit reque
 | H08 | chatbot | Optional sourced Gemini RAG feature/backend | H06 + explicit chatbot selection |
 | H09 | reskin | Apply user references to presentation and assets | H06 + design references |
 
-Create branches just in time from a reviewed integration commit. Do not create all branches from today's old HEAD. After H02, H03-H05 may proceed separately if contracts are stable; concurrency is not mandatory. H09 may be brought forward once the relevant screen contract is stable; a reskin must still pass the same behavior checks.
+Create branches just in time from a reviewed integration commit. Do not create all branches from today's old HEAD. Implement one module at a time, integrating a passing module before the next eligible module. Reordering the planned sequence requires a documented scope decision; a reskin must pass the same behavior checks.
 
 ## Gates
 
