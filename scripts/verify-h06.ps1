@@ -51,7 +51,8 @@ $null=Adb @('shell','settings','put','system','user_rotation',$rotation)
 $null=Adb @('shell','settings','put','system','font_scale',$script:scale)
 $loop=@('demoLoopRetriesOneStampAndRefreshesHome','normalFakeBoundaryReopensWithoutDiscovery','cancellationAndPendingRecreationDoNotAdvance','malformedAndUnpreparedRoutesNeverOpenDefaultDb')
 $boundary=@('intentContextBoundary','intentResultBoundary','navigationPersistenceAndStaleness','clockBindingAndIsolation','stableEntryRunIsolation','commitFailurePoisonsOnlyIdentity')
-Run 'com.example.firststep.game.integration.IntegrationLoopTest,com.example.firststep.game.integration.IntegrationBoundaryTest' ($loop+$boundary) 'focused.log'
+$mode=@('pausedModeCompletionKeepsIdentityAtomicThenResumes','recreationRejectsOldCallbackAndRetainsRequestedMode')
+Run 'com.example.firststep.game.integration.IntegrationLoopTest,com.example.firststep.game.integration.IntegrationBoundaryTest,com.example.firststep.game.integration.IntegrationModeLifecycleTest' ($loop+$boundary+$mode) 'focused.log'
 if($Restart){
   $run=[guid]::NewGuid().ToString()
   $extra=@('-e','h06RestartRun',$run)

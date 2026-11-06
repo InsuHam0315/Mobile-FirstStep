@@ -40,7 +40,8 @@ public final class GameHomeActivity extends AppCompatActivity {
   private NavigationPolicy.State integrationState;
   private String launchedNonce;
   private boolean integrationBusy, integrationFailed;
-  private long integrationEpoch;
+  private long integrationEpoch, integrationGeneration;
+  private Progress.Mode pendingIntegrationMode;
   private String integrationMessage = "";
   private final ActivityResultLauncher<Intent> discoveryRoute =
       registerForActivityResult(
@@ -101,6 +102,7 @@ public final class GameHomeActivity extends AppCompatActivity {
       if (integrationContext != null) {
         if (integrationBusy) return;
         IntegrationContext next = integrationContext.withFakeNow(value);
+        long generation = ++integrationGeneration;
         integrationBusy = true;
         renderIntegrationStatus();
         integrationWorker.execute(
@@ -108,7 +110,8 @@ public final class GameHomeActivity extends AppCompatActivity {
               boolean saved = new NavigationStore(this).saveClock(next);
               runOnUiThread(
                   () -> {
-                    if (isDestroyed() || isFinishing()) return;
+                    if (isDestroyed() || isFinishing() || generation != integrationGeneration)
+                      return;
                     integrationBusy = false;
                     if (!saved) {
                       failIntegration();
@@ -166,6 +169,16 @@ public final class GameHomeActivity extends AppCompatActivity {
           integrationContext = c;
         }
         launchedNonce = saved.getString("h06_nonce");
+        String desired = saved.getString("h06_pending_mode");
+        if (desired != null) {
+          try {
+            pendingIntegrationMode = Progress.Mode.valueOf(desired);
+          } catch (IllegalArgumentException invalid) {
+            failIntegration();
+            return;
+          }
+          integrationBusy = true;
+        }
       }
       if (integrationContext == null) {
         failIntegration();
@@ -267,6 +280,7 @@ public final class GameHomeActivity extends AppCompatActivity {
     render(snapshot());
     if (resumed) {
       controller.resume();
+      if (pendingIntegrationMode != null) resolvePendingIntegrationMode();
       handler.postDelayed(tick, 1000);
     }
   }
@@ -434,16 +448,26 @@ public final class GameHomeActivity extends AppCompatActivity {
   }
 
   private void switchIntegrationMode() {
-    if (integrationBusy) return;
+    if (integrationBusy || !resumed || controller == null) return;
+    pendingIntegrationMode =
+        integrationContext.mode == Progress.Mode.NORMAL ? Progress.Mode.DEMO : Progress.Mode.NORMAL;
+    integrationBusy = true;
+    ++integrationGeneration;
+    renderIntegrationStatus();
+    resolvePendingIntegrationMode();
+  }
+
+  private void resolvePendingIntegrationMode() {
+    if (!resumed
+        || controller == null
+        || pendingIntegrationMode == null
+        || integrationContext == null) return;
     IntegrationContext old = integrationContext;
+    Progress.Mode desired = pendingIntegrationMode;
     IntegrationContext next =
         IntegrationContext.create(
-            old.datasetId,
-            old.runId,
-            old.targetId,
-            old.mode == Progress.Mode.NORMAL ? Progress.Mode.DEMO : Progress.Mode.NORMAL,
-            old.clock,
-            old.fakeNow);
+            old.datasetId, old.runId, old.targetId, desired, old.clock, old.fakeNow);
+    long generation = ++integrationGeneration;
     integrationBusy = true;
     renderIntegrationStatus();
     integrationWorker.execute(
@@ -452,18 +476,31 @@ public final class GameHomeActivity extends AppCompatActivity {
             NavigationPolicy.State state = IntegrationRouteAccess.bound(this, next);
             runOnUiThread(
                 () -> {
-                  if (isDestroyed() || isFinishing()) return;
-                  integrationBusy = false;
+                  if (isDestroyed()
+                      || isFinishing()
+                      || generation != integrationGeneration
+                      || pendingIntegrationMode != desired
+                      || !old.equalsIdentity(integrationContext)) return;
+                  if (!resumed || controller == null) return;
                   integrationState = state;
                   integrationContext = state.context;
-                  integrationMessage = "";
                   IntegrationIntentCodec.writeContext(getIntent(), integrationContext);
                   if (fake) host.setFakeNow(integrationContext.fakeNow);
-                  controller.mode(integrationContext.mode);
+                  pendingIntegrationMode = null;
+                  integrationMessage = "";
+                  controller.mode(desired);
+                  integrationBusy = false;
                   renderIntegrationStatus();
                 });
           } catch (Exception failure) {
-            runOnUiThread(this::failIntegration);
+            runOnUiThread(
+                () -> {
+                  if (!isDestroyed()
+                      && !isFinishing()
+                      && generation == integrationGeneration
+                      && pendingIntegrationMode == desired
+                      && resumed) failIntegration();
+                });
           }
         });
   }
@@ -471,6 +508,7 @@ public final class GameHomeActivity extends AppCompatActivity {
   /** Explicit user action recovers durable pending/accepted/consumed navigation. */
   private void openIntegration() {
     if (integrationBusy || !resumed) return;
+    ++integrationGeneration;
     IntegrationContext requested = integrationContext;
     long epoch = integrationEpoch;
     integrationBusy = true;
@@ -525,6 +563,7 @@ public final class GameHomeActivity extends AppCompatActivity {
 
   private void receiveDiscovery(int code, Intent data) {
     if (integrationContext == null) return;
+    ++integrationGeneration;
     final String nonce = launchedNonce;
     launchedNonce = null;
     final IntegrationContext requested = integrationContext;
@@ -581,6 +620,7 @@ public final class GameHomeActivity extends AppCompatActivity {
   private void refreshIntegration() {
     if (integrationContext == null || integrationBusy) return;
     IntegrationContext requested = integrationContext;
+    long generation = ++integrationGeneration;
     integrationWorker.execute(
         () -> {
           try {
@@ -589,6 +629,8 @@ public final class GameHomeActivity extends AppCompatActivity {
                 () -> {
                   if (isDestroyed()
                       || isFinishing()
+                      || generation != integrationGeneration
+                      || integrationBusy
                       || !requested.equalsIdentity(integrationContext)) return;
                   integrationState = state;
                   integrationContext = state.context;
@@ -598,7 +640,13 @@ public final class GameHomeActivity extends AppCompatActivity {
                   renderIntegrationStatus();
                 });
           } catch (Exception failure) {
-            runOnUiThread(this::failIntegration);
+            runOnUiThread(
+                () -> {
+                  if (!isDestroyed()
+                      && !isFinishing()
+                      && generation == integrationGeneration
+                      && !integrationBusy) failIntegration();
+                });
           }
         });
   }
@@ -802,6 +850,7 @@ public final class GameHomeActivity extends AppCompatActivity {
     if (controller != null) {
       map.active(true);
       controller.resume();
+      if (pendingIntegrationMode != null) resolvePendingIntegrationMode();
       consumeLocationResult();
       handler.postDelayed(tick, 1000);
     }
@@ -837,6 +886,8 @@ public final class GameHomeActivity extends AppCompatActivity {
       IntegrationIntentCodec.writeContext(retained, integrationContext);
       out.putParcelable("h06_context", retained);
       out.putString("h06_nonce", launchedNonce);
+      if (pendingIntegrationMode != null)
+        out.putString("h06_pending_mode", pendingIntegrationMode.name());
     }
     HomeState s = snapshot();
     if (s == null) return;
