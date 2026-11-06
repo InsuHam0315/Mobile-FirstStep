@@ -1,16 +1,35 @@
 {
+  "schemaVersion": 2,
+  "recordUnit": "branch",
   "parentPageId": "3cded980-d97e-808b-b86d-c8db842ef22c",
   "databaseId": "410ed980-d97e-801d-bd3c-e4f854c92a90",
   "dataSourceUrl": "collection://410ed980-d97e-808c-a4e1-000bccda66d9",
   "viewUrl": "view://410ed980-d97e-8053-8bef-000ccf0d9b10",
+  "legacyPlanningViewUrl": "view://410ed980-d97e-8181-8bd4-000c47dc4053",
   "titleProperty": "이름",
   "statusProperty": "상태",
-  "taskIdProperty": "Task ID",
-  "tasks": {
-    "H00": {
+  "relatedTasksProperty": "관련 작업",
+  "branchProperty": "브랜치",
+  "summaryProperty": "현재 상황",
+  "verificationProperty": "검증 현황",
+  "commitProperty": "커밋",
+  "documentTypeProperty": "문서 구분",
+  "activeDocumentType": "브랜치 개발일지",
+  "branches": {
+    "main": {
+      "pageId": "410ed980-d97e-812c-8434-daad82e1bf54",
+      "url": "https://app.notion.com/p/410ed980d97e812c8434daad82e1bf54?pvs=204"
+    },
+    "codex/midpoint": {
+      "pageId": "410ed980-d97e-810a-921f-ef9ddaee2c33",
+      "url": "https://app.notion.com/p/410ed980d97e810a921fef9ddaee2c33?pvs=204"
+    },
+    "codex/game-harness": {
       "pageId": "410ed980-d97e-819b-98d9-ccfe96112722",
       "url": "https://app.notion.com/p/410ed980d97e819b98d9ccfe96112722?pvs=204"
-    },
+    }
+  },
+  "legacyPlanningPages": {
     "H01": {
       "pageId": "410ed980-d97e-8112-b811-d8591461a8c2",
       "url": "https://app.notion.com/p/410ed980d97e8112b811d8591461a8c2?pvs=204"

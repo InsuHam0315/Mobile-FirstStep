@@ -18,16 +18,24 @@ gpt-6.1-terra implementation/verification specialists, and gpt-6-luna for narrow
 read-only exploration. The root model is selected by the session/user, not by a
 repo file. Check actual availability; never invent gpt-6.1-luna or claim profiles
 ran merely because TOML files exist. Disclose unavailable roles before substitution.
-Use short English internal prompts, technical records and handoffs; Korean app copy
-and final report. Prefer coordinator + one PM + one leaf within available slots.
+Use short English internal prompts, repository technical records and handoffs.
+Write app copy and the final report in Korean. Notion branch journals MUST be rich,
+human-readable Korean, following the development-journal contract in NOTION_WORKFLOW.md;
+do not paste compressed English agent notes into them. Prefer coordinator + one PM
+and one leaf within available slots.
 
 Keep ongoing work in the EXISTING Notion board inside AI기반모바일프로그래밍:
 https://www.notion.so/410ed980d97e801dbd3ce4f854c92a90
-H01: https://www.notion.so/410ed980d97e8112b811d8591461a8c2
-Fetch its current schema and row. Follow NOTION_WORKFLOW.md. Only the coordinator
-updates the row at actual start, meaningful blockers and verified completion.
-No duplicate board/tasks. Record scope, branch/worktree/base/candidate, checks,
-review, device limits and integration status. Notion failure must leave a local
+Main journal: https://www.notion.so/410ed980d97e812c8434daad82e1bf54
+Fetch its current schema and main journal. Follow NOTION_WORKFLOW.md. Maintain ONE
+journal per actual branch, not per task or session. Once codex/game-foundation exists,
+reuse its journal if present or create it once and register it in notion.json.
+Do not resume the archived H01 planning card. Only the coordinator appends meaningful
+Korean development entries: goal, selected technology and rationale, implementation,
+observed checks/demo results, actual failures/fixes, current state and next step.
+Never invent successful demos or failed alternatives for narrative effect. Retain
+branch/worktree/base/candidate, review, device limits and integration evidence.
+Notion failure must leave a local
 pending-sync record and be disclosed; it must not become a fabricated success.
 
 Check the harness and H01 readiness. From a clean reviewed main checkout, run

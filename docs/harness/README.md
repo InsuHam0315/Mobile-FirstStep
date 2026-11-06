@@ -9,13 +9,13 @@ Status: harness setup only. The new game is not implemented. Date: 2026-11-06.
 3. Use the reviewed baseline SHA in `tasks.json`. If new uncommitted app work exists, review/checkpoint it and advance the baseline before branching. Do not silently omit facilities, camera, or map improvements.
 4. Create the task branch/worktree using `scripts/harness.py new-worktree TASK_ID`. The command fails on dirty checkouts, inactive tasks, missing dependencies, or an unrecorded baseline.
 5. Implement within ownership, run relevant checks, obtain an independent review, then let the coordinator integrate. Only the coordinator changes shared build/manifest/navigation contracts or the task board.
-6. Record a short handoff and update the existing Notion task row using `notion.json`. A task is complete only when its acceptance criteria and required checks pass; preserve unresolved device/field limitations. Verified feature work is not automatically merged into main.
+6. Record a short internal handoff and append a readable Korean development entry to the branch journal using `notion.json`. Create at most one journal per actual branch, not one page per task. A task is complete only when its acceptance criteria and required checks pass; preserve unresolved device/field limitations. Verified feature work is not automatically merged into main.
 
 No continuous background agent or paid API service is started by these files. Native `.codex/agents/*.toml` profiles supply role instructions when a supporting Codex session loads them. Current-session dispatch can instead use the built-in collaboration tools with the same model and task instructions. Profile discovery/model access must be checked in the actual session; parsing TOML alone does not establish runtime loading.
 
 ## Language and token budget discipline
 
-- Internal prompts, code identifiers, technical docs, task packets, reviews, and handoffs: English.
+- Internal prompts, code identifiers, repository technical docs, task packets, reviews, and handoffs: English. Notion branch journals are the explicit exception: readable, substantive Korean development narratives for the user and team, following `NOTION_WORKFLOW.md`.
 - App text, content, TTS scripts, and final user reports: Korean.
 - English is a preference, not a guaranteed token saving. Reduce context by sending paths + contracts + acceptance criteria rather than replaying the full chat/PDF.
 - Specialists receive a fresh bounded context. Reuse a specialist for related follow-ups; do not duplicate an already-completed exploration.

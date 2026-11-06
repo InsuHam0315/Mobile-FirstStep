@@ -5,10 +5,13 @@
 ```text
 Use the FirstStep harness. Read AGENTS.md, docs/harness/README.md, and tasks.json.
 Execute only task {ID} if authorized and ready. Preserve existing uncommitted work.
-Follow ROUTING.md. Use English internal prompts/handoffs, Korean app copy and final report.
+Follow ROUTING.md. Use English internal prompts/handoffs; Korean app copy, final report,
+and substantive human-readable Notion branch journals per NOTION_WORKFLOW.md.
 Create isolated task worktrees only after baseline/dependency checks. Keep UI replaceable.
-Read NOTION_WORKFLOW.md and resolve the existing task row from notion.json. The coordinator
-records start, material blockers, and verified completion; specialists return evidence only.
+Read NOTION_WORKFLOW.md and resolve the branch journal from notion.json. The coordinator
+records goals, choices/rationale, observed results, real fixes and next steps in Korean.
+Append milestones to the same branch page, never create per-task/session pages.
+Create a missing branch journal only after the actual branch exists; specialists return evidence only.
 Do not expand into pending Firebase/chatbot choices or later backlog tasks.
 Verify the exact patch, obtain independent review, and report changed behavior, evidence,
 remaining limitations, and the next bounded step. Do not claim configured roles have run.
@@ -47,7 +50,7 @@ Actual agent roles/models used:
 Changed paths and user-visible outcome:
 Checks: command, environment, exit/result, evidence path:
 Review verdict and unresolved limits:
-Notion task URL / sync result / feature commit vs main integration:
+Notion branch-journal URL / sync result / feature commit vs main integration:
 Next owner and minimal required context:
 ```
 
