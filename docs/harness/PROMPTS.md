@@ -1,6 +1,6 @@
 # Compact dispatch prompts
 
-## Coordinator entry
+## Management coordinator entry
 
 ```text
 Use the FirstStep harness. Read AGENTS.md, docs/harness/README.md, and tasks.json.
@@ -12,6 +12,8 @@ Read NOTION_WORKFLOW.md and resolve the branch journal from notion.json. The coo
 records goals, choices/rationale, observed results, real fixes and next steps in Korean.
 Append milestones to the same branch page, never create per-task/session pages.
 Create a missing branch journal only after the actual branch exists; specialists return evidence only.
+In two-chat mode, this Notion authority belongs only to the management chat.
+The implementation chat follows NEW_CHAT_PROMPT.md and returns evidence without Notion writes.
 Do not expand into pending Firebase/chatbot choices or later backlog tasks.
 Verify the exact patch, obtain independent review, and report changed behavior, evidence,
 remaining limitations, and the next bounded step. Do not claim configured roles have run.
@@ -50,7 +52,8 @@ Actual agent roles/models used:
 Changed paths and user-visible outcome:
 Checks: command, environment, exit/result, evidence path:
 Review verdict and unresolved limits:
-Notion branch-journal URL / sync result / feature commit vs main integration:
+Journal update: pending management review (implementation does not write Notion).
+Known branch-journal URL, if any / feature commit vs main integration:
 Next owner and minimal required context:
 ```
 

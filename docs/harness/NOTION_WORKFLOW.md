@@ -13,7 +13,7 @@
 
 ## Ownership, language and cadence
 
-The coordinator alone updates journals and shared records. PMs/workers return concise English evidence. Internal prompts, repository technical records and handoffs stay English; **Notion titles, status summaries, rationale, development narratives, verification and next steps are Korean for the user/team**. Keep exact technical names, commands and paths when useful; explain unfamiliar terms on first use.
+The management chat alone updates journals and their mapping in notion.json. The separate implementation chat, its lead, PMs and workers must not write Notion; they provide concise English evidence in the task handoff. Within this document, journal coordinator means the management chat, not an implementation lead. Internal prompts, repository technical records and handoffs stay English; **Notion titles, status summaries, rationale, development narratives, verification and next steps are Korean for the user/team**. Keep exact technical names, commands and paths when useful; explain unfamiliar terms on first use.
 
 Write at meaningful implementation milestones, material blockers, completed reviews, and integration. Do not log each tool call or create daily pages. Never assign human owners, deadlines or notify teammates without instructions. Human-facing richness is not constrained by the specialist handoff word limit.
 
@@ -55,7 +55,7 @@ Screenshots of actual APK UI may use simulated inputs; label both. Camera overla
 
 Before saving, check that the Korean narrative is readable, current status agrees with evidence, historical tests are dated, links work, and no planning text appears as shipped functionality. Preserve user notes and previous evidence. After partial writes, retain successful IDs and retry only missing changes; fetch uncertain outcomes before retrying.
 
-If Notion is inaccessible, continue independent authorized work, record the pending branch-journal update in `docs/harness/handoffs/<TASK>.md` under Pending Notion sync, and disclose the pending sync in the final Korean report. Do not create a substitute board or claim success. Scope/decision blockers still block dependent work.
+Implementation chats mark their handoff `Journal update: pending management review` without attempting Notion writes. If Notion is inaccessible to the management chat, it records the pending update and discloses it in the final Korean report. Independent authorized implementation may continue. Do not create a substitute board or claim a successful sync. Scope/decision blockers still block dependent work.
 
 ## Verified inventory at transition (2026-11-06)
 

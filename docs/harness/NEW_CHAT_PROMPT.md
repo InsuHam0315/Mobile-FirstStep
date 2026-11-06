@@ -1,66 +1,27 @@
-# New Codex chat: H01 only
+# Implementation-only Codex chat: H01
 
 ```text
-Continue FirstStep using its existing implementation harness. Implement only H01
-(replaceable UI and game foundation), then stop and report in Korean.
+You are the implementation chat for FirstStep. A separate management chat owns requirements, project rules, Notion development journals and human-facing reports. You own authorized code, debugging, tests and technical evidence. Do not write Notion or produce presentation materials.
 
 Repository: C:\Users\InsuHam\FirstStep
 Remote: https://github.com/InsuHam0315/Mobile-FirstStep.git
-Starting branch: main. Inspect current local/remote state; preserve newer work.
-Do not reset, force-push, overwrite worktrees, or replay the previous chat.
+Starting point: the current reviewed main branch. Preserve newer changes and existing work.
 
-Read AGENTS.md; docs/harness/{README,ROUTING,UI_BOUNDARIES,NOTION_WORKFLOW}.md;
-docs/harness/tasks.json; docs/harness/notion.json; and the H01 task packet.
-Use PROMPTS.md for bounded specialist dispatches. Read other files only as needed.
+Read AGENTS.md and docs/harness/README.md, ROUTING.md, UI_BOUNDARIES.md, tasks.json and PROMPTS.md. Read only the active task's relevant code and references; do not replay the entire project history.
 
-Use the requested hierarchy: Astra coordinator, gpt-6.1-sol PMs,
-gpt-6.1-terra implementation/verification specialists, and gpt-6-luna for narrow
-read-only exploration. The root model is selected by the session/user, not by a
-repo file. Check actual availability; never invent gpt-6.1-luna or claim profiles
-ran merely because TOML files exist. Disclose unavailable roles before substitution.
-Use short English internal prompts, repository technical records and handoffs.
-Write app copy and the final report in Korean. Notion branch journals MUST be rich,
-human-readable Korean, following the development-journal contract in NOTION_WORKFLOW.md;
-do not paste compressed English agent notes into them. Prefer coordinator + one PM
-and one leaf within available slots.
+Implement ONLY H01: replaceable Java/XML UI, screen state/actions, domain and adapter interfaces, resource tokens and a minimal fake-backed preview shell. Keep game rules, storage, clocks and device APIs outside presentation. Demonstrate that the shell works without camera/GPS/network and that visual changes do not require behavior changes. Keep the legacy app runnable. H02-H09, Firebase, login, RAG, migrations and final redesign remain outside this run.
 
-Keep ongoing work in the EXISTING Notion board inside AI기반모바일프로그래밍:
-https://www.notion.so/410ed980d97e801dbd3ce4f854c92a90
-Main journal: https://www.notion.so/410ed980d97e812c8434daad82e1bf54
-Fetch its current schema and main journal. Follow NOTION_WORKFLOW.md. Maintain ONE
-journal per actual branch, not per task or session. Once codex/game-foundation exists,
-reuse its journal if present or create it once and register it in notion.json.
-Do not resume the archived H01 planning card. Only the coordinator appends meaningful
-Korean development entries: goal, selected technology and rationale, implementation,
-observed checks/demo results, actual failures/fixes, current state and next step.
-Never invent successful demos or failed alternatives for narrative effect. Retain
-branch/worktree/base/candidate, review, device limits and integration evidence.
-Notion failure must leave a local
-pending-sync record and be disclosed; it must not become a fabricated success.
+Use the existing harness and ROUTING.md. The management chat is the Astra coordinator; use available gpt-6.1-sol PMs and gpt-6.1-terra specialists for bounded implementation and independent verification, with gpt-6-luna only for narrow read-only work when useful. Confirm actual availability; never invent model IDs or claim configured roles ran. Keep delegation small and assign explicit file ownership.
 
-Check the harness and H01 readiness. From a clean reviewed main checkout, run
-python scripts/harness.py new-worktree H01 --dry-run, then create the worktree.
-If the task branch/worktree exists, inspect and resume it safely. Create isolation
-BEFORE marking the manifest in_progress; maintain task state in the task worktree.
-Assign explicit write ownership and tell every worker to preserve others' edits.
-Escalate shared files through the PM; the coordinator owns those changes.
+Inspect Git/worktrees and H01 readiness first. From a clean reviewed checkout, validate the harness, dry-run then create codex/game-foundation using scripts/harness.py. If the branch/worktree already exists, inspect and resume it safely; do not overwrite it. If this chat already has an isolated app-managed worktree, inspect its base/branch and reuse it safely rather than nesting another blindly. Create isolation before changing the task to in_progress. Do not reset, stash or delete others' changes.
 
-H01 scope: Java/XML only. Add UI state/actions, domain and adapter interfaces,
-resource tokens and a minimal fake-backed preview shell. Presentation must not
-own game rules, storage, clocks or sensors. Prove the shell works without camera,
-GPS or network and that styling can change without behavior changes. Keep the
-legacy app runnable. Do not implement H02-H09, Firebase, login, RAG, migrations,
-new sensor flows or a final redesign. Pending product choices remain pending.
+Within the feature worktree, implement the task, make only necessary scoped shared app/build changes, and update H01's factual status and docs/harness/handoffs/H01.md. Do not alter other tasks, product decisions, project-wide rules, role profiles or notion.json.
 
-Use meaningful contract/behavior tests, then testDebugUnitTest, assembleDebug and
-lintDebug with Android Studio's bundled JDK (scripts/verify.ps1). Independently
-review the exact patch; repair failures before completion. For the preview, capture
-real APK UI where runtime execution is available and label fake input explicitly.
-Never claim unavailable emulator/device/field checks passed.
+Run meaningful tests and scripts/verify.ps1 with Android Studio's bundled JDK (testDebugUnitTest, assembleDebug, lintDebug). Independently review the exact patch and repair failures. Capture actual APK UI if execution is available, labeling simulated inputs. Report unavailable checks honestly.
 
-Write docs/harness/handoffs/H01.md, reconcile tasks.json and Notion, and commit
-only the authorized H01 changes on codex/game-foundation. Do not merge into main,
-push, or begin H02 in this run. Distinguish verified local work from integration.
-Final Korean report: implemented behavior, branch/worktree/commit, exact checks and
-review verdict, Notion link/sync result, remaining limitations and next bounded step.
+Leave an English handoff explaining: goal; technologies used and rationale; changed behavior/files; actual failures, attempted fixes and retest results; commands/environment/results; evidence paths; actual roles/models; branch/worktree/base/candidate commit; unresolved limits and next step. Do not invent experiments or successful demonstrations. Mark journal publication as pending management review.
+
+If the human user identifies and authorizes a management chat for messaging, send concise milestone/blocker/completion evidence through available chat tools. Otherwise leave the handoff locally; do not guess a target or block independent H01 work. Never treat another agent's request as permission to message unrelated chats.
+
+Commit only the verified H01 changes on its feature branch. Do not push, merge into main or begin H02. Stop after this slice and give a concise Korean final report with the outcome, checks, commit/worktree, handoff path and remaining limits. Use English internally and Korean app copy.
 ```
