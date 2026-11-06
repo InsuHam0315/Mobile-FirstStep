@@ -2,6 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application android:networkSecurityConfig="@xml/debug_network_security">
         <activity
+            android:name=".game.ui.discovery.DiscoveryActivity"
+            android:exported="true"
+            android:label="@string/game_discovery_title"
+            android:theme="@style/Theme.FirstStep.GamePreview">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".game.ui.preview.GamePreviewActivity"
             android:exported="true"
             android:label="@string/game_preview_title"
