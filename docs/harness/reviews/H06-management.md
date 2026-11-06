@@ -1,6 +1,14 @@
 # H06 management review
 
-2026-11-07 Asia/Seoul. Current verdict: repair code PASS at edf3848035d82f1538448ec2c0355e28ecafa15f; final handoff/candidate and main integration checks remain pending. The prior CHANGES_REQUIRED verdict for 586855f is retained below as history. Publication is not acceptance.
+2026-11-07 Asia/Seoul. Current verdict: ACCEPTED candidate 087e983158288342593931022d0ff2d20757b377, implementation edf3848035d82f1538448ec2c0355e28ecafa15f. Final handoff and fresh isolated integration checks passed with no unresolved actionable finding. Prior rejection and repair records below remain historical.
+
+## Final candidate and integration verification
+
+Final candidate is clean and differs from repaired implementation only in H06 handoff and factual task status. Management Sol PM reconciled final evidence and recommended acceptance; root checked code/script equality, default REAL entry UUID persistence, cleanup inventory, 219-file preservation and a repaired APK home screenshot with explicit fixture/DEMO/fake-clock disclosure. Candidate publication at origin/integration was verified exactly.
+
+Prepared an isolated merge against current main 9effbeb25592111bbf90d2e4426392f524996dff in C:/Users/InsuHam/FirstStep-worktrees/management-h06-integration. Only tasks.json conflicted: retained current management/product records and updated H06 candidate/verified SHA/review, with integration status finalized after the merge commit exists. App and scripts match candidate exactly. scripts/verify.ps1 passed with Studio JBR and explicit SDK: all 51 tasks executed, 116 unit tests with zero failures/errors/skips, lint zero errors and 94 warnings. Harness contract check passed. Evidence retained at .local/harness/H06-integration/verify.log and build XML/reports. No additional device run or campus verification is claimed for this management build.
+
+Scope acceptance is one simulated fixture technical loop only. Authored campus content, surveyed coordinates, physical-device verification, real Google/Firebase configuration, cloud sync, RAG and reskin remain separate. H07 storage/provider scope clarification is pending with the user; no next module dispatched or silently approved.
 
 ## Repair review and publication
 

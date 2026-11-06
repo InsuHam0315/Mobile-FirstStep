@@ -1,0 +1,20 @@
+<resources>
+    <string name="game_integration_title">예시 게임 시작 (개발용)</string>
+    <string name="game_integration_disclosure">디지털정보관 · 소프트웨어학과의 기술 연결 시험입니다. 도착과 학교 콘텐츠는 검증 전 예시이며 실제 캠퍼스 탐방 완료를 뜻하지 않습니다.</string>
+    <string name="game_integration_context">예시 실행 %1$s\n%2$s · %3$s · 도착 시뮬레이션</string>
+    <string name="game_integration_real_clock">실제 시계 (예시 기록)</string>
+    <string name="game_integration_fake_clock">가상 시계</string>
+    <string name="game_integration_loading">격리된 예시 실행을 확인하고 있습니다.</string>
+    <string name="game_integration_error">실행 정보나 저장 상태를 확인할 수 없습니다. 기본 기록으로 전환하지 않습니다. 앱을 다시 시작해 주세요.</string>
+    <string name="game_integration_normal">NORMAL 예시 이어가기 · 소개 후 15분</string>
+    <string name="game_integration_demo">DEMO 예시 이어가기 · 즉시 퀴즈</string>
+    <string name="game_integration_back">돌아가기</string>
+    <string name="game_integration_continue">확인한 예시 발견 결과로 소개 계속</string>
+    <string name="game_integration_home_action">예시 도착·발견 시작 / 소개·퀴즈 이어가기</string>
+    <string name="game_integration_pending">아직 확정하지 않은 예시 발견이 있습니다. 버튼으로 다시 열거나 취소할 수 있습니다.</string>
+    <string name="game_integration_accepted">예시 발견 결과가 보관되었습니다. 소개·퀴즈를 이어갈 수 있습니다.</string>
+    <string name="game_integration_canceled">발견을 취소했습니다. 진행 기록은 완료되지 않았습니다.</string>
+    <string name="game_integration_rejected">요청과 일치하지 않거나 이미 처리한 결과입니다. 진행을 변경하지 않았습니다.</string>
+    <string name="game_integration_discovery_ready">보관된 예시 발견 결과입니다. 계속하기를 눌러 소개로 이동하세요.</string>
+    <string name="game_integration_description">%1$s\n%2$s</string>
+</resources>

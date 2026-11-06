@@ -20,9 +20,12 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.firststep.BuildConfig;
 import com.example.firststep.R;
 import com.example.firststep.game.composition.discovery.DiscoveryHost;
+import com.example.firststep.game.composition.integration.*;
 import com.example.firststep.game.domain.discovery.DiscoveryResult;
 import com.example.firststep.game.presentation.discovery.DiscoveryController;
 import com.example.firststep.game.presentation.discovery.DiscoveryState;
+import com.example.firststep.game.presentation.integration.NavigationPolicy;
+import java.util.concurrent.*;
 
 public final class DiscoveryActivity extends AppCompatActivity
     implements DiscoveryController.Listener {
@@ -33,6 +36,19 @@ public final class DiscoveryActivity extends AppCompatActivity
   private DiscoveryController controller;
   private DiscoveryHost host;
   private boolean simulated, active;
+  private final ExecutorService integrationWorker = Executors.newSingleThreadExecutor();
+  private IntegrationIntentCodec.Request integrationRequest;
+  private IntegrationResult completedIntegration;
+  private boolean continued;
+
+  public IntegrationResult integrationResultForTest() {
+    return completedIntegration;
+  }
+
+  public IntegrationContext integrationContextForTest() {
+    return integrationRequest == null ? null : integrationRequest.context;
+  }
+
   private long generation, permissionGeneration;
   private final Runnable ticker =
       new Runnable() {
@@ -48,11 +64,6 @@ public final class DiscoveryActivity extends AppCompatActivity
   public void onCreate(Bundle state) {
     super.onCreate(state);
     setContentView(R.layout.game_discovery);
-    simulated = BuildConfig.DEBUG && SIMULATED.equals(getIntent().getStringExtra(MODE_EXTRA));
-    host =
-        new DiscoveryHost(
-            this, this, (PreviewView) findViewById(R.id.game_discovery_preview), simulated, this);
-    controller = host.controller();
     View root = findViewById(R.id.game_discovery_scroll);
     int left = root.getPaddingLeft(),
         top = root.getPaddingTop(),
@@ -67,6 +78,76 @@ public final class DiscoveryActivity extends AppCompatActivity
           v.setPadding(left + i.left, top + i.top, right + i.right, bottom + i.bottom);
           return insets;
         });
+    setResult(RESULT_CANCELED);
+    findViewById(R.id.game_discovery_exit).setOnClickListener(v -> finish());
+    if (IntegrationIntentCodec.hasIntegrationContext(getIntent())) {
+      integrationRequest =
+          BuildConfig.DEBUG ? IntegrationIntentCodec.readRequest(getIntent()) : null;
+      if (integrationRequest == null) {
+        integrationError();
+        return;
+      }
+      IntegrationIntentCodec.Request request = integrationRequest;
+      integrationWorker.execute(
+          () -> {
+            try {
+              NavigationPolicy.State pending = IntegrationRouteAccess.bound(this, request.context);
+              if (pending.phase != NavigationPolicy.Phase.PENDING
+                  || !request.nonce.equals(pending.nonce)) throw new IllegalStateException();
+              runOnUiThread(
+                  () -> {
+                    if (isDestroyed() || isFinishing()) return;
+                    IntegrationIntentCodec.writeRequest(
+                        getIntent(), pending.context, request.nonce);
+                    integrationRequest = IntegrationIntentCodec.readRequest(getIntent());
+                    if (state != null) {
+                      Intent retained = state.getParcelable("h06_completed");
+                      if (retained != null) {
+                        completedIntegration = IntegrationIntentCodec.readResult(retained);
+                        if (completedIntegration == null
+                            || !request.context.equalsIdentity(completedIntegration.context)
+                            || !request.nonce.equals(completedIntegration.nonce)) {
+                          integrationError();
+                          return;
+                        }
+                      }
+                    }
+                    initializeDiscovery();
+                  });
+            } catch (Exception failure) {
+              runOnUiThread(this::integrationError);
+            }
+          });
+      return;
+    }
+    initializeDiscovery();
+  }
+
+  private void initializeDiscovery() {
+    simulated = BuildConfig.DEBUG && SIMULATED.equals(getIntent().getStringExtra(MODE_EXTRA));
+    host =
+        new DiscoveryHost(
+            this, this, (PreviewView) findViewById(R.id.game_discovery_preview), simulated, this);
+    controller = host.controller();
+    if (integrationRequest != null) {
+      findViewById(R.id.game_discovery_method_light).setVisibility(View.GONE);
+      ((TextView) findViewById(R.id.game_integration_discovery_context))
+          .setText(
+              getString(
+                  R.string.game_integration_description,
+                  getString(R.string.game_integration_disclosure),
+                  getString(
+                      R.string.game_integration_context,
+                      integrationRequest.context.runId,
+                      integrationRequest.context.mode.name(),
+                      getString(
+                          integrationRequest.context.clock == IntegrationContext.Clock.REAL
+                              ? R.string.game_integration_real_clock
+                              : R.string.game_integration_fake_clock))));
+      findViewById(R.id.game_integration_discovery_context).setVisibility(View.VISIBLE);
+      findViewById(R.id.game_integration_discovery_continue)
+          .setOnClickListener(v -> continueIntegration());
+    }
     findViewById(R.id.game_discovery_arrival).setOnClickListener(v -> controller.arrival());
     findViewById(R.id.game_discovery_align_fallback)
         .setOnClickListener(v -> controller.headingFallback());
@@ -105,6 +186,8 @@ public final class DiscoveryActivity extends AppCompatActivity
                   return true;
               }
             });
+    if (active) resumeDiscovery();
+    renderCompletedIntegration();
   }
 
   @Override
@@ -112,6 +195,14 @@ public final class DiscoveryActivity extends AppCompatActivity
     super.onResume();
     setResult(RESULT_CANCELED);
     active = true;
+    if (host != null) resumeDiscovery();
+  }
+
+  private void resumeDiscovery() {
+    if (completedIntegration != null) {
+      renderCompletedIntegration();
+      return;
+    }
     View art = findViewById(R.id.game_discovery_art);
     art.animate().cancel();
     art.setScaleX(1f);
@@ -128,7 +219,7 @@ public final class DiscoveryActivity extends AppCompatActivity
     active = false;
     handler.removeCallbacks(ticker);
     findViewById(R.id.game_discovery_art).animate().cancel();
-    host.pause();
+    if (host != null) host.pause();
     super.onPause();
   }
 
@@ -160,7 +251,7 @@ public final class DiscoveryActivity extends AppCompatActivity
   }
 
   public DiscoveryState snapshot() {
-    return controller.snapshot();
+    return controller == null ? null : controller.snapshot();
   }
 
   @Override
@@ -255,6 +346,65 @@ public final class DiscoveryActivity extends AppCompatActivity
     }
   }
 
+  private void integrationError() {
+    if (isDestroyed() || isFinishing()) return;
+    ((TextView) findViewById(R.id.game_discovery_status)).setText(R.string.game_integration_error);
+    for (int id :
+        new int[] {
+          R.id.game_discovery_arrival,
+          R.id.game_discovery_hold,
+          R.id.game_discovery_retry,
+          R.id.game_discovery_camera_fallback,
+          R.id.game_discovery_align_fallback,
+          R.id.game_discovery_method_shake,
+          R.id.game_discovery_method_light,
+          R.id.game_integration_discovery_continue
+        }) findViewById(id).setVisibility(View.GONE);
+    if (host != null) host.pause();
+  }
+
+  private void renderCompletedIntegration() {
+    if (completedIntegration == null) return;
+    ((TextView) findViewById(R.id.game_discovery_result))
+        .setText(R.string.game_integration_discovery_ready);
+    findViewById(R.id.game_integration_discovery_continue).setVisibility(View.VISIBLE);
+    for (int id :
+        new int[] {
+          R.id.game_discovery_arrival,
+          R.id.game_discovery_hold,
+          R.id.game_discovery_retry,
+          R.id.game_discovery_camera_fallback,
+          R.id.game_discovery_align_fallback,
+          R.id.game_discovery_method_shake
+        }) findViewById(id).setEnabled(false);
+  }
+
+  private void continueIntegration() {
+    if (!active || continued || completedIntegration == null) return;
+    continued = true;
+    findViewById(R.id.game_integration_discovery_continue).setEnabled(false);
+    Intent data = new Intent();
+    IntegrationIntentCodec.writeResult(data, completedIntegration);
+    setResult(RESULT_OK, data);
+    finish();
+  }
+
+  @Override
+  protected void onSaveInstanceState(Bundle out) {
+    super.onSaveInstanceState(out);
+    if (completedIntegration != null) {
+      Intent retained = new Intent();
+      IntegrationIntentCodec.writeResult(retained, completedIntegration);
+      out.putParcelable("h06_completed", retained);
+    }
+  }
+
+  @Override
+  protected void onDestroy() {
+    integrationWorker.shutdown();
+    super.onDestroy();
+  }
+
   private int lightResource(String status) {
     switch (status) {
       case "missing":
@@ -277,6 +427,23 @@ public final class DiscoveryActivity extends AppCompatActivity
     View art = findViewById(R.id.game_discovery_art);
     art.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
     art.animate().scaleX(1.35f).scaleY(1.35f).setDuration(500).start();
+    if (integrationRequest != null) {
+      if (completedIntegration != null || continued) return;
+      IntegrationResult candidate =
+          new IntegrationResult(integrationRequest.context, integrationRequest.nonce, result);
+      NavigationPolicy.State pending =
+          NavigationPolicy.begin(
+              NavigationPolicy.State.empty(), integrationRequest.context, integrationRequest.nonce);
+      if (NavigationPolicy.accept(pending, candidate) == null) {
+        integrationError();
+        return;
+      }
+      completedIntegration = candidate;
+      handler.removeCallbacks(ticker);
+      host.pause();
+      renderCompletedIntegration();
+      return;
+    }
     Intent data =
         new Intent()
             .putExtra("sessionId", result.sessionId)

@@ -8,6 +8,7 @@ import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.firststep.BuildConfig;
 import com.example.firststep.R;
+import com.example.firststep.game.composition.integration.*;
 import com.example.firststep.game.composition.introquiz.IntroQuizHost;
 import com.example.firststep.game.data.local.*;
 import com.example.firststep.game.domain.*;
@@ -29,6 +30,11 @@ public final class IntroQuizActivity extends AppCompatActivity {
   private Bundle restored;
   private boolean resumed;
   private String[] sentences;
+  private final ExecutorService integrationWorker = Executors.newSingleThreadExecutor();
+  private IntegrationContext integrationContext;
+  private boolean integrationRoute, routeReady;
+  private IntegrationContext requestedIntegration;
+  private long routeGeneration, clockGeneration;
 
   public IntroQuizController.Snapshot snapshot() {
     return controller == null ? null : controller.snapshot();
@@ -39,11 +45,57 @@ public final class IntroQuizActivity extends AppCompatActivity {
   }
 
   public void setDebugClockForTest(long now) {
-    if (BuildConfig.DEBUG && fake) {
-      fakeNow = now;
-      if (host != null) host.setClock(now);
-      if (resumed && controller != null) controller.tick();
-    }
+    if (!BuildConfig.DEBUG || !fake) return;
+    if (integrationRoute) {
+      IntegrationContext current = integrationContext;
+      if (current == null || !resumed) return;
+      long routeToken = routeGeneration, clockToken = ++clockGeneration;
+      routeReady = false;
+      if (host != null) host.stopTicks();
+      if (controller != null) controller.pause();
+      visible(R.id.game_intro_scroll, false);
+      integrationWorker.execute(
+          () -> {
+            IntegrationContext latest = null;
+            try {
+              IntegrationContext next = current.withFakeNow(now);
+              NavigationStore store = new NavigationStore(getApplicationContext());
+              if (store.saveClock(next)) {
+                com.example.firststep.game.presentation.integration.NavigationPolicy.State state =
+                    store.load(next);
+                if (state != null) latest = state.context;
+              }
+            } catch (RuntimeException ignored) {
+            }
+            IntegrationContext saved = latest;
+            runOnUiThread(
+                () -> {
+                  if (!alive
+                      || !resumed
+                      || routeGeneration != routeToken
+                      || clockGeneration != clockToken) return;
+                  visible(R.id.game_intro_scroll, true);
+                  if (saved == null) {
+                    error(getString(R.string.game_integration_error));
+                    return;
+                  }
+                  integrationContext = saved;
+                  routeReady = true;
+                  fakeNow = saved.fakeNow;
+                  if (host != null) host.setClock(fakeNow);
+                  if (controller != null) {
+                    controller.resume();
+                    host.startTicks(controller);
+                  }
+                });
+          });
+    } else applyDebugClock(now);
+  }
+
+  private void applyDebugClock(long now) {
+    fakeNow = now;
+    if (host != null) host.setClock(now);
+    if (resumed && controller != null) controller.tick();
   }
 
   public int debugSpeechGenerationForTest() {
@@ -76,6 +128,28 @@ public final class IntroQuizActivity extends AppCompatActivity {
         });
     sentences = getResources().getStringArray(R.array.game_intro_sentences);
     findViewById(R.id.game_intro_back).setOnClickListener(v -> finish());
+    integrationRoute = IntegrationIntentCodec.hasIntegrationContext(getIntent());
+    if (integrationRoute) {
+      visible(R.id.game_intro_demo, false);
+      for (int id :
+          new int[] {
+            R.id.game_intro_show_again,
+            R.id.game_intro_replay,
+            R.id.game_intro_next,
+            R.id.game_intro_finish,
+            R.id.game_intro_skip,
+            R.id.game_intro_reminder,
+            R.id.game_quiz_start,
+            R.id.game_quiz_submit,
+            R.id.game_quiz_retry,
+            R.id.game_quiz_result
+          }) visible(id, false);
+      ((TextView) findViewById(R.id.game_intro_status)).setText(R.string.game_integration_loading);
+      requestedIntegration =
+          BuildConfig.DEBUG ? IntegrationIntentCodec.readContext(getIntent()) : null;
+      if (requestedIntegration == null) error(getString(R.string.game_integration_error));
+      return;
+    }
     findViewById(R.id.game_intro_demo)
         .setOnClickListener(
             v -> {
@@ -121,7 +195,29 @@ public final class IntroQuizActivity extends AppCompatActivity {
       }
     }
 
-    ((TextView) findViewById(R.id.game_intro_target)).setText(R.string.game_intro_target);
+    initializeHost(instant, run);
+  }
+
+  private void initializeHost(boolean instant, String run) {
+    TextView target = findViewById(R.id.game_intro_target);
+    if (integrationRoute && integrationContext != null) {
+      target.setText(
+          android.text.TextUtils.concat(
+              getString(R.string.game_intro_target),
+              "\n",
+              getString(R.string.game_integration_disclosure),
+              "\n",
+              integrationContext.datasetId,
+              "\n",
+              getString(
+                  R.string.game_integration_context,
+                  integrationContext.runId,
+                  integrationContext.mode.name(),
+                  getString(
+                      integrationContext.clock == IntegrationContext.Clock.REAL
+                          ? R.string.game_integration_real_clock
+                          : R.string.game_integration_fake_clock))));
+    } else target.setText(R.string.game_intro_target);
     visible(R.id.game_intro_target, true);
     for (int id :
         new int[] {
@@ -176,7 +272,7 @@ public final class IntroQuizActivity extends AppCompatActivity {
                 restored.getString("pending_version"),
                 map(restored, "pending"));
           }
-          if (resumed) {
+          if (resumed && (!integrationRoute || routeReady)) {
             controller.resume();
             host.startTicks(controller);
           }
@@ -231,15 +327,71 @@ public final class IntroQuizActivity extends AppCompatActivity {
   protected void onResume() {
     super.onResume();
     resumed = true;
+    if (integrationRoute) {
+      if (requestedIntegration != null) verifyIntegrationResume();
+      return;
+    }
     if (controller != null) {
       controller.resume();
       if (host != null) host.startTicks(controller);
     }
   }
 
+  private void verifyIntegrationResume() {
+    long token = ++routeGeneration;
+    routeReady = false;
+    ++clockGeneration;
+    visible(R.id.game_intro_scroll, false);
+    integrationWorker.execute(
+        () -> {
+          try {
+            IntegrationContext loaded =
+                IntegrationRouteAccess.requireIntroduction(
+                    getApplicationContext(), requestedIntegration);
+            runOnUiThread(
+                () -> {
+                  if (!alive || !resumed || routeGeneration != token || isFinishing()) return;
+                  integrationContext = loaded;
+                  routeReady = true;
+                  modeName = loaded.mode.name();
+                  fake = loaded.clock == IntegrationContext.Clock.DEBUG_FAKE;
+                  fakeNow = fake ? loaded.fakeNow : 0;
+                  visible(R.id.game_intro_scroll, true);
+                  for (int id :
+                      new int[] {
+                        R.id.game_intro_show_again,
+                        R.id.game_intro_replay,
+                        R.id.game_intro_next,
+                        R.id.game_intro_finish,
+                        R.id.game_intro_skip,
+                        R.id.game_quiz_retry
+                      }) findViewById(id).setEnabled(true);
+                  if (host == null) initializeHost(loaded.mode == Progress.Mode.DEMO, loaded.runId);
+                  else {
+                    if (fake) host.setClock(fakeNow);
+                    if (controller != null) {
+                      controller.resume();
+                      host.startTicks(controller);
+                    }
+                  }
+                });
+          } catch (Exception failure) {
+            runOnUiThread(
+                () -> {
+                  if (!alive || !resumed || routeGeneration != token || isFinishing()) return;
+                  visible(R.id.game_intro_scroll, true);
+                  error(getString(R.string.game_integration_error));
+                });
+          }
+        });
+  }
+
   @Override
   protected void onPause() {
     resumed = false;
+    routeReady = false;
+    ++routeGeneration;
+    ++clockGeneration;
     if (host != null) host.stopTicks();
     if (controller != null) controller.pause();
     else if (host != null) host.pauseSpeech();
@@ -250,6 +402,7 @@ public final class IntroQuizActivity extends AppCompatActivity {
   protected void onDestroy() {
     alive = false;
     if (host != null) host.close();
+    integrationWorker.shutdown();
     super.onDestroy();
   }
 
@@ -258,6 +411,7 @@ public final class IntroQuizActivity extends AppCompatActivity {
     ((TextView) findViewById(R.id.game_intro_status)).setText(s);
     for (int id :
         new int[] {
+          R.id.game_intro_show_again,
           R.id.game_intro_replay,
           R.id.game_intro_next,
           R.id.game_intro_finish,
@@ -274,6 +428,7 @@ public final class IntroQuizActivity extends AppCompatActivity {
   }
 
   private void render(IntroQuizController.Snapshot s) {
+    if (integrationRoute && !routeReady) return;
     boolean intro = s.stage == IntroQuizController.Stage.INTRO,
         wait = s.stage == IntroQuizController.Stage.WAITING,
         quiz = s.stage == IntroQuizController.Stage.QUIZ,
@@ -286,7 +441,10 @@ public final class IntroQuizActivity extends AppCompatActivity {
     visible(R.id.game_intro_caption, intro);
     visible(
         R.id.game_intro_reminder,
-        wait && !fake && !(BuildConfig.DEBUG && getIntent().hasExtra("game_intro_debug_run")));
+        wait
+            && !integrationRoute
+            && !fake
+            && !(BuildConfig.DEBUG && getIntent().hasExtra("game_intro_debug_run")));
     visible(R.id.game_quiz_start, wait);
     visible(R.id.game_quiz_submit, quiz);
     visible(
@@ -296,11 +454,13 @@ public final class IntroQuizActivity extends AppCompatActivity {
     visible(R.id.game_quiz_result, result);
     String label =
         "DEMO".equals(modeName)
-            ? (getIntent().getBooleanExtra("game_intro_instant_demo", false)
+            ? ((integrationRoute && integrationContext != null
+                    ? integrationContext.mode == Progress.Mode.DEMO
+                    : getIntent().getBooleanExtra("game_intro_instant_demo", false))
                 ? getString(R.string.game_intro_ui_5)
                 : getString(R.string.game_intro_ui_6))
             : getString(R.string.game_intro_ui_7);
-    if (BuildConfig.DEBUG && getIntent().hasExtra("game_intro_debug_run"))
+    if (integrationRoute || (BuildConfig.DEBUG && getIntent().hasExtra("game_intro_debug_run")))
       label += getString(R.string.game_intro_ui_8);
     if (fake) label += getString(R.string.game_intro_ui_9);
     if (BuildConfig.DEBUG
@@ -334,7 +494,8 @@ public final class IntroQuizActivity extends AppCompatActivity {
       for (GameContent.Question q : s.progress.active.questions) {
         TextView title = new TextView(this);
         title.setText(q.text);
-        title.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.game_color_text));
+        title.setTextColor(
+            androidx.core.content.ContextCompat.getColor(this, R.color.game_color_text));
         title.setTextSize(
             android.util.TypedValue.COMPLEX_UNIT_PX,
             getResources().getDimension(R.dimen.game_text_body));
@@ -347,7 +508,8 @@ public final class IntroQuizActivity extends AppCompatActivity {
           choice.setId(View.generateViewId());
           choice.setTag(o.id);
           choice.setText(o.text);
-          choice.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.game_color_text));
+          choice.setTextColor(
+              androidx.core.content.ContextCompat.getColor(this, R.color.game_color_text));
           choice.setMinHeight(getResources().getDimensionPixelSize(R.dimen.game_touch_min));
           group.addView(choice);
           if (o.id.equals(s.answers.get(q.id))) choice.setChecked(true);
@@ -369,6 +531,7 @@ public final class IntroQuizActivity extends AppCompatActivity {
 
   private void reminder() {
     if (controller == null
+        || integrationRoute
         || fake
         || (BuildConfig.DEBUG && getIntent().hasExtra("game_intro_debug_run"))) return;
     IntroQuizController.Snapshot s = controller.snapshot();
