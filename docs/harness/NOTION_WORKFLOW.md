@@ -62,5 +62,6 @@ Implementation chats mark their handoff `Journal update: pending management revi
 - main: integration baseline and next-step journal.
 - codex/midpoint: previous app implementation journal; branch tip af0d3a2 is on origin and included in main.
 - codex/game-harness: preparation/verification journal; local branch tip 6dc8af1 is included in main, with no separate remote branch observed.
-- codex/game-foundation now exists locally at ce6857d; its branch journal records implemented H01 and a management-requested test-isolation repair. It is not pushed/integrated. See reviews/H01-management.md.
-- Firebase/auth/Firestore/cloud photos/Gemini RAG and game/legacy choices retain their existing gates.
+- codex/game-foundation was repaired, accepted and integrated into main at 0c5f633; its existing journal records the evidence and closure. See reviews/H01-management.md.
+- progress was created from 346f146 and H02 implementation started in its isolated worktree. Its journal must distinguish work in progress from accepted/integrated results.
+- Google sign-in and first-login profile requirements are selected in PRODUCT_DECISIONS.md. Firebase/provider setup, Firestore, cloud photos, Gemini RAG and remaining legacy choices are separate decisions; do not treat the login method itself as still unselected.

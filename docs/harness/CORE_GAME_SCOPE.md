@@ -1,5 +1,7 @@
 # Confirmed core scope and H02 dispatch basis
 
+Later direct user decisions are recorded in PRODUCT_DECISIONS.md: validate the software department first, then expand; Google sign-in plus first-login profile belongs to a later slice and does not expand active H02.
+
 Source: user-supplied C:/Users/InsuHam/Desktop/2026-2_모바일/Project/mid/첫발자국 게임 설계서.pdf, dated 2026-11-06. Management re-read all eight pages and rendered page 5 on 2026-11-06. The user authorized sequential implementation of the supplied design. The earlier coreGame=pending_confirmation entry was a stale management tracking entry, not an unresolved team decision. It is now reconciled to approved for the documented core only; do not ask the user to reapprove these specified rules.
 
 ## Source-backed rules

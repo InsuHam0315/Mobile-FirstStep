@@ -16,7 +16,7 @@ Before integration, all acceptance criteria and required checks must pass on the
 4. Record the real integrated SHA and update task status/baseline consistently; push main normally and confirm the remote SHA. Update the same branch journal with checks, revision and integration status. Preserve verification evidence before any future worktree retirement; retirement is not implied by this policy.
 5. Select exactly one next module whose dependencies are integrated and whose required product decisions are resolved. Create its plain module-name branch from the updated reviewed main and dispatch implementation under current rules. No routine user confirmation is needed. Do not silently approve decisions in tasks.json, skip a blocked module, or implement optional Firebase/login/RAG features merely because they appear in the backlog.
 
-At adoption H01 has a P2 test-isolation finding in reviews/H01-management.md. Its repair and acceptance re-review must precede integration. H02/progress still has the coreGame decision gate.
+Historical adoption gate: H01 had a P2 test-isolation finding. It was repaired, independently accepted and integrated at 0c5f633. H02's coreGame gate was reconciled to the already-confirmed design in CORE_GAME_SCOPE.md; it is no longer awaiting confirmation. Use current tasks.json and PRODUCT_DECISIONS.md for subsequent scope, rather than replaying historical gates.
 
 ## Coordination limits
 
