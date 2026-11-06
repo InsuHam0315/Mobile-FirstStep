@@ -1,6 +1,16 @@
 # H05 management review
 
-Date: 2026-11-06 (Asia/Seoul). Verdict: CHANGES_REQUIRED. Do not integrate or dispatch H06 yet.
+Date: 2026-11-06 (Asia/Seoul). Final verdict: PASS for code b6613a86b1da48229585fe65ecef47adc8040162 and candidate 7b1f1af673b9d2575a8b9710c2d1fb5c0a44fdaa. Historical CHANGES_REQUIRED records below are retained, not current blockers.
+
+## Final acceptance: v5/v6
+
+The hidden-marker P2 is closed. Selection now requires down/up and marker center in both last-rendered and current map regions; attribution, neutral viewport, canceled/invalid-origin and clipping-change paths cannot select hidden markers. Visible-marker selection and panning remain covered. Management Sol PM and reused Terra independently reviewed the exact repair with no remaining actionable findings. Root inspected the production diff, exact patch hash and labeled synthetic APK screenshot.
+
+Exact three-file patch SHA256: 197967670E5C2DC379091CDF497F9A8D12A5EFD3D87B09B52F915CCF2387B776. Retained repair-v5 evidence confirms corrected pre-fix RED: four APK tests, three wrong-selection failures and one visible-marker/pan pass. GREEN: five focused APK checks in portrait/font1.0 and landscape/font1.6, no skips; 111 units; lint zero errors/94 warnings. Historical v3 count is correctly preserved as 95. Synthetic markers are isolated test data near 0,0 with tiles disabled, not authored campus coordinates.
+
+Fresh management integration against current main 49b1b6e in C:/Users/InsuHam/FirstStep-worktrees/management-h05-final-integration passed scripts/verify.ps1: all 51 Gradle tasks executed, 111 units with zero failures/errors/skips, APK build and lint zero errors/94 warnings. App/scripts tree is identical to the accepted candidate; tasks.json conflict was reconciled to preserve management decisions and reviews. Evidence: .local/harness/H05-final-integration/verify.log and app/build reports. The older uncommitted management-h05-integration evidence worktree remains preserved.
+
+All three management findings are closed. H05 may integrate and advance to a separately scoped H06 technical loop. Limits remain actual API35 emulator/synthetic inputs, no physical-device/campus GPS/entrance survey, no authored five-building content, no authentication/cloud/RAG, same-process favorite atomicity and memory-only failed-intent recovery. Passing this bounded module does not claim a complete production app.
 
 ## Latest: v3/v4 repair review
 
