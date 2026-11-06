@@ -16,6 +16,10 @@
   "documentTypeProperty": "문서 구분",
   "activeDocumentType": "브랜치 개발일지",
   "branches": {
+    "map-home": {
+      "pageId": "410ed980-d97e-818c-843c-f2e14277615f",
+      "url": "https://www.notion.so/410ed980d97e818c843cf2e14277615f"
+    },
     "intro-quiz": {
       "pageId": "410ed980-d97e-818b-a4ba-e48c7c97b417",
       "url": "https://www.notion.so/410ed980d97e818ba4bae48c7c97b417"
