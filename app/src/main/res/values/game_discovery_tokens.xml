@@ -1,0 +1,5 @@
+<resources>
+    <dimen name="game_discovery_preview_height">240dp</dimen>
+    <dimen name="game_discovery_art_size">100dp</dimen>
+    <color name="game_discovery_art_fill">#FFF1C4</color>
+</resources>
