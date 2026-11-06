@@ -49,6 +49,8 @@ Create the feature worktree from a clean reviewed checkout **before** changing i
 
 Record actual branch/worktree/base and candidate commits, checks/review and local/pushed/integrated state. 커밋 identifies the stated journal snapshot; use prose for candidate versus integrated SHAs. Update integratedSha in tasks.json only after actual integration. Never link an unpushed commit as if available remotely. A local branch can be included in main without an origin branch of the same name.
 
+Current publication policy requires current/future module branches on GitHub as well as main, following BRANCH_COMMITS.md. Record the branch URL and verified remote tip when published. The previous sentence describes a possible Git state, not the desired final collaboration state. A published candidate may still be awaiting acceptance or repairs; do not mark it complete merely because its push succeeded.
+
 Screenshots of actual APK UI may use simulated inputs; label both. Camera overlays are not tracked AR. Emulator checks are not campus measurements. Do not claim deployment, Google/Firebase/Gemini access or free operation without evidence. Keep credentials and raw personal data out of Notion.
 
 ## Review and recovery

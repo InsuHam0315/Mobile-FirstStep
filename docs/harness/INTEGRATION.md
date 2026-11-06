@@ -6,6 +6,8 @@ User authorization, 2026-11-06: finish one module, resolve issues and verify it,
 
 Implementation delivers one bounded module and its evidence. Management reviews the result, owns integration and Notion, and selects the next eligible module. The implementation chat's per-slice stop remains a handoff boundary, not a demand for renewed user approval. Do not have both chats independently merge or start competing modules.
 
+Management also publishes module branches to GitHub at meaningful committed checkpoints for teammate collaboration under BRANCH_COMMITS.md. A feature-branch push is distinct from acceptance and main integration; do not hold every branch private until integration, or bypass review because a candidate is public. Confirm remote SHA and preserve teammate changes before every subsequent push.
+
 Before integration, all acceptance criteria and required checks must pass on the reviewed patch. Independent review must have no unresolved actionable findings. A failing test, missing required evidence or CHANGES_REQUIRED verdict blocks integration and advancement. Repair and retest first. Record pre-existing warnings and explicitly excluded real-device/field checks; passing scoped checks never proves the entire app has no bugs.
 
 ## Sequence

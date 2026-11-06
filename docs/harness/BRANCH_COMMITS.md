@@ -44,6 +44,18 @@ Use Korean commit subjects and bodies. Allowed types: 기능, 수정, 리팩터�
 
 ## Handoff and journal
 
-Record module, stable branch, latest revision label, full commit SHA, verification and integration status in the technical handoff. Management maintains one Korean Notion journal per actual branch and appends meaningful revision milestones to that same page. Do not create a journal page per version.
+Record module, stable branch, latest revision label, full commit SHA, verification, remote publication and integration status separately in the technical handoff. Management maintains one Korean Notion journal per actual branch and appends meaningful revision milestones to that same page. Do not create a journal page per version.
 
 Before dispatching H02 or any later module, management ensures the implementation worktree includes this policy. The already-running H01 worktree does not need to fetch or merge it mid-run.
+
+## GitHub collaboration publication
+
+User clarification, 2026-11-06: module branches must be visible on GitHub for teammates; pushing only main is insufficient. This updates remote publication policy, not ownership or acceptance criteria.
+
+Management publishes each current/future module branch with a normal push after a meaningful owner-authored commit is available. Inspect exact ref, committed payload, relevant checkpoint evidence and remote state first. Never stage/commit another owner's unfinished files, interrupt active work to manufacture a checkpoint, or push a baseline-only branch and describe it as delivered implementation. Local uncommitted edits are never part of a push.
+
+For first publication use the explicit origin/module ref and set its upstream. Verify the remote SHA after pushing. Later pushes must be normal fast-forwards; fetch and reconcile teammate updates rather than forcing history. Keep the feature branch remotely available after integration for collaboration; deletion is not implied.
+
+A published checkpoint can remain under review or require repairs. Notion/handoffs must distinguish local commit, published candidate, accepted candidate and integrated main. Publication does not bypass tests, independent review or integration verification. Never claim a local commit alone is a push. Preserve secrets/ignored artifacts and do not bulk-publish old unrelated branches under this rule.
+
+Implementation owns commits; management owns publication. Implementation should report a coherent committed checkpoint and its tests when available, then continue only the authorized module. Do not add noisy messages for every edit. Completed H02 progress is eligible now; active H03 discovery is published at its next meaningful committed checkpoint, not from its unmodified baseline.
