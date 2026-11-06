@@ -4,6 +4,8 @@ Status: harness setup only. The new game is not implemented. Date: 2026-11-06.
 
 ## Start here
 
+For module work after the currently running H01, also read `BRANCH_COMMITS.md` for stable module branch names and versioned commit subjects. H01 is exempt from this prospective naming change.
+
 1. Read this file and `tasks.json`; select one authorized task, not the whole backlog.
 2. Read `ROUTING.md` and `NOTION_WORKFLOW.md`, then only its task packet and relevant code. Use `PROMPTS.md` for short dispatches; `NEW_CHAT_PROMPT.md` is the H01 entry prompt.
 3. Use the reviewed baseline SHA in `tasks.json`. If new uncommitted app work exists, review/checkpoint it and advance the baseline before branching. Do not silently omit facilities, camera, or map improvements.

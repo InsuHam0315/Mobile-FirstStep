@@ -11,6 +11,7 @@
 - Read `docs/harness/README.md`, `docs/harness/tasks.json`, and only the selected task's references before new-game work.
 - Use English for internal agent prompts, repository task records, reviews, and handoffs. Notion is human-facing: write rich, readable Korean branch development journals under `docs/harness/NOTION_WORKFLOW.md`, not compressed agent notes. Keep app copy and final user reports Korean; avoid routine narration unless required by higher-priority instructions or a material blocker.
 - Work one authorized vertical slice at a time. Do not implement the entire backlog. Firebase, authentication, cloud photos, and Gemini RAG remain pending user selection.
+- From the next module after the already-running H01, follow `docs/harness/BRANCH_COMMITS.md`: stable `codex/game-<module>` branches and module-scoped versioned commit subjects. Do not rename branches or rewrite existing commits to retrofit this policy.
 - Keep replaceable Java/XML presentation separate from game rules, storage, clocks, and device APIs. Follow `docs/harness/UI_BOUNDARIES.md`.
 - Use the requested coordinator -> Sol PM -> Terra/Luna specialist hierarchy only for bounded useful work. Read `docs/harness/ROUTING.md`; do not silently invent model IDs.
 - Assign one branch/worktree and an explicit write scope per implementation task. Workers are not alone: preserve others' edits; escalate shared app-file changes through the PM to the implementation lead. Project-wide rules and scope changes belong to management; see ROUTING.md.
