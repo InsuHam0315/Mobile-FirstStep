@@ -1,6 +1,6 @@
 # FirstStep Codex implementation harness
 
-Status (2026-11-06): H01 integrated at0c5f633. H02/progress integrated at84dbff2 after strict JSON-type repair, independent re-review and fresh integration checks; see reviews/H02-management.md. H03/discovery is the next bounded slice under H03_SCOPE.md. The full new game is not implemented.
+Status (2026-11-06): H01 integrated at0c5f633, H02/progress at84dbff2, H03/discovery atab73238 and H04/intro-quiz at21dd08c after conflict-recovery repair, independent re-review and fresh integration checks. See reviews/H04-management.md. H05/map-home is the next bounded slice under H05_SCOPE.md with approved facility search/favorites/real-map integration. The full new game is not implemented.
 
 ## Start here
 
@@ -43,7 +43,7 @@ The initial harness branch is `codex/game-harness`. At the user's explicit reque
 | H02 | progress | Local per-building progress, clock rules, quiz rules, migration policy | H01 + core selection |
 | H03 | discovery | Camera preview, orientation, summon adapters, fallback | H02 |
 | H04 | intro-quiz | TTS captions, quiz UI, delayed eligibility and notifications | H02 |
-| H05 | map-home | Illustrated map, home, stamps, profile, ending | H02 |
+| H05 | map-home | Real map, facility search/favorites, home, local profile, ending; see H05_SCOPE.md | H02, H04 |
 | H06 | integration | One end-to-end building, then five, recovery and visual tests | H03-H05 |
 | H07 | firebase | Optional identity/sync adapter | H06 + explicit cloud selection |
 | H08 | chatbot | Optional sourced Gemini RAG feature/backend | H06 + explicit chatbot selection |

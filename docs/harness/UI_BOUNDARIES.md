@@ -8,7 +8,7 @@ Status: **planned architecture**, not a completed refactor or implemented game.
 
 The current app is Activity-centric: Activities render Java/XML Views and coordinate substantial application/device work. The new `game` packages below are a target structure. Keep Java/XML and the existing `app` module; use logical packages before adding Gradle modules. Do not move legacy code wholesale to make a diagram true.
 
-Firebase/Auth, Firestore, cloud photos, RAG/model choices, and legacy-feature retention remain pending in the task board. No UI task implicitly selects or enables them.
+Google sign-in and first-login profile fields are selected for a later slice; provider configuration, Firestore, cloud photos and RAG remain separately gated. Facility search, favorites and the real map are approved for H05 under PRODUCT_DECISIONS.md and H05_SCOPE.md. Other legacy retention/migration choices are not implicitly approved. No UI task enables optional providers by itself.
 
 ## Target packages and dependency direction
 
