@@ -1,0 +1,52 @@
+<resources>
+    <string name="game_intro_title">소개와 퀴즈 (개발용)</string>
+    <string name="game_intro_disclosure">직접 진입한 시제품입니다. 도착은 확인하지 않았으며 내용은 검증 전 예시입니다. 진행은 이 기기에만 저장됩니다. 화면 회전에는 답안이 유지되지만 앱 프로세스 종료 시 미제출 답안은 보장되지 않습니다.</string>
+    <string name="game_intro_replay">다시 듣기</string>
+    <string name="game_intro_next">다음 문장</string>
+    <string name="game_intro_finish">소개 완료</string>
+    <string name="game_intro_skip">소개 건너뛰고 완료</string>
+    <string name="game_intro_reminder">알림 요청</string>
+    <string name="game_intro_start">퀴즈 시작</string>
+    <string name="game_intro_submit">답안 제출</string>
+    <string name="game_intro_retry">다시 시도</string>
+    <string name="game_intro_back">뒤로</string>
+    <string name="game_intro_sentence1">안녕하세요. 이 문장은 검증 전 예시 소개입니다.</string>
+    <string name="game_intro_sentence2">학교 정보와 문제는 확인 후 교체될 예정입니다.</string>
+    <string name="game_intro_sentence3">소개를 완료하면 퀴즈를 준비할 수 있습니다.</string>
+    <string name="game_intro_show_again">소개 다시 보기</string>
+    <string name="game_intro_demo">DEMO 즉시 퀴즈 시연 열기 (별도 기록)</string>
+    <string-array name="game_intro_sentences">
+        <item>@string/game_intro_sentence1</item>
+        <item>@string/game_intro_sentence2</item>
+        <item>@string/game_intro_sentence3</item>
+    </string-array>
+    <string name="game_intro_storage_error">진행 정보를 확인하지 못했습니다. 다시 확인해 주세요.</string>
+    <string name="game_intro_ui_1">잘못된 진입 정보입니다.</string>
+    <string name="game_intro_ui_2">시연 즉시 설정은 DEMO에서만 사용할 수 있습니다.</string>
+    <string name="game_intro_ui_3">개발용 실행 식별자가 올바르지 않습니다.</string>
+    <string name="game_intro_ui_4">예시 콘텐츠를 불러오지 못했습니다.</string>
+    <string name="game_intro_ui_5">DEMO 즉시 시연 기록</string>
+    <string name="game_intro_ui_6">DEMO 시연 기록</string>
+    <string name="game_intro_ui_7">NORMAL 일반 기록</string>
+    <string name="game_intro_ui_8"> · 격리된 테스트 기록</string>
+    <string name="game_intro_ui_9"> · 가상 시계</string>
+    <string name="game_intro_ui_10">\n불러오는 중…</string>
+    <string name="game_intro_ui_11">\n음성이 없어도 자막을 읽고 직접 진행할 수 있습니다.</string>
+    <string name="game_intro_ui_12">\n퀴즈를 시작할 수 있습니다.</string>
+    <string name="game_intro_ui_14">\n알림은 대략적인 시간에 도착하며 거부하거나 늦어져도 퀴즈를 이용할 수 있습니다. 재부팅 후 알림이 유지되지 않을 수 있습니다.</string>
+    <string name="game_intro_ui_15">통과 · 스탬프 1개</string>
+    <string name="game_intro_ui_16">다시 도전해 주세요</string>
+    <string name="game_intro_ui_17">알림을 요청했습니다. 도착 시간은 달라질 수 있습니다.</string>
+    <string name="game_intro_ui_18">알림을 설정하지 못했습니다. 앱에서 퀴즈를 확인해 주세요.</string>
+    <string name="game_intro_ui_19">알림이 거부되어도 앱에서 퀴즈를 이용할 수 있습니다.</string>
+    <string name="game_intro_speech_1">음성을 사용할 수 없습니다. 자막으로 진행해 주세요.</string>
+    <string name="game_intro_speech_2">음성을 초기화하지 못했습니다. 자막으로 진행해 주세요.</string>
+    <string name="game_intro_speech_3">한국어 음성을 사용할 수 없습니다. 자막으로 진행해 주세요.</string>
+    <string name="game_intro_speech_4">음성을 재생하지 못했습니다. 자막으로 진행해 주세요.</string>
+    <string name="game_intro_notification_1">퀴즈 알림</string>
+    <string name="game_intro_notification_2">퀴즈를 확인해 주세요</string>
+    <string name="game_intro_notification_3">앱에서 저장된 진행 상태를 확인합니다.</string>
+    <string name="game_intro_debug_speech_label"> · 음성 오류 시뮬레이션</string>
+    <string name="game_intro_remaining">\n남은 시간: %1$d분 %2$02d초</string>
+    <string name="game_intro_target">디지털정보관 · 소프트웨어학과 (검증 전 예시)</string>
+</resources>

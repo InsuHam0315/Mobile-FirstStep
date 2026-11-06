@@ -1,6 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.TTS_SERVICE" />
+        </intent>
+    </queries>
     <application android:networkSecurityConfig="@xml/debug_network_security">
+        <receiver
+            android:name=".game.notifications.IntroQuizReminderReceiver"
+            android:exported="false" />
+        <activity
+            android:name=".game.ui.intro.IntroQuizActivity"
+            android:exported="true"
+            android:label="@string/game_intro_title"
+            android:theme="@style/Theme.FirstStep.GamePreview">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".game.ui.discovery.DiscoveryActivity"
             android:exported="true"
