@@ -1,6 +1,6 @@
 # FirstStep Codex implementation harness
 
-Status (2026-11-06): H01 integrated at0c5f633. H02/progress passed management re-review after strict JSON-type repair and fresh integration checks; see reviews/H02-management.md. H03/discovery is the next bounded slice under H03_SCOPE.md. The full new game is not implemented.
+Status (2026-11-06): H01 integrated at0c5f633. H02/progress integrated at84dbff2 after strict JSON-type repair, independent re-review and fresh integration checks; see reviews/H02-management.md. H03/discovery is the next bounded slice under H03_SCOPE.md. The full new game is not implemented.
 
 ## Start here
 

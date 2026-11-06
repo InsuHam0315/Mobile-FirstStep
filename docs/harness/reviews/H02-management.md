@@ -35,3 +35,5 @@ Management reused verification_pm (Sol PM) for read-only acceptance review; its 
 - Prior unaccepted integration worktree/evidence is preserved. Do not use its old merged tree as the release candidate. main integration and remote identity are recorded in the next task-board checkpoint after this accepted merge commit is created.
 
 Accepted scope: local rules/storage only. No new UI, real15-minute wall-clock demonstration, physical/campus checks, production clock/ID/random wiring, account/profile integration or cloud sync. Normal/demo data is separated; future account binding requires an explicit migration/ownership policy.
+
+Integration completed at84dbff23368c0f58841fd554fffd134f5094f998 (main328b817 + progress1a369d2). The task board records this merge as H02 integratedSha; H03 is the next ready slice. Subsequent checkpoint changes are management metadata only.
