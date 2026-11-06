@@ -16,6 +16,22 @@ public final class GameJson {
     return ((Number) value).longValue();
   }
 
+  private static String string(JSONObject object, String key) throws JSONException {
+    Object value = object.get(key);
+    if (!(value instanceof String)) {
+      throw new IllegalArgumentException("expected string: " + key);
+    }
+    return (String) value;
+  }
+
+  private static boolean bool(JSONObject object, String key) throws JSONException {
+    Object value = object.get(key);
+    if (!(value instanceof Boolean)) {
+      throw new IllegalArgumentException("expected boolean: " + key);
+    }
+    return (Boolean) value;
+  }
+
   public static GameContent catalog(String json) {
     try {
       JSONObject root = new JSONObject(json);
@@ -26,9 +42,9 @@ public final class GameJson {
         JSONObject b = a.getJSONObject(i);
         bs.add(
             new GameContent.Building(
-                b.getString("id"), b.getString("label"), questions(b.getJSONArray("questions"))));
+                string(b, "id"), string(b, "label"), questions(b.getJSONArray("questions"))));
       }
-      return new GameContent(root.getString("version"), bs);
+      return new GameContent(string(root, "version"), bs);
     } catch (JSONException e) {
       throw new IllegalArgumentException("invalid catalog", e);
     }
@@ -42,11 +58,11 @@ public final class GameJson {
       List<GameContent.Option> options = new ArrayList<>();
       for (int j = 0; j < os.length(); j++) {
         JSONObject o = os.getJSONObject(j);
-        options.add(new GameContent.Option(o.getString("id"), o.getString("text")));
+        options.add(new GameContent.Option(string(o, "id"), string(o, "text")));
       }
       qs.add(
           new GameContent.Question(
-              q.getString("id"), q.getString("text"), q.getString("correctOptionId"), options));
+              string(q, "id"), string(q, "text"), string(q, "correctOptionId"), options));
     }
     return qs;
   }
@@ -107,8 +123,8 @@ public final class GameJson {
     try {
       JSONObject o = new JSONObject(json);
       if (integer(o, "schema") != 1) throw new IllegalArgumentException("progress schema");
-      Progress.Mode mode = Progress.Mode.valueOf(o.getString("mode"));
-      String id = o.getString("buildingId");
+      Progress.Mode mode = Progress.Mode.valueOf(string(o, "mode"));
+      String id = string(o, "buildingId");
       if (!o.has("introDoneAt") || !o.has("active"))
         throw new IllegalArgumentException("missing required progress field");
       Long intro = o.isNull("introDoneAt") ? null : integer(o, "introDoneAt");
@@ -117,7 +133,7 @@ public final class GameJson {
         JSONObject a = o.getJSONObject("active");
         active =
             new Progress.Attempt(
-                a.getString("id"), a.getString("version"), questions(a.getJSONArray("questions")));
+                string(a, "id"), string(a, "version"), questions(a.getJSONArray("questions")));
       }
       Map<String, Progress.Result> history = new LinkedHashMap<>();
       JSONArray h = o.getJSONArray("history");
@@ -127,19 +143,19 @@ public final class GameJson {
         Iterator<String> keys = a.keys();
         while (keys.hasNext()) {
           String k = keys.next();
-          answers.put(k, a.getString(k));
+          answers.put(k, string(a, k));
         }
         Progress.Result result =
             new Progress.Result(
-                r.getString("id"),
-                r.getString("version"),
+                string(r, "id"),
+                string(r, "version"),
                 answers,
                 Math.toIntExact(integer(r, "correct")));
         if (history.put(result.attemptId, result) != null)
           throw new IllegalArgumentException("duplicate result");
       }
       return new Progress(
-          mode, id, intro, o.getBoolean("instantDemo"), o.getBoolean("stamp"), active, history);
+          mode, id, intro, bool(o, "instantDemo"), bool(o, "stamp"), active, history);
     } catch (JSONException e) {
       throw new IllegalArgumentException("invalid progress", e);
     }

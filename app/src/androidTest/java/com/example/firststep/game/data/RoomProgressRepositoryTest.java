@@ -273,4 +273,120 @@ public class RoomProgressRepositoryTest {
     assertEquals(1, content.buildings.size());
     assertEquals(3, content.buildings.get("fixture-1").questions.size());
   }
+
+  private org.json.JSONObject target(org.json.JSONObject root, String section) throws Exception {
+    switch (section) {
+      case "root":
+        return root;
+      case "building":
+        return root.getJSONArray("buildings").getJSONObject(0);
+      case "catalogQuestion":
+        return target(root, "building").getJSONArray("questions").getJSONObject(0);
+      case "catalogOption":
+        return target(root, "catalogQuestion").getJSONArray("options").getJSONObject(0);
+      case "active":
+        return root.getJSONObject("active");
+      case "question":
+        return target(root, "active").getJSONArray("questions").getJSONObject(0);
+      case "option":
+        return target(root, "question").getJSONArray("options").getJSONObject(0);
+      case "history":
+        return root.getJSONArray("history").getJSONObject(0);
+      case "answers":
+        return target(root, "history").getJSONObject("answers");
+      default:
+        throw new AssertionError(section);
+    }
+  }
+
+  private void assertMalformedPersistedTypesRejected(boolean update) throws Exception {
+    Context c = ApplicationProvider.getApplicationContext();
+    String name = "h02-types-" + UUID.randomUUID() + ".db";
+    GameProgressDatabase database = db(c, name);
+    try (RoomProgressRepository repo = new RoomProgressRepository(database)) {
+      GameContent content = GameJson.catalog(asset(c));
+      List<GameContent.Question> questions = content.buildings.get("fixture-1").questions;
+      Progress.Attempt active = new Progress.Attempt("active-id", content.version, questions);
+      Map<String, String> answers = new LinkedHashMap<>();
+      for (GameContent.Question q : questions) answers.put(q.id, q.options.get(0).id);
+      Map<String, Progress.Result> history = new LinkedHashMap<>();
+      history.put("old-id", new Progress.Result("old-id", content.version, answers, 0));
+      String valid =
+          GameJson.encode(
+              new Progress(Progress.Mode.DEMO, "fixture-1", 0L, true, false, active, history));
+      String[][] fields = {
+        {"root", "mode"},
+        {"root", "buildingId"},
+        {"active", "id"},
+        {"active", "version"},
+        {"question", "id"},
+        {"question", "text"},
+        {"question", "correctOptionId"},
+        {"option", "id"},
+        {"option", "text"},
+        {"history", "id"},
+        {"history", "version"},
+        {"answers", questions.get(0).id}
+      };
+      List<String> invalid = new ArrayList<>();
+      for (String[] field : fields) {
+        for (Object bad : new Object[] {42, new org.json.JSONObject(), org.json.JSONObject.NULL}) {
+          org.json.JSONObject root = new org.json.JSONObject(valid);
+          target(root, field[0]).put(field[1], bad);
+          invalid.add(root.toString());
+        }
+      }
+      for (String key : new String[] {"instantDemo", "stamp"}) {
+        for (String bad : new String[] {"true", "false"}) {
+          invalid.add(new org.json.JSONObject(valid).put(key, bad).toString());
+        }
+      }
+      for (String payload : invalid) {
+        database.progressDao().save(new GameProgressDatabase.Row("DEMO", "fixture-1", payload));
+        assertEquals(payload, database.progressDao().find("DEMO", "fixture-1").payload);
+        try {
+          if (update) repo.atomicUpdate(Progress.Mode.DEMO, "fixture-1", p -> p);
+          else repo.read(Progress.Mode.DEMO, "fixture-1");
+          fail((update ? "update" : "read") + " accepted " + payload);
+        } catch (IllegalArgumentException | IllegalStateException expected) {
+        }
+        assertEquals(payload, database.progressDao().find("DEMO", "fixture-1").payload);
+      }
+    } finally {
+      c.deleteDatabase(name);
+    }
+  }
+
+  @Test
+  public void malformedPersistedTypesAreRejectedByReadWithoutOverwrite() throws Exception {
+    assertMalformedPersistedTypesRejected(false);
+  }
+
+  @Test
+  public void malformedPersistedTypesAreRejectedByUpdateWithoutOverwrite() throws Exception {
+    assertMalformedPersistedTypesRejected(true);
+  }
+
+  @Test
+  public void malformedCatalogStringTypesAreRejected() throws Exception {
+    Context c = ApplicationProvider.getApplicationContext();
+    String valid = asset(c);
+    String[][] fields = {
+      {"root", "version"}, {"building", "id"}, {"building", "label"},
+      {"catalogQuestion", "id"}, {"catalogQuestion", "text"},
+      {"catalogQuestion", "correctOptionId"},
+      {"catalogOption", "id"}, {"catalogOption", "text"}
+    };
+    for (String[] field : fields) {
+      for (Object bad : new Object[] {42, new org.json.JSONObject(), org.json.JSONObject.NULL}) {
+        org.json.JSONObject root = new org.json.JSONObject(valid);
+        target(root, field[0]).put(field[1], bad);
+        try {
+          GameJson.catalog(root.toString());
+          fail("catalog accepted " + field[0] + "." + field[1]);
+        } catch (IllegalArgumentException expected) {
+        }
+      }
+    }
+  }
 }
