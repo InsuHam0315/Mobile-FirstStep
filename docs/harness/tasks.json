@@ -9,7 +9,7 @@
     "firestore": "pending_selection",
     "cloudPhotos": "pending_selection",
     "geminiRag": "pending_selection",
-    "legacyFeatures": "pending_selection"
+    "legacyFeatures": "approved"
   },
   "tasks": [
     {"id":"H00","branch":"codex/game-harness","status":"verified","integratedSha":"6dc8af1f67a8487c4a4c9e2f64b38367583ea701","dependsOn":[],"decisionKeys":[],"owner":"coordinator","writeScope":["AGENTS.md",".codex/agents/","docs/harness/","scripts/harness.py",".gitignore"],"goal":"Install English agent instructions, staged task/worktree tooling, and replaceable UI boundaries.","acceptance":["Manifest and role profiles validate","Worktree checks reject missing baseline, dirty checkout, and inactive tasks","No app source or runtime settings changed"]},
