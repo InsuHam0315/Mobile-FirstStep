@@ -1,0 +1,22 @@
+<resources>
+    <style name="Theme.FirstStep.GamePreview" parent="Theme.FirstStep">
+        <item name="android:windowBackground">@color/game_color_surface</item>
+    </style>
+    <color name="game_color_surface">#FAF7EF</color>
+    <color name="game_color_text">#1E2B39</color>
+    <color name="game_color_action">#873E27</color>
+    <color name="game_color_on_action">#FFFFFF</color>
+    <dimen name="game_space_medium">16dp</dimen>
+    <dimen name="game_space_large">24dp</dimen>
+    <dimen name="game_touch_min">48dp</dimen>
+    <dimen name="game_text_title">28sp</dimen>
+    <dimen name="game_text_body">17sp</dimen>
+    <dimen name="game_shape_action_corner">12dp</dimen>
+    <style name="GameActionButton" parent="Widget.MaterialComponents.Button">
+        <item name="cornerRadius">@dimen/game_shape_action_corner</item>
+        <item name="android:textSize">@dimen/game_text_body</item>
+        <item name="backgroundTint">@color/game_color_action</item>
+        <item name="android:textColor">@color/game_color_on_action</item>
+        <item name="android:minHeight">@dimen/game_touch_min</item>
+    </style>
+</resources>

@@ -1,0 +1,12 @@
+<resources>
+    <string name="game_preview_title">게임 미리보기</string>
+    <string name="game_preview_heading">새로운 캠퍼스 이야기</string>
+    <string name="game_preview_notice">미리보기 화면이에요. 아래 내용은 실제 진행 상황이 아닌 예시 데이터입니다.</string>
+    <string name="game_preview_loading">예시 장소를 불러오고 있어요.</string>
+    <string name="game_preview_ready">예시 장소를 살펴보세요.</string>
+    <string name="game_preview_selected">예시 장소를 선택했어요.</string>
+    <string name="game_preview_item">예시 장소 살펴보기</string>
+    <string name="game_preview_empty">표시할 예시 장소가 없어요.</string>
+    <string name="game_preview_error">예시 장소를 불러오지 못했어요.</string>
+    <string name="game_preview_retry">다시 불러오기</string>
+</resources>
