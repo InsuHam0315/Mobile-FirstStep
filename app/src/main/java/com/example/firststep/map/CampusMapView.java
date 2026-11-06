@@ -12,6 +12,9 @@ import java.util.*;
 public final class CampusMapView extends View {
     public interface Listener { void status(String message); void selected(Mission mission); default void panned() {} }
     private final Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
+    private final Paint attributionPaint=new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Rect attributionBounds=new Rect();
+    private final ViewTreeObserver.OnScrollChangedListener attributionScroll=this::invalidate;
     private final TileStore store;
     private Listener listener;
     private List<Mission> missions=Collections.emptyList();
@@ -34,8 +37,28 @@ public final class CampusMapView extends View {
     public void retry(){store.retry();invalidate();}
     public void active(boolean value){store.active(value);if(value)invalidate();}
     public void close(){store.close();}
+    /** Bounds of the label rendered in the last frame, useful for viewport/accessibility checks. */
+    public Rect attributionBoundsForTest(){return new Rect(attributionBounds);}
+    @Override protected void onAttachedToWindow(){
+        super.onAttachedToWindow();
+        getViewTreeObserver().addOnScrollChangedListener(attributionScroll);
+    }
+    @Override protected void onDetachedFromWindow(){
+        if(getViewTreeObserver().isAlive())getViewTreeObserver().removeOnScrollChangedListener(attributionScroll);
+        super.onDetachedFromWindow();
+    }
     @Override protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);canvas.drawColor(0xFFEDE9DF);
+        attributionBounds.setEmpty();
+        Rect viewport=new Rect();
+        if(!getLocalVisibleRect(viewport))return;
+        attributionPaint.setTextSize(12*getResources().getDisplayMetrics().scaledDensity);
+        attributionPaint.setTextAlign(Paint.Align.LEFT);
+        String credit="© OpenStreetMap 기여자";
+        Paint.FontMetrics metrics=attributionPaint.getFontMetrics();
+        int bandHeight=(int)Math.ceil(metrics.bottom-metrics.top+8*scale);
+        // A sliver too small for a readable credit must not display map imagery without attribution.
+        if(viewport.height()<bandHeight || viewport.width()<attributionPaint.measureText(credit)+16*scale)return;
         double left=cx-getWidth()/scale/2,top=cy-getHeight()/scale/2;
         int minX=(int)Math.floor(left/256),maxX=(int)Math.floor((left+getWidth()/scale)/256);
         int minY=(int)Math.floor(top/256),maxY=(int)Math.floor((top+getHeight()/scale)/256),n=1<<zoom;
@@ -59,6 +82,11 @@ public final class CampusMapView extends View {
             paint.setColor(0x333A78B8);canvas.drawCircle(x,y,(float)Math.min(getWidth(),current.getAccuracy()/metersPerPixel*scale),paint);
             paint.setColor(Color.WHITE);canvas.drawCircle(x,y,8*scale,paint);paint.setColor(0xFF2262A2);canvas.drawCircle(x,y,5*scale,paint);
         }
+        attributionBounds.set(viewport.left,viewport.bottom-bandHeight,viewport.right,viewport.bottom);
+        attributionPaint.setColor(Color.WHITE);
+        canvas.drawRect(attributionBounds,attributionPaint);
+        attributionPaint.setColor(0xFF1E2B39);
+        canvas.drawText(credit,viewport.left+8*scale,viewport.bottom-4*scale-metrics.bottom,attributionPaint);
     }
     @Override public boolean onTouchEvent(MotionEvent event) {
         float x=event.getX(),y=event.getY();

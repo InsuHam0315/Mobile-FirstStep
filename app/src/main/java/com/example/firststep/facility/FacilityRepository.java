@@ -15,12 +15,19 @@ import org.json.JSONObject;
 
 /** Reads bundled data and keeps favorites on this device by stable facility ID. */
 public final class FacilityRepository {
+  private static final Object FAVORITES_LOCK = new Object();
   private final Context context;
   private final SharedPreferences preferences;
 
   public FacilityRepository(Context context) {
     this.context = context.getApplicationContext();
     preferences = this.context.getSharedPreferences("facility_favorites", Context.MODE_PRIVATE);
+  }
+
+  // Test-only seam: injected preferences are used without accessing Android assets.
+  FacilityRepository(SharedPreferences preferences) {
+    this.context = null;
+    this.preferences = java.util.Objects.requireNonNull(preferences);
   }
 
   public List<Facility> load() throws Exception {
@@ -63,13 +70,17 @@ public final class FacilityRepository {
   }
 
   public Set<String> favorites() {
-    return new HashSet<>(preferences.getStringSet("ids", Collections.emptySet()));
+    synchronized (FAVORITES_LOCK) {
+      return new HashSet<>(preferences.getStringSet("ids", Collections.emptySet()));
+    }
   }
 
   public void setFavorite(String id, boolean selected) {
-    Set<String> ids = favorites();
-    if (selected) ids.add(id);
-    else ids.remove(id);
-    preferences.edit().putStringSet("ids", ids).apply();
+    synchronized (FAVORITES_LOCK) {
+      Set<String> ids = favorites();
+      if (selected) ids.add(id);
+      else ids.remove(id);
+      preferences.edit().putStringSet("ids", ids).apply();
+    }
   }
 }
