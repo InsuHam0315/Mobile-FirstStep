@@ -1,6 +1,6 @@
 # FirstStep Codex implementation harness
 
-Status (2026-11-06): H01 feature implementation is awaiting a test-isolation repair and management acceptance; it is not integrated. The full new game is not implemented.
+Status (2026-11-06): H01 accepted and integrated at 0c5f633 after permission-isolation repair. H02/progress is ready under CORE_GAME_SCOPE.md; the full new game is not implemented.
 
 ## Start here
 
@@ -28,7 +28,7 @@ No continuous background agent or paid API service is started by these files. Na
 
 The 2026-11-06 game PDF is a design input, not permission to delete working code. The requested plan is a staged rebuild inside the existing repository, retaining Java/XML and reusable device code.
 
-Candidate core: five destination episodes, free order, fairy discovery/summoning, TTS + captions, per-building quiz eligibility after 15 minutes, three-question quizzes, stamps, ending. It is not a shipped implementation.
+Confirmed core per the supplied game design: five destination episodes, free order, fairy discovery/summoning, TTS + captions, per-building quiz eligibility 15 minutes after introduction, three-question quizzes (2/3 pass), stamps, ending. See CORE_GAME_SCOPE.md. Specification approval is not a claim these features have shipped.
 
 Pending explicit selections: legacy facility directory/favorites, photo capture as an optional feature, real-map fallback, legacy ARCore, Google login/Firebase Auth, Firestore, cloud photos, Gemini RAG, school identity, old backend retention, mandatory student ID. The PDF excludes servers while earlier discussion requested Firebase/chat. Do not resolve that conflict by silently enabling either architecture.
 
