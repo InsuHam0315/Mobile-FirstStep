@@ -1,0 +1,322 @@
+{
+  "schema": 1,
+  "version": "synthetic-v1",
+  "description": "SYNTHETIC TEST FIXTURES ONLY; no campus facts or locations",
+  "buildings": [
+    {
+      "id": "fixture-1",
+      "label": "가상 테스트 건물 1",
+      "questions": [
+        {
+          "id": "fixture-1-q1",
+          "text": "가상 테스트 건물 1의 테스트용 예시 질문 1",
+          "correctOptionId": "a",
+          "options": [
+            {
+              "id": "a",
+              "text": "테스트용 예시 선택지 A"
+            },
+            {
+              "id": "b",
+              "text": "테스트용 예시 선택지 B"
+            },
+            {
+              "id": "c",
+              "text": "테스트용 예시 선택지 C"
+            }
+          ]
+        },
+        {
+          "id": "fixture-1-q2",
+          "text": "가상 테스트 건물 1의 테스트용 예시 질문 2",
+          "correctOptionId": "a",
+          "options": [
+            {
+              "id": "a",
+              "text": "테스트용 예시 선택지 A"
+            },
+            {
+              "id": "b",
+              "text": "테스트용 예시 선택지 B"
+            },
+            {
+              "id": "c",
+              "text": "테스트용 예시 선택지 C"
+            }
+          ]
+        },
+        {
+          "id": "fixture-1-q3",
+          "text": "가상 테스트 건물 1의 테스트용 예시 질문 3",
+          "correctOptionId": "a",
+          "options": [
+            {
+              "id": "a",
+              "text": "테스트용 예시 선택지 A"
+            },
+            {
+              "id": "b",
+              "text": "테스트용 예시 선택지 B"
+            },
+            {
+              "id": "c",
+              "text": "테스트용 예시 선택지 C"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fixture-2",
+      "label": "가상 테스트 건물 2",
+      "questions": [
+        {
+          "id": "fixture-2-q1",
+          "text": "가상 테스트 건물 2의 테스트용 예시 질문 1",
+          "correctOptionId": "a",
+          "options": [
+            {
+              "id": "a",
+              "text": "테스트용 예시 선택지 A"
+            },
+            {
+              "id": "b",
+              "text": "테스트용 예시 선택지 B"
+            },
+            {
+              "id": "c",
+              "text": "테스트용 예시 선택지 C"
+            }
+          ]
+        },
+        {
+          "id": "fixture-2-q2",
+          "text": "가상 테스트 건물 2의 테스트용 예시 질문 2",
+          "correctOptionId": "a",
+          "options": [
+            {
+              "id": "a",
+              "text": "테스트용 예시 선택지 A"
+            },
+            {
+              "id": "b",
+              "text": "테스트용 예시 선택지 B"
+            },
+            {
+              "id": "c",
+              "text": "테스트용 예시 선택지 C"
+            }
+          ]
+        },
+        {
+          "id": "fixture-2-q3",
+          "text": "가상 테스트 건물 2의 테스트용 예시 질문 3",
+          "correctOptionId": "a",
+          "options": [
+            {
+              "id": "a",
+              "text": "테스트용 예시 선택지 A"
+            },
+            {
+              "id": "b",
+              "text": "테스트용 예시 선택지 B"
+            },
+            {
+              "id": "c",
+              "text": "테스트용 예시 선택지 C"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fixture-3",
+      "label": "가상 테스트 건물 3",
+      "questions": [
+        {
+          "id": "fixture-3-q1",
+          "text": "가상 테스트 건물 3의 테스트용 예시 질문 1",
+          "correctOptionId": "a",
+          "options": [
+            {
+              "id": "a",
+              "text": "테스트용 예시 선택지 A"
+            },
+            {
+              "id": "b",
+              "text": "테스트용 예시 선택지 B"
+            },
+            {
+              "id": "c",
+              "text": "테스트용 예시 선택지 C"
+            }
+          ]
+        },
+        {
+          "id": "fixture-3-q2",
+          "text": "가상 테스트 건물 3의 테스트용 예시 질문 2",
+          "correctOptionId": "a",
+          "options": [
+            {
+              "id": "a",
+              "text": "테스트용 예시 선택지 A"
+            },
+            {
+              "id": "b",
+              "text": "테스트용 예시 선택지 B"
+            },
+            {
+              "id": "c",
+              "text": "테스트용 예시 선택지 C"
+            }
+          ]
+        },
+        {
+          "id": "fixture-3-q3",
+          "text": "가상 테스트 건물 3의 테스트용 예시 질문 3",
+          "correctOptionId": "a",
+          "options": [
+            {
+              "id": "a",
+              "text": "테스트용 예시 선택지 A"
+            },
+            {
+              "id": "b",
+              "text": "테스트용 예시 선택지 B"
+            },
+            {
+              "id": "c",
+              "text": "테스트용 예시 선택지 C"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fixture-4",
+      "label": "가상 테스트 건물 4",
+      "questions": [
+        {
+          "id": "fixture-4-q1",
+          "text": "가상 테스트 건물 4의 테스트용 예시 질문 1",
+          "correctOptionId": "a",
+          "options": [
+            {
+              "id": "a",
+              "text": "테스트용 예시 선택지 A"
+            },
+            {
+              "id": "b",
+              "text": "테스트용 예시 선택지 B"
+            },
+            {
+              "id": "c",
+              "text": "테스트용 예시 선택지 C"
+            }
+          ]
+        },
+        {
+          "id": "fixture-4-q2",
+          "text": "가상 테스트 건물 4의 테스트용 예시 질문 2",
+          "correctOptionId": "a",
+          "options": [
+            {
+              "id": "a",
+              "text": "테스트용 예시 선택지 A"
+            },
+            {
+              "id": "b",
+              "text": "테스트용 예시 선택지 B"
+            },
+            {
+              "id": "c",
+              "text": "테스트용 예시 선택지 C"
+            }
+          ]
+        },
+        {
+          "id": "fixture-4-q3",
+          "text": "가상 테스트 건물 4의 테스트용 예시 질문 3",
+          "correctOptionId": "a",
+          "options": [
+            {
+              "id": "a",
+              "text": "테스트용 예시 선택지 A"
+            },
+            {
+              "id": "b",
+              "text": "테스트용 예시 선택지 B"
+            },
+            {
+              "id": "c",
+              "text": "테스트용 예시 선택지 C"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fixture-5",
+      "label": "가상 테스트 건물 5",
+      "questions": [
+        {
+          "id": "fixture-5-q1",
+          "text": "가상 테스트 건물 5의 테스트용 예시 질문 1",
+          "correctOptionId": "a",
+          "options": [
+            {
+              "id": "a",
+              "text": "테스트용 예시 선택지 A"
+            },
+            {
+              "id": "b",
+              "text": "테스트용 예시 선택지 B"
+            },
+            {
+              "id": "c",
+              "text": "테스트용 예시 선택지 C"
+            }
+          ]
+        },
+        {
+          "id": "fixture-5-q2",
+          "text": "가상 테스트 건물 5의 테스트용 예시 질문 2",
+          "correctOptionId": "a",
+          "options": [
+            {
+              "id": "a",
+              "text": "테스트용 예시 선택지 A"
+            },
+            {
+              "id": "b",
+              "text": "테스트용 예시 선택지 B"
+            },
+            {
+              "id": "c",
+              "text": "테스트용 예시 선택지 C"
+            }
+          ]
+        },
+        {
+          "id": "fixture-5-q3",
+          "text": "가상 테스트 건물 5의 테스트용 예시 질문 3",
+          "correctOptionId": "a",
+          "options": [
+            {
+              "id": "a",
+              "text": "테스트용 예시 선택지 A"
+            },
+            {
+              "id": "b",
+              "text": "테스트용 예시 선택지 B"
+            },
+            {
+              "id": "c",
+              "text": "테스트용 예시 선택지 C"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
