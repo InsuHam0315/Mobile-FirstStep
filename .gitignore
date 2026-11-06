@@ -23,3 +23,5 @@ local.properties
 /backend/.pytest_cache/
 /backend/tests/__pycache__/
 /firststep.local.properties
+__pycache__/
+*.py[cod]
