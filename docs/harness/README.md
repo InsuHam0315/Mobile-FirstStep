@@ -40,14 +40,14 @@ The initial harness branch is `codex/game-harness`. At the user's explicit reque
 |---|---|---|---|
 | H00 | codex/game-harness | Roles, packets, boundaries, safe worktree tooling | none |
 | H01 | codex/game-foundation | UI state/actions, domain/adapter contracts, resource tokens, minimal shell | H00 + baseline |
-| H02 | codex/game-progress | Local per-building progress, clock rules, quiz rules, migration policy | H01 + core selection |
-| H03 | codex/game-discovery | Camera preview, orientation, summon adapters, fallback | H02 |
-| H04 | codex/game-intro-quiz | TTS captions, quiz UI, delayed eligibility and notifications | H02 |
-| H05 | codex/game-map-home | Illustrated map, home, stamps, profile, ending | H02 |
-| H06 | codex/game-integration | One end-to-end building, then five, recovery and visual tests | H03-H05 |
-| H07 | codex/game-firebase | Optional identity/sync adapter | H06 + explicit cloud selection |
-| H08 | codex/game-chatbot | Optional sourced Gemini RAG feature/backend | H06 + explicit chatbot selection |
-| H09 | codex/game-reskin | Apply user references to presentation and assets | H06 + design references |
+| H02 | progress | Local per-building progress, clock rules, quiz rules, migration policy | H01 + core selection |
+| H03 | discovery | Camera preview, orientation, summon adapters, fallback | H02 |
+| H04 | intro-quiz | TTS captions, quiz UI, delayed eligibility and notifications | H02 |
+| H05 | map-home | Illustrated map, home, stamps, profile, ending | H02 |
+| H06 | integration | One end-to-end building, then five, recovery and visual tests | H03-H05 |
+| H07 | firebase | Optional identity/sync adapter | H06 + explicit cloud selection |
+| H08 | chatbot | Optional sourced Gemini RAG feature/backend | H06 + explicit chatbot selection |
+| H09 | reskin | Apply user references to presentation and assets | H06 + design references |
 
 Create branches just in time from a reviewed integration commit. Do not create all branches from today's old HEAD. After H02, H03-H05 may proceed separately if contracts are stable; concurrency is not mandatory. H09 may be brought forward once the relevant screen contract is stable; a reskin must still pass the same behavior checks.
 

@@ -48,7 +48,11 @@ def validate(board: dict) -> list[str]:
         tid = task.get("id", "")
         if not re.fullmatch(r"H\d{2}", tid):
             errors.append(f"Invalid task ID: {tid}")
-        if not re.fullmatch(r"codex/[a-z0-9]+(?:-[a-z0-9]+)*", task.get("branch", "")):
+        legacy_branch = {"H00": "codex/game-harness", "H01": "codex/game-foundation"}.get(tid)
+        branch = task.get("branch", "")
+        if not isinstance(branch, str) or (branch != legacy_branch and (
+                not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", branch)
+                or branch in {"main", "master", "head"})):
             errors.append(f"{tid}: invalid branch")
         if task.get("status") not in STATES:
             errors.append(f"{tid}: invalid status")
@@ -144,7 +148,7 @@ def new_worktree(board, task, dry_run):
     if git("branch", "--list", task["branch"]):
         raise ValueError("Task branch already exists; inspect it instead of overwriting")
     parent = (ROOT.parent / (ROOT.name + "-worktrees")).resolve()
-    target = parent / (task["id"].lower() + "-" + task["branch"].split("/")[1])
+    target = parent / (task["id"].lower() + "-" + task["branch"].rsplit("/", 1)[-1])
     if target.exists() or target.is_symlink():
         raise ValueError("Worktree target already exists; nothing was changed")
     if target.resolve().parent != parent or parent == ROOT:
