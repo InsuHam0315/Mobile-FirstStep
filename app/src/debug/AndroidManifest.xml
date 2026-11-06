@@ -7,6 +7,16 @@
         </intent>
     </queries>
     <application android:networkSecurityConfig="@xml/debug_network_security">
+        <activity
+            android:name=".game.ui.home.GameHomeActivity"
+            android:exported="true"
+            android:label="@string/game_home_title"
+            android:theme="@style/Theme.FirstStep.GamePreview">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <receiver
             android:name=".game.notifications.IntroQuizReminderReceiver"
             android:exported="false" />

@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/game_home_scroll" android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true" android:fitsSystemWindows="true">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="@dimen/game_space_medium" android:background="@color/game_color_surface">
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_home_title" android:textSize="@dimen/game_text_title" android:textColor="@color/game_color_text" android:textStyle="bold" />
+        <TextView android:id="@+id/game_home_context" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/game_color_text" android:textSize="@dimen/game_text_body" />
+        <Button style="@style/GameActionButton" android:id="@+id/game_home_back" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="@dimen/game_touch_min" android:text="@string/game_home_back" />
+        <TextView android:id="@+id/game_home_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/game_color_text" android:textSize="@dimen/game_text_body" />
+        <Button style="@style/GameActionButton" android:id="@+id/game_home_retry" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_home_retry" />
+        <LinearLayout android:id="@+id/game_home_panel" android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
+            <Button style="@style/GameActionButton" android:id="@+id/game_home_mode" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_home_mode" />
+            <TextView android:id="@+id/game_home_progress" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/game_color_text" android:textSize="@dimen/game_text_body" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_home_synthetic" android:textColor="@color/game_color_text" android:textSize="@dimen/game_text_body" />
+            <Button style="@style/GameActionButton" android:id="@+id/game_home_prototype" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_home_prototype" />
+            <Button style="@style/GameActionButton" android:id="@+id/game_home_discovery" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_home_discovery" />
+            <Button style="@style/GameActionButton" android:id="@+id/game_home_search" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_home_search" />
+            <Button style="@style/GameActionButton" android:id="@+id/game_home_map" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_home_map" />
+            <Button style="@style/GameActionButton" android:id="@+id/game_home_profile" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_home_profile" />
+            <Button style="@style/GameActionButton" android:id="@+id/game_home_ending" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_home_ending" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_home_favorites_title" android:textColor="@color/game_color_text" android:textSize="@dimen/game_text_body" />
+            <LinearLayout android:id="@+id/game_home_favorites" android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content" />
+        </LinearLayout>
+        <LinearLayout android:id="@+id/game_home_search_panel" android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
+            <EditText android:id="@+id/game_home_search_query" android:layout_width="match_parent" android:layout_height="wrap_content" android:importantForAutofill="no" android:inputType="text" android:singleLine="true" android:hint="@string/game_home_query_hint" android:textColor="@color/game_color_text" android:textSize="@dimen/game_text_body" />
+            <Spinner android:id="@+id/game_home_search_category" android:layout_width="match_parent" android:layout_height="48dp" />
+            <CheckBox android:id="@+id/game_home_search_favorites" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="@dimen/game_touch_min" android:text="@string/game_home_favorites_only" android:textColor="@color/game_color_text" android:textSize="@dimen/game_text_body" />
+            <LinearLayout android:id="@+id/game_home_results" android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content" />
+        </LinearLayout>
+        <LinearLayout android:id="@+id/game_home_detail_panel" android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
+            <TextView android:id="@+id/game_home_detail_content" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="@dimen/game_text_body" android:textColor="@color/game_color_text" />
+            <Button style="@style/GameActionButton" android:id="@+id/game_home_detail_favorite" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_home_favorite" />
+            <Button style="@style/GameActionButton" android:id="@+id/game_home_detail_map" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_home_map" />
+            <Button style="@style/GameActionButton" android:id="@+id/game_home_detail_official" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_home_official" />
+        </LinearLayout>
+        <LinearLayout android:id="@+id/game_map_panel" android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/game_map_selection" android:text="@string/game_home_no_coordinate" android:textColor="@color/game_color_text" android:textSize="@dimen/game_text_body" />
+            <com.example.firststep.map.CampusMapView android:id="@+id/game_map_view" android:layout_width="match_parent" android:layout_height="360dp" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_home_attribution" android:textColor="@color/game_color_text" android:textSize="@dimen/game_text_body" />
+            <TextView android:id="@+id/game_map_tile_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/game_color_text" android:textSize="@dimen/game_text_body" />
+            <TextView android:id="@+id/game_map_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_home_location_initial" android:textColor="@color/game_color_text" android:textSize="@dimen/game_text_body" />
+            <Button style="@style/GameActionButton" android:id="@+id/game_map_current" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_home_current" />
+            <Button style="@style/GameActionButton" android:id="@+id/game_map_debug_location" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_home_debug_location" />
+            <Button style="@style/GameActionButton" android:id="@+id/game_map_zoom_in" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_home_zoom_in" />
+            <Button style="@style/GameActionButton" android:id="@+id/game_map_zoom_out" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_home_zoom_out" />
+            <Button style="@style/GameActionButton" android:id="@+id/game_map_retry" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_home_retry" />
+        </LinearLayout>
+        <TextView android:id="@+id/game_profile_content" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_home_local_profile" android:textSize="@dimen/game_text_body" android:textColor="@color/game_color_text" />
+        <TextView android:id="@+id/game_ending_content" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="@dimen/game_text_body" android:textColor="@color/game_color_text" />
+    </LinearLayout>
+</ScrollView>
