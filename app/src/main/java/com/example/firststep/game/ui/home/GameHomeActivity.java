@@ -10,29 +10,58 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.*;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.activity.OnBackPressedCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AppCompatActivity;
 import com.example.firststep.BuildConfig;
 import com.example.firststep.R;
 import com.example.firststep.data.Mission;
 import com.example.firststep.facility.*;
 import com.example.firststep.game.composition.home.HomeHost;
+import com.example.firststep.game.composition.integration.*;
 import com.example.firststep.game.device.homemap.H05LocationAdapter;
 import com.example.firststep.game.domain.Progress;
 import com.example.firststep.game.presentation.home.*;
+import com.example.firststep.game.presentation.integration.NavigationPolicy;
 import com.example.firststep.game.ui.discovery.DiscoveryActivity;
 import com.example.firststep.game.ui.intro.IntroQuizActivity;
 import com.example.firststep.map.CampusMapView;
 import java.util.*;
+import java.util.concurrent.*;
 
 /** Replaceable Android view binder. Storage and progress policies live in HomeHost. */
 public final class GameHomeActivity extends AppCompatActivity {
   public static final String EXTRA_DEBUG_RUN = "game_intro_debug_run",
       EXTRA_DEBUG_CLOCK = "game_intro_debug_clock";
   private static final int LOCATION_REQUEST = 505;
-  private final OnBackPressedCallback backCallback = new OnBackPressedCallback(false) {
-    @Override public void handleOnBackPressed() { navigateBack(); }
-  };
+  private final ExecutorService integrationWorker = Executors.newSingleThreadExecutor();
+  private IntegrationContext integrationContext;
+  private NavigationPolicy.State integrationState;
+  private String launchedNonce;
+  private boolean integrationBusy, integrationFailed;
+  private long integrationEpoch;
+  private String integrationMessage = "";
+  private final ActivityResultLauncher<Intent> discoveryRoute =
+      registerForActivityResult(
+          new ActivityResultContracts.StartActivityForResult(),
+          result -> receiveDiscovery(result.getResultCode(), result.getData()));
+
+  public IntegrationContext integrationContextForTest() {
+    return integrationContext;
+  }
+
+  public NavigationPolicy.State integrationStateForTest() {
+    return integrationState;
+  }
+
+  private final OnBackPressedCallback backCallback =
+      new OnBackPressedCallback(false) {
+        @Override
+        public void handleOnBackPressed() {
+          navigateBack();
+        }
+      };
   private String resultsKey = null, favoritesKey = null;
   private boolean mapFromDetail, resumed, locationResultPending;
   private HomeHost host;
@@ -69,8 +98,33 @@ public final class GameHomeActivity extends AppCompatActivity {
 
   public void setDebugClockForTest(long value) {
     if (BuildConfig.DEBUG && fake && host != null) {
-      host.setFakeNow(value);
-      host.tick(snapshot().progress);
+      if (integrationContext != null) {
+        if (integrationBusy) return;
+        IntegrationContext next = integrationContext.withFakeNow(value);
+        integrationBusy = true;
+        renderIntegrationStatus();
+        integrationWorker.execute(
+            () -> {
+              boolean saved = new NavigationStore(this).saveClock(next);
+              runOnUiThread(
+                  () -> {
+                    if (isDestroyed() || isFinishing()) return;
+                    integrationBusy = false;
+                    if (!saved) {
+                      failIntegration();
+                      return;
+                    }
+                    integrationContext = next;
+                    IntegrationIntentCodec.writeContext(getIntent(), next);
+                    host.setFakeNow(value);
+                    host.tick(snapshot().progress);
+                    renderIntegrationStatus();
+                  });
+            });
+      } else {
+        host.setFakeNow(value);
+        host.tick(snapshot().progress);
+      }
     }
   }
 
@@ -95,6 +149,52 @@ public final class GameHomeActivity extends AppCompatActivity {
           view.setPadding(bars.left, bars.top, bars.right, bars.bottom);
           return insets;
         });
+    if (IntegrationIntentCodec.hasIntegrationContext(getIntent())) {
+      integrationContext =
+          BuildConfig.DEBUG ? IntegrationIntentCodec.readContext(getIntent()) : null;
+      if (saved != null) {
+        Intent retained = saved.getParcelable("h06_context");
+        if (retained != null) {
+          IntegrationContext c = IntegrationIntentCodec.readContext(retained);
+          if (c == null
+              || integrationContext == null
+              || !c.runId.equals(integrationContext.runId)
+              || c.clock != integrationContext.clock) {
+            failIntegration();
+            return;
+          }
+          integrationContext = c;
+        }
+        launchedNonce = saved.getString("h06_nonce");
+      }
+      if (integrationContext == null) {
+        failIntegration();
+        return;
+      }
+      IntegrationContext requested = integrationContext;
+      integrationWorker.execute(
+          () -> {
+            try {
+              NavigationPolicy.State state = IntegrationRouteAccess.bound(this, requested);
+              IntegrationRouteAccess.readProgress(this, state.context);
+              runOnUiThread(
+                  () -> {
+                    if (isDestroyed() || isFinishing()) return;
+                    integrationContext = state.context;
+                    integrationState = state;
+                    IntegrationIntentCodec.writeContext(getIntent(), integrationContext);
+                    initializeHome(saved);
+                  });
+            } catch (Exception failure) {
+              runOnUiThread(this::failIntegration);
+            }
+          });
+      return;
+    }
+    initializeHome(saved);
+  }
+
+  private void initializeHome(Bundle saved) {
     run = BuildConfig.DEBUG ? getIntent().getStringExtra(EXTRA_DEBUG_RUN) : null;
     fake = BuildConfig.DEBUG && getIntent().hasExtra(EXTRA_DEBUG_CLOCK);
     try {
@@ -117,18 +217,24 @@ public final class GameHomeActivity extends AppCompatActivity {
       return;
     }
     long now =
-        saved != null && saved.containsKey("clock")
-            ? saved.getLong("clock")
-            : getIntent().getLongExtra(EXTRA_DEBUG_CLOCK, 0);
+        integrationContext != null && integrationContext.fakeNow != null
+            ? integrationContext.fakeNow
+            : saved != null && saved.containsKey("clock")
+                ? saved.getLong("clock")
+                : getIntent().getLongExtra(EXTRA_DEBUG_CLOCK, 0);
     host = new HomeHost(this, run, fake, now);
     controller = new HomeController(host, this::render);
     host.attach(controller);
+    if (integrationContext != null)
+      controller.restore(HomeState.Screen.HOME, integrationContext.mode, "", "", false, null);
     if (saved != null) {
       mapFromDetail = saved.getBoolean("mapFromDetail");
       try {
         controller.restore(
             HomeState.Screen.valueOf(saved.getString("screen")),
-            Progress.Mode.valueOf(saved.getString("mode")),
+            integrationContext != null
+                ? integrationContext.mode
+                : Progress.Mode.valueOf(saved.getString("mode")),
             saved.getString("query", ""),
             saved.getString("category", ""),
             saved.getBoolean("favorites"),
@@ -153,7 +259,16 @@ public final class GameHomeActivity extends AppCompatActivity {
               controller.location(message);
             });
     bind();
+    if (integrationContext != null) {
+      findViewById(R.id.game_home_discovery).setVisibility(View.GONE);
+      ((TextView) findViewById(R.id.game_home_prototype))
+          .setText(R.string.game_integration_home_action);
+    }
     render(snapshot());
+    if (resumed) {
+      controller.resume();
+      handler.postDelayed(tick, 1000);
+    }
   }
 
   private void bind() {
@@ -161,11 +276,14 @@ public final class GameHomeActivity extends AppCompatActivity {
     click(R.id.game_home_retry, () -> controller.retry());
     click(
         R.id.game_home_mode,
-        () ->
-            controller.mode(
-                snapshot().mode == Progress.Mode.NORMAL
-                    ? Progress.Mode.DEMO
-                    : Progress.Mode.NORMAL));
+        () -> {
+          if (integrationContext != null) {
+            switchIntegrationMode();
+            return;
+          }
+          controller.mode(
+              snapshot().mode == Progress.Mode.NORMAL ? Progress.Mode.DEMO : Progress.Mode.NORMAL);
+        });
     click(R.id.game_home_search, () -> controller.navigate(HomeState.Screen.SEARCH));
     click(
         R.id.game_home_map,
@@ -257,6 +375,10 @@ public final class GameHomeActivity extends AppCompatActivity {
   }
 
   private void openIntro() {
+    if (integrationContext != null) {
+      openIntegration();
+      return;
+    }
     Intent i =
         new Intent(this, IntroQuizActivity.class)
             .putExtra("game_intro_building_id", HomeHost.TARGET)
@@ -267,11 +389,225 @@ public final class GameHomeActivity extends AppCompatActivity {
     startActivity(i);
   }
 
+  private void failIntegration() {
+    if (isDestroyed() || isFinishing()) return;
+    integrationBusy = true;
+    integrationFailed = true;
+    ((TextView) findViewById(R.id.game_home_status)).setText(R.string.game_integration_error);
+    for (int id :
+        new int[] {
+          R.id.game_home_panel,
+          R.id.game_home_search_panel,
+          R.id.game_home_detail_panel,
+          R.id.game_map_panel,
+          R.id.game_profile_content,
+          R.id.game_ending_content,
+          R.id.game_home_retry
+        }) show(id, false);
+    show(R.id.game_home_back, true);
+    findViewById(R.id.game_home_back).setOnClickListener(v -> finish());
+  }
+
+  private void renderIntegrationStatus() {
+    if (integrationContext == null) return;
+    String clock =
+        getString(
+            integrationContext.clock == IntegrationContext.Clock.REAL
+                ? R.string.game_integration_real_clock
+                : R.string.game_integration_fake_clock);
+    String text =
+        getString(R.string.game_integration_disclosure)
+            + "\n"
+            + getString(
+                R.string.game_integration_context,
+                integrationContext.runId,
+                integrationContext.mode.name(),
+                clock);
+    if (integrationState != null && integrationState.phase == NavigationPolicy.Phase.PENDING)
+      text += "\n" + getString(R.string.game_integration_pending);
+    if (!integrationMessage.isEmpty()) text += "\n" + integrationMessage;
+    ((TextView) findViewById(R.id.game_integration_home_context)).setText(text);
+    show(R.id.game_integration_home_context, true);
+    findViewById(R.id.game_home_mode).setEnabled(!integrationBusy);
+    findViewById(R.id.game_home_prototype)
+        .setEnabled(!integrationBusy && snapshot() != null && !snapshot().loading);
+  }
+
+  private void switchIntegrationMode() {
+    if (integrationBusy) return;
+    IntegrationContext old = integrationContext;
+    IntegrationContext next =
+        IntegrationContext.create(
+            old.datasetId,
+            old.runId,
+            old.targetId,
+            old.mode == Progress.Mode.NORMAL ? Progress.Mode.DEMO : Progress.Mode.NORMAL,
+            old.clock,
+            old.fakeNow);
+    integrationBusy = true;
+    renderIntegrationStatus();
+    integrationWorker.execute(
+        () -> {
+          try {
+            NavigationPolicy.State state = IntegrationRouteAccess.bound(this, next);
+            runOnUiThread(
+                () -> {
+                  if (isDestroyed() || isFinishing()) return;
+                  integrationBusy = false;
+                  integrationState = state;
+                  integrationContext = state.context;
+                  integrationMessage = "";
+                  IntegrationIntentCodec.writeContext(getIntent(), integrationContext);
+                  if (fake) host.setFakeNow(integrationContext.fakeNow);
+                  controller.mode(integrationContext.mode);
+                  renderIntegrationStatus();
+                });
+          } catch (Exception failure) {
+            runOnUiThread(this::failIntegration);
+          }
+        });
+  }
+
+  /** Explicit user action recovers durable pending/accepted/consumed navigation. */
+  private void openIntegration() {
+    if (integrationBusy || !resumed) return;
+    IntegrationContext requested = integrationContext;
+    long epoch = integrationEpoch;
+    integrationBusy = true;
+    renderIntegrationStatus();
+    integrationWorker.execute(
+        () -> {
+          try {
+            NavigationStore store = new NavigationStore(this);
+            NavigationPolicy.State state = IntegrationRouteAccess.bound(this, requested);
+            Progress progress = IntegrationRouteAccess.readProgress(this, state.context);
+            Intent destination;
+            String nonce = null;
+            if (progress.introDoneAt != null || state.phase == NavigationPolicy.Phase.CONSUMED) {
+              destination = new Intent(this, IntroQuizActivity.class);
+              IntegrationIntentCodec.writeContext(destination, state.context);
+            } else if (state.phase == NavigationPolicy.Phase.ACCEPTED) {
+              if (!store.consume(state.context, state.nonce)) throw new IllegalStateException();
+              state = store.load(state.context);
+              destination = new Intent(this, IntroQuizActivity.class);
+              IntegrationIntentCodec.writeContext(destination, state.context);
+            } else {
+              nonce =
+                  state.phase == NavigationPolicy.Phase.PENDING
+                      ? state.nonce
+                      : UUID.randomUUID().toString();
+              if (state.phase == NavigationPolicy.Phase.EMPTY && !store.begin(state.context, nonce))
+                throw new IllegalStateException();
+              state = store.load(state.context);
+              destination = new Intent(this, DiscoveryActivity.class);
+              IntegrationIntentCodec.writeRequest(destination, state.context, nonce);
+            }
+            NavigationPolicy.State latest = state;
+            String requestNonce = nonce;
+            runOnUiThread(
+                () -> {
+                  if (isDestroyed() || isFinishing()) return;
+                  integrationBusy = false;
+                  integrationState = latest;
+                  integrationContext = latest.context;
+                  renderIntegrationStatus();
+                  if (!resumed || integrationEpoch != epoch) return;
+                  if (requestNonce != null) {
+                    launchedNonce = requestNonce;
+                    discoveryRoute.launch(destination);
+                  } else startActivity(destination);
+                });
+          } catch (Exception failure) {
+            runOnUiThread(this::failIntegration);
+          }
+        });
+  }
+
+  private void receiveDiscovery(int code, Intent data) {
+    if (integrationContext == null) return;
+    final String nonce = launchedNonce;
+    launchedNonce = null;
+    final IntegrationContext requested = integrationContext;
+    if (nonce == null) {
+      integrationMessage = getString(R.string.game_integration_rejected);
+      renderIntegrationStatus();
+      return;
+    }
+    integrationBusy = true;
+    renderIntegrationStatus();
+    integrationWorker.execute(
+        () -> {
+          try {
+            NavigationStore store = new NavigationStore(this);
+            boolean accepted = false;
+            boolean canceled = code == RESULT_CANCELED;
+            if (canceled) store.cancel(requested, nonce);
+            else if (code == RESULT_OK) {
+              IntegrationResult result = IntegrationIntentCodec.readResult(data);
+              if (result != null
+                  && requested.equalsIdentity(result.context)
+                  && nonce.equals(result.nonce))
+                accepted = store.accept(result) && store.consume(requested, nonce);
+            }
+            NavigationPolicy.State state = store.load(requested);
+            if (state == null) throw new IllegalStateException();
+            boolean launch = accepted;
+            runOnUiThread(
+                () -> {
+                  if (isDestroyed() || isFinishing()) return;
+                  integrationBusy = false;
+                  integrationState = state;
+                  integrationContext = state.context;
+                  integrationMessage =
+                      getString(
+                          launch
+                              ? R.string.game_integration_accepted
+                              : canceled
+                                  ? R.string.game_integration_canceled
+                                  : R.string.game_integration_rejected);
+                  renderIntegrationStatus();
+                  if (launch && resumed) {
+                    Intent next = new Intent(this, IntroQuizActivity.class);
+                    IntegrationIntentCodec.writeContext(next, state.context);
+                    startActivity(next);
+                  }
+                });
+          } catch (Exception failure) {
+            runOnUiThread(this::failIntegration);
+          }
+        });
+  }
+
+  private void refreshIntegration() {
+    if (integrationContext == null || integrationBusy) return;
+    IntegrationContext requested = integrationContext;
+    integrationWorker.execute(
+        () -> {
+          try {
+            NavigationPolicy.State state = IntegrationRouteAccess.bound(this, requested);
+            runOnUiThread(
+                () -> {
+                  if (isDestroyed()
+                      || isFinishing()
+                      || !requested.equalsIdentity(integrationContext)) return;
+                  integrationState = state;
+                  integrationContext = state.context;
+                  IntegrationIntentCodec.writeContext(getIntent(), state.context);
+                  if (fake && host != null) host.setFakeNow(state.context.fakeNow);
+                  if (resumed && controller != null) controller.resume();
+                  renderIntegrationStatus();
+                });
+          } catch (Exception failure) {
+            runOnUiThread(this::failIntegration);
+          }
+        });
+  }
+
   private void requestLocation() {
     if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED
-            || checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
+            != PackageManager.PERMISSION_GRANTED
+        || checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED) {
       requestPermissions(
           new String[] {
             Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION
@@ -302,6 +638,10 @@ public final class GameHomeActivity extends AppCompatActivity {
   }
 
   private void render(HomeState s) {
+    if (integrationFailed) {
+      failIntegration();
+      return;
+    }
     if (s == null) return;
     backCallback.setEnabled(s.screen != HomeState.Screen.HOME);
     binding = true;
@@ -342,7 +682,11 @@ public final class GameHomeActivity extends AppCompatActivity {
         .setText(getString(R.string.game_home_mode_format, s.mode.name()));
     ((TextView) findViewById(R.id.game_profile_content))
         .setText(
-            getString(R.string.game_home_profile_format, getString(R.string.game_home_local_profile), s.mode.name(), status));
+            getString(
+                R.string.game_home_profile_format,
+                getString(R.string.game_home_local_profile),
+                s.mode.name(),
+                status));
     ((TextView) findViewById(R.id.game_ending_content))
         .setText(
             s.endingAvailable ? R.string.game_home_ending_open : R.string.game_home_ending_locked);
@@ -371,8 +715,14 @@ public final class GameHomeActivity extends AppCompatActivity {
     if (f != null) {
       ((TextView) findViewById(R.id.game_home_detail_content))
           .setText(
-              getString(R.string.game_home_detail_format, f.name, f.category, f.summary,
-                  f.locationStatus, f.hoursStatus, getString(R.string.game_home_no_coordinate)));
+              getString(
+                  R.string.game_home_detail_format,
+                  f.name,
+                  f.category,
+                  f.summary,
+                  f.locationStatus,
+                  f.hoursStatus,
+                  getString(R.string.game_home_no_coordinate)));
       ((Button) findViewById(R.id.game_home_detail_favorite))
           .setText(
               s.favoriteIds.contains(f.id)
@@ -391,7 +741,11 @@ public final class GameHomeActivity extends AppCompatActivity {
     ((TextView) findViewById(R.id.game_map_selection))
         .setText(
             mapFromDetail && f != null
-                ? getString(R.string.game_home_selected_map_format, f.name, f.id, getString(R.string.game_home_no_coordinate))
+                ? getString(
+                    R.string.game_home_selected_map_format,
+                    f.name,
+                    f.id,
+                    getString(R.string.game_home_no_coordinate))
                 : getString(R.string.game_home_no_coordinate));
     ((TextView) findViewById(R.id.game_map_status))
         .setText(
@@ -399,6 +753,7 @@ public final class GameHomeActivity extends AppCompatActivity {
                 ? getString(R.string.game_home_location_initial)
                 : s.locationMessage);
     ((TextView) findViewById(R.id.game_map_tile_status)).setText(s.tileMessage);
+    renderIntegrationStatus();
     binding = false;
   }
 
@@ -428,7 +783,8 @@ public final class GameHomeActivity extends AppCompatActivity {
       TextView empty = new TextView(this);
       empty.setText(R.string.game_home_empty);
       empty.setTextColor(getColor(R.color.game_color_text));
-      empty.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX,
+      empty.setTextSize(
+          android.util.TypedValue.COMPLEX_UNIT_PX,
           getResources().getDimension(R.dimen.game_text_body));
       parent.addView(empty);
     }
@@ -442,6 +798,7 @@ public final class GameHomeActivity extends AppCompatActivity {
   protected void onResume() {
     super.onResume();
     resumed = true;
+    refreshIntegration();
     if (controller != null) {
       map.active(true);
       controller.resume();
@@ -453,6 +810,7 @@ public final class GameHomeActivity extends AppCompatActivity {
   @Override
   protected void onPause() {
     resumed = false;
+    integrationEpoch++;
     handler.removeCallbacks(tick);
     if (controller != null) {
       controller.pause();
@@ -467,12 +825,19 @@ public final class GameHomeActivity extends AppCompatActivity {
     if (location != null) location.close();
     if (map != null) map.close();
     if (host != null) host.close();
+    integrationWorker.shutdown();
     super.onDestroy();
   }
 
   @Override
   protected void onSaveInstanceState(Bundle out) {
     super.onSaveInstanceState(out);
+    if (integrationContext != null) {
+      Intent retained = new Intent();
+      IntegrationIntentCodec.writeContext(retained, integrationContext);
+      out.putParcelable("h06_context", retained);
+      out.putString("h06_nonce", launchedNonce);
+    }
     HomeState s = snapshot();
     if (s == null) return;
     out.putBoolean("mapFromDetail", mapFromDetail);
