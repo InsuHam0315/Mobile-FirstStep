@@ -13,5 +13,5 @@
 - Keep replaceable Java/XML presentation separate from game rules, storage, clocks, and device APIs. Follow `docs/harness/UI_BOUNDARIES.md`.
 - Use the requested coordinator -> Sol PM -> Terra/Luna specialist hierarchy only for bounded useful work. Read `docs/harness/ROUTING.md`; do not silently invent model IDs.
 - Assign one branch/worktree and an explicit write scope per implementation task. Workers are not alone: preserve others' edits, and request a PM-owned change for shared files.
-- The current checkout contains pre-existing uncommitted app changes. New Git worktrees do not include them. Establish the baseline described in the harness before creating app feature worktrees; never reset/stash/delete them automatically.
+- New Git worktrees do not include uncommitted edits. Use the recorded reviewed baseline in the task board, checkpoint any later pre-existing app changes before branching, and never reset/stash/delete them automatically.
 - A written agent profile is configuration, not evidence that the role ran. Record the actual model, base SHA, commands, outcomes, and remaining limits in each handoff.

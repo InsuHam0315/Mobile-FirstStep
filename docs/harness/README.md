@@ -6,7 +6,7 @@ Status: harness setup only. The new game is not implemented. Date: 2026-11-06.
 
 1. Read this file and `tasks.json`; select one authorized task, not the whole backlog.
 2. Read `ROUTING.md`, then only its task packet and relevant code. Use `PROMPTS.md` for short dispatches.
-3. Before app feature work, checkpoint the existing uncommitted app work after a scoped diff/secret review. Record the baseline SHA in `tasks.json`. Do not silently omit the facilities, camera, or map improvements.
+3. Use the reviewed baseline SHA in `tasks.json`. If new uncommitted app work exists, review/checkpoint it and advance the baseline before branching. Do not silently omit facilities, camera, or map improvements.
 4. Create the task branch/worktree using `scripts/harness.py new-worktree TASK_ID`. The command fails on dirty checkouts, inactive tasks, missing dependencies, or an unrecorded baseline.
 5. Implement within ownership, run relevant checks, obtain an independent review, then let the coordinator integrate. Only the coordinator changes shared build/manifest/navigation contracts or the task board.
 6. Record a short handoff. A task is complete only when its acceptance criteria and required checks pass; preserve unresolved device/field limitations.
@@ -30,7 +30,7 @@ Candidate core: five destination episodes, free order, fairy discovery/summoning
 
 Pending explicit selections: legacy facility directory/favorites, photo capture as an optional feature, real-map fallback, legacy ARCore, Google login/Firebase Auth, Firestore, cloud photos, Gemini RAG, school identity, old backend retention, mandatory student ID. The PDF excludes servers while earlier discussion requested Firebase/chat. Do not resolve that conflict by silently enabling either architecture.
 
-The initial harness branch is `codex/game-harness`. Existing app edits remain in the current checkout and are outside the harness commit. Do not claim a feature worktree contains them until a baseline commit includes them. No automatic push or publication is part of harness setup.
+The initial harness branch is `codex/game-harness`. At the user's explicit request, pre-existing app edits and the harness were checkpointed together in `6dc8af1` and included on `main`. The task board records that baseline; feature worktrees must descend from it. Pushes are performed only within user authorization, not automatically by task scripts.
 
 ## Planned branch sequence
 
