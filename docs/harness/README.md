@@ -1,6 +1,6 @@
 # FirstStep Codex implementation harness
 
-Status (2026-11-06): H01 accepted and integrated at 0c5f633 after permission-isolation repair. H02/progress is ready under CORE_GAME_SCOPE.md; the full new game is not implemented.
+Status (2026-11-06): H01 integrated at0c5f633. H02/progress passed management re-review after strict JSON-type repair and fresh integration checks; see reviews/H02-management.md. H03/discovery is the next bounded slice under H03_SCOPE.md. The full new game is not implemented.
 
 ## Start here
 
@@ -30,7 +30,7 @@ The 2026-11-06 game PDF is a design input, not permission to delete working code
 
 Confirmed core per the supplied game design: five destination episodes, free order, fairy discovery/summoning, TTS + captions, per-building quiz eligibility 15 minutes after introduction, three-question quizzes (2/3 pass), stamps, ending. See CORE_GAME_SCOPE.md. Specification approval is not a claim these features have shipped.
 
-Pending explicit selections: legacy facility directory/favorites, photo capture as an optional feature, real-map fallback, legacy ARCore, Google login/Firebase Auth, Firestore, cloud photos, Gemini RAG, school identity, old backend retention, mandatory student ID. The PDF excludes servers while earlier discussion requested Firebase/chat. Do not resolve that conflict by silently enabling either architecture.
+Google sign-in and mandatory first-login name/student-number/department are selected for a later slice; first real content validation targets the software department. See PRODUCT_DECISIONS.md. Still separate choices/configuration: legacy facility directory/favorites, optional photo capture, real-map fallback, legacy ARCore, Firebase provider/project configuration, Firestore, cloud photos, Gemini RAG, verified school identity and old backend retention. The PDF excludes servers from its core while later user messages select sign-in. Do not silently expand a local module into cloud integration.
 
 The initial harness branch is `codex/game-harness`. At the user's explicit request, pre-existing app edits and the harness were checkpointed together in `6dc8af1` and included on `main`. The task board records that baseline; feature worktrees must descend from it. Pushes are performed only within user authorization, not automatically by task scripts.
 
