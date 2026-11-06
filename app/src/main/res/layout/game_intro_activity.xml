@@ -1,0 +1,22 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/game_intro_scroll" android:fitsSystemWindows="true" android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="@dimen/game_space_medium">
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_intro_title" android:textSize="@dimen/game_text_title" android:textColor="@color/game_color_text" />
+        <TextView android:id="@+id/game_intro_target" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="@dimen/game_text_body" android:textColor="@color/game_color_text" android:visibility="gone" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_intro_disclosure" android:textColor="@color/game_color_text" />
+        <Button android:id="@+id/game_intro_demo" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_intro_demo" />
+        <TextView android:id="@+id/game_intro_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="@dimen/game_text_body" android:textColor="@color/game_color_text" />
+        <TextView android:id="@+id/game_intro_caption" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="@dimen/game_text_body" android:textColor="@color/game_color_text" />
+        <Button android:id="@+id/game_intro_replay" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_intro_replay" />
+        <Button android:id="@+id/game_intro_next" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_intro_next" />
+        <Button android:id="@+id/game_intro_finish" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_intro_finish" />
+        <Button android:id="@+id/game_intro_skip" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_intro_skip" />
+        <Button android:id="@+id/game_intro_reminder" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_intro_reminder" />
+        <Button android:id="@+id/game_quiz_start" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_intro_start" />
+        <Button android:id="@+id/game_intro_show_again" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_intro_show_again" />
+        <LinearLayout android:id="@+id/game_quiz_questions" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" />
+        <Button android:id="@+id/game_quiz_submit" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_intro_submit" />
+        <Button android:id="@+id/game_quiz_retry" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_intro_retry" />
+        <TextView android:id="@+id/game_quiz_result" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="@dimen/game_text_body" android:textColor="@color/game_color_text" />
+        <Button android:id="@+id/game_intro_back" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_intro_back" />
+    </LinearLayout>
+</ScrollView>
