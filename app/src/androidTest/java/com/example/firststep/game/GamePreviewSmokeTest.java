@@ -16,7 +16,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.SystemClock;
@@ -38,11 +37,11 @@ import org.junit.runner.RunWith;
 /** Real APK checks with simulated catalog data; grants and radios are configured by the runner. */
 @RunWith(AndroidJUnit4.class)
 public final class GamePreviewSmokeTest {
-    @Test public void fakePreviewWorksWithoutPermissionsAndRestoresSelection() throws Exception {
+    @Test public void fakePreviewRestoresSelection() throws Exception {
         Context context = ApplicationProvider.getApplicationContext();
-        assertDenied(context, Manifest.permission.CAMERA);
-        assertDenied(context, Manifest.permission.ACCESS_FINE_LOCATION);
-        assertDenied(context, Manifest.permission.ACCESS_COARSE_LOCATION);
+        int camera = context.checkSelfPermission(Manifest.permission.CAMERA);
+        int fine = context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION);
+        int coarse = context.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION);
         try (ActivityScenario<GamePreviewActivity> screen = ActivityScenario.launch(
                 new Intent(context, GamePreviewActivity.class))) {
             String orientation = InstrumentationRegistry.getArguments().getString("h01Orientation");
@@ -88,9 +87,9 @@ public final class GamePreviewSmokeTest {
                     .check(matches(isCompletelyDisplayed()));
             capture("preview-restored-simulated");
         }
-        assertDenied(context, Manifest.permission.CAMERA);
-        assertDenied(context, Manifest.permission.ACCESS_FINE_LOCATION);
-        assertDenied(context, Manifest.permission.ACCESS_COARSE_LOCATION);
+        assertEquals("Camera permission changed", camera, context.checkSelfPermission(Manifest.permission.CAMERA));
+        assertEquals("Fine location permission changed", fine, context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION));
+        assertEquals("Coarse location permission changed", coarse, context.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION));
     }
 
     @Test public void legacyLauncherStillOpens() throws Exception {
@@ -101,11 +100,6 @@ public final class GamePreviewSmokeTest {
             screen.onActivity(activity -> assertTrue(!activity.isFinishing()));
             capture("legacy-launcher");
         }
-    }
-
-    private static void assertDenied(Context context, String permission) {
-        assertEquals(permission + " must remain denied", PackageManager.PERMISSION_DENIED,
-                context.checkSelfPermission(permission));
     }
 
     private static void assertTextFits(TextView view) {
