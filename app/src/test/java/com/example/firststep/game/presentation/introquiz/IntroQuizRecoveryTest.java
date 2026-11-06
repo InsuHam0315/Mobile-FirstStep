@@ -16,10 +16,11 @@ public class IntroQuizRecoveryTest {
     final Map<Progress.Mode, Progress> rows = new EnumMap<>(Progress.Mode.class);
     boolean fail;
     int reads;
+    int failAtRead = -1;
 
     public Progress read(Progress.Mode mode, String id) {
       reads++;
-      if (fail) throw new IllegalStateException();
+      if (fail || reads == failAtRead) throw new IllegalStateException();
       return rows.getOrDefault(mode, Progress.empty(mode, id));
     }
 
@@ -323,7 +324,8 @@ public class IntroQuizRecoveryTest {
     c.pause();
     c.resume();
     IntroQuizController recreated = f.controller(Progress.Mode.NORMAL, false, Runnable::run);
-    recreated.restore(c.snapshot().sentence, c.wantsIntroduction(), null, null, null, null, null, null, null);
+    recreated.restore(
+        c.snapshot().sentence, c.wantsIntroduction(), null, null, null, null, null, null, null);
     c.pause();
     recreated.resume();
     queue.remove(0).run();
@@ -364,8 +366,16 @@ public class IntroQuizRecoveryTest {
     assertEquals(IntroQuizController.Stage.LOADING, loading.snapshot().stage);
     assertEquals(result, loading.resultIdToRestore());
     IntroQuizController recreated = f.controller(Progress.Mode.NORMAL, false, Runnable::run);
-    recreated.restore(0, loading.wantsIntroduction(), null, null, null,
-        loading.resultIdToRestore(), null, null, null);
+    recreated.restore(
+        0,
+        loading.wantsIntroduction(),
+        null,
+        null,
+        null,
+        loading.resultIdToRestore(),
+        null,
+        null,
+        null);
     loading.pause();
     queue.remove(0).run();
     recreated.resume();
@@ -373,5 +383,210 @@ public class IntroQuizRecoveryTest {
     assertEquals(result, recreated.snapshot().result.attemptId);
     assertFalse(recreated.snapshot().result.passed);
     assertEquals(1, recreated.snapshot().progress.history.size());
+  }
+
+  private static Map<String, String> answers(String option) {
+    Map<String, String> values = new LinkedHashMap<>();
+    for (int n = 0; n < 3; n++) values.put("q" + n, option);
+    return values;
+  }
+
+  private static void selectAll(IntroQuizController controller, String option) {
+    for (int n = 0; n < 3; n++) controller.choose("q" + n, option);
+  }
+
+  @Test
+  public void conflictingLiveSubmissionShowsAuthoritativePass() {
+    Fixture f = new Fixture();
+    IntroQuizController winner = f.started();
+    IntroQuizController loser = f.controller(Progress.Mode.NORMAL, false, Runnable::run);
+    loser.resume();
+    String id = winner.snapshot().progress.active.id;
+    selectAll(winner, "a");
+    selectAll(loser, "b");
+    winner.submit();
+    loser.submit();
+    assertEquals(IntroQuizController.Stage.RESULT, loser.snapshot().stage);
+    assertEquals(id, loser.snapshot().result.attemptId);
+    assertTrue(loser.snapshot().result.passed);
+    assertEquals(answers("a"), loser.snapshot().result.answers);
+    assertNull(loser.pendingId());
+    assertEquals(1, f.repo.read(Progress.Mode.NORMAL, B).history.size());
+    loser.pause();
+    loser.resume();
+    assertEquals(IntroQuizController.Stage.RESULT, loser.snapshot().stage);
+  }
+
+  @Test
+  public void conflictingLiveSubmissionShowsFailedResultAndCurrentRetry() {
+    Fixture f = new Fixture();
+    IntroQuizController winner = f.started();
+    IntroQuizController loser = f.controller(Progress.Mode.NORMAL, false, Runnable::run);
+    loser.resume();
+    String original = winner.snapshot().progress.active.id;
+    selectAll(winner, "b");
+    selectAll(loser, "a");
+    winner.submit();
+    String retry = f.repo.read(Progress.Mode.NORMAL, B).active.id;
+    loser.submit();
+    assertEquals(IntroQuizController.Stage.RESULT, loser.snapshot().stage);
+    assertEquals(original, loser.snapshot().result.attemptId);
+    assertFalse(loser.snapshot().result.passed);
+    assertEquals(answers("b"), loser.snapshot().result.answers);
+    assertNull(loser.pendingId());
+    loser.retry();
+    assertEquals(IntroQuizController.Stage.QUIZ, loser.snapshot().stage);
+    assertEquals(retry, loser.snapshot().progress.active.id);
+    assertTrue(loser.snapshot().answers.isEmpty());
+  }
+
+  @Test
+  public void conflictingFailedResultRetryReflectsAlreadyAdvancedPass() {
+    Fixture f = new Fixture();
+    IntroQuizController winner = f.started();
+    IntroQuizController loser = f.controller(Progress.Mode.NORMAL, false, Runnable::run);
+    loser.resume();
+    String original = winner.snapshot().progress.active.id;
+    selectAll(winner, "b");
+    selectAll(loser, "a");
+    winner.submit();
+    winner.retry();
+    String retry = winner.snapshot().progress.active.id;
+    selectAll(winner, "a");
+    winner.submit();
+    loser.submit();
+    assertEquals(IntroQuizController.Stage.RESULT, loser.snapshot().stage);
+    assertEquals(original, loser.snapshot().result.attemptId);
+    assertFalse(loser.snapshot().result.passed);
+    assertNull(loser.pendingId());
+    loser.retry();
+    assertEquals(IntroQuizController.Stage.RESULT, loser.snapshot().stage);
+    assertTrue(loser.snapshot().result.passed);
+    assertEquals(retry, loser.snapshot().result.attemptId);
+    assertEquals(2, loser.snapshot().progress.history.size());
+  }
+
+  @Test
+  public void restoredConflictingPendingReconcilesWithoutOverwritingWinner() {
+    Fixture f = new Fixture();
+    IntroQuizController winner = f.started();
+    Progress.Attempt original = winner.snapshot().progress.active;
+    selectAll(winner, "b");
+    winner.submit();
+    IntroQuizController restored = f.controller(Progress.Mode.NORMAL, false, Runnable::run);
+    restored.restore(
+        0,
+        false,
+        answers("a"),
+        original.id,
+        original.contentVersion,
+        null,
+        original.id,
+        original.contentVersion,
+        answers("a"));
+    restored.resume();
+    assertEquals(IntroQuizController.Stage.RESULT, restored.snapshot().stage);
+    assertFalse(restored.snapshot().result.passed);
+    assertEquals(answers("b"), restored.snapshot().result.answers);
+    assertNull(restored.pendingId());
+    restored.retry();
+    assertEquals(IntroQuizController.Stage.QUIZ, restored.snapshot().stage);
+    assertNotEquals(original.id, restored.snapshot().progress.active.id);
+  }
+
+  @Test
+  public void transientSubmissionFailureRetainsPendingAndRetryPersistsOriginal() {
+    Fixture f = new Fixture();
+    IntroQuizController c = f.started();
+    String id = c.snapshot().progress.active.id;
+    selectAll(c, "a");
+    f.repo.fail = true;
+    c.submit();
+    assertEquals(IntroQuizController.Stage.ERROR, c.snapshot().stage);
+    assertEquals(id, c.pendingId());
+    assertEquals(answers("a"), c.pendingAnswers());
+    f.repo.fail = false;
+    c.retry();
+    assertEquals(IntroQuizController.Stage.RESULT, c.snapshot().stage);
+    assertTrue(c.snapshot().result.passed);
+    assertEquals(answers("a"), c.snapshot().result.answers);
+    assertNull(c.pendingId());
+    assertEquals(1, f.repo.read(Progress.Mode.NORMAL, B).history.size());
+  }
+
+  @Test
+  public void conflictReadFailureRetainsPendingUntilReconciliationSucceeds() {
+    Fixture f = new Fixture();
+    IntroQuizController winner = f.started();
+    IntroQuizController loser = f.controller(Progress.Mode.NORMAL, false, Runnable::run);
+    loser.resume();
+    String id = winner.snapshot().progress.active.id;
+    selectAll(winner, "a");
+    selectAll(loser, "b");
+    winner.submit();
+    f.repo.failAtRead = f.repo.reads + 2;
+    loser.submit();
+    assertEquals(IntroQuizController.Stage.ERROR, loser.snapshot().stage);
+    assertEquals(id, loser.pendingId());
+    assertEquals(answers("b"), loser.pendingAnswers());
+    loser.retry();
+    assertEquals(IntroQuizController.Stage.RESULT, loser.snapshot().stage);
+    assertEquals(answers("a"), loser.snapshot().result.answers);
+    assertNull(loser.pendingId());
+  }
+
+  @Test
+  public void conflictReconciliationStaysWithinModeAndBuilding() {
+    Fixture f = new Fixture();
+    IntroQuizController normal = f.started();
+    selectAll(normal, "a");
+    normal.submit();
+    Progress normalRecord = f.repo.read(Progress.Mode.NORMAL, B);
+    IntroQuizController winner = f.controller(Progress.Mode.DEMO, true, Runnable::run);
+    winner.resume();
+    winner.finish();
+    winner.start();
+    IntroQuizController loser = f.controller(Progress.Mode.DEMO, true, Runnable::run);
+    loser.resume();
+    String demoId = winner.snapshot().progress.active.id;
+    selectAll(winner, "b");
+    selectAll(loser, "a");
+    winner.submit();
+    loser.submit();
+    assertEquals(IntroQuizController.Stage.RESULT, loser.snapshot().stage);
+    assertEquals(Progress.Mode.DEMO, loser.snapshot().progress.mode);
+    assertEquals(B, loser.snapshot().progress.buildingId);
+    assertEquals(demoId, loser.snapshot().result.attemptId);
+    assertFalse(loser.snapshot().result.passed);
+    assertEquals(answers("b"), loser.snapshot().result.answers);
+    assertSame(normalRecord, f.repo.read(Progress.Mode.NORMAL, B));
+    assertTrue(normalRecord.stamp);
+  }
+
+  @Test
+  public void unknownOriginalAttemptRemainsFailClosedWithoutSubmittingCurrentRetry() {
+    Fixture f = new Fixture();
+    IntroQuizController active = f.started();
+    Progress.Attempt current = active.snapshot().progress.active;
+    IntroQuizController restored = f.controller(Progress.Mode.NORMAL, false, Runnable::run);
+    restored.restore(
+        0,
+        false,
+        answers("a"),
+        current.id,
+        current.contentVersion,
+        null,
+        "missing-attempt",
+        current.contentVersion,
+        answers("a"));
+    restored.resume();
+    assertEquals(IntroQuizController.Stage.ERROR, restored.snapshot().stage);
+    assertEquals("missing-attempt", restored.pendingId());
+    restored.retry();
+    assertEquals(IntroQuizController.Stage.ERROR, restored.snapshot().stage);
+    assertEquals("missing-attempt", restored.pendingId());
+    Progress untouched = f.repo.read(Progress.Mode.NORMAL, B);
+    assertEquals(current.id, untouched.active.id);
+    assertTrue(untouched.history.isEmpty());
   }
 }

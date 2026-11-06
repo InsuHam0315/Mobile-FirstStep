@@ -283,6 +283,19 @@ public final class IntroQuizController {
     answers.putAll(valid);
   }
 
+  // A conflicting payload can mean another host already committed this attempt.
+  // Reconcile only the original ID in the same repository key; all other failures remain visible.
+  private Progress submitAndReconcile(String id, String version, Map<String, String> submitted) {
+    try {
+      service.submit(mode, building, id, version, submitted);
+    } catch (IllegalArgumentException rejected) {
+      Progress current = service.read(mode, building);
+      if (!current.history.containsKey(id)) throw rejected;
+      return current;
+    }
+    return service.read(mode, building);
+  }
+
   public void resume() {
     active = true;
     if (restoredAttempt == null
@@ -300,7 +313,7 @@ public final class IntroQuizController {
         pendingAnswers == null ? null : new LinkedHashMap<>(pendingAnswers);
     load(
         () -> {
-          if (id != null && ver != null && a != null) service.submit(mode, building, id, ver, a);
+          if (id != null && ver != null && a != null) return submitAndReconcile(id, ver, a);
           return service.read(mode, building);
         },
         showIntro);
@@ -379,8 +392,7 @@ public final class IntroQuizController {
     final Map<String, String> a = new LinkedHashMap<>(pendingAnswers);
     load(
         () -> {
-          service.submit(mode, building, id, ver, a);
-          return service.read(mode, building);
+          return submitAndReconcile(id, ver, a);
         },
         false);
   }
