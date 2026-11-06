@@ -1,6 +1,14 @@
 # H06 management review
 
-2026-11-07 Asia/Seoul. Verdict: CHANGES_REQUIRED for tested checkpoint 586855f60de93d2d90dcd6b2e0111921e3b63498. Final handoff/candidate not yet submitted. Publication is not acceptance.
+2026-11-07 Asia/Seoul. Current verdict: repair code PASS at edf3848035d82f1538448ec2c0355e28ecafa15f; final handoff/candidate and main integration checks remain pending. The prior CHANGES_REQUIRED verdict for 586855f is retained below as history. Publication is not acceptance.
+
+## Repair review and publication
+
+Management root inspected the exact repair diff and retained logs; reused Sol PM and Terra independently found no actionable introduced issue. Prior P2 is closed. Pending mode survives pause/recreation, stale callbacks are rejected, and context/Intent/active controller are updated together after resume. HomeController is unchanged. Repair patch SHA256 14C7242481ADB89FA626C358659CDCF32E97B161A35D7E5EA5EDAD8256ACD2FD matches the committed evidence; full base candidate hash is 1C3020A8277FBA1ADD9F462EE7579E5DED400F1C58CD7C1EEE28C63206F917DF.
+
+Owner controlled APK regression failed both tests on v1, then the same two passed on repair. Root inspected raw RED/GREEN logs, 12 focused portrait and 12 large-font landscape passes, restart preparation/resume 1+1 and one existing home regression pass. Repair database invariant log reports 219 original files byte-identical, 16 new isolated files, none changed/missing. Required verification reports 51 tasks, 8 executed and 43 up-to-date; this is not a fresh management integration build. Owner final handoff, default-entry/cleanup reconciliation and documentation commit are still pending.
+
+Management pushed exact edf3848 to origin/integration and verified the remote SHA. Main application code remains unchanged until final candidate acceptance and integration verification. No H07 dispatch.
 
 ## Candidate and evidence
 
