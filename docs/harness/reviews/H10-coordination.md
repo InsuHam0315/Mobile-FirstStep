@@ -1,0 +1,10 @@
+# H10 independent content dispatch
+
+- User authorized required independent work while Firebase setup is pending (2026-11-08), relayed by their Dot coordinator. H07 identity/profile remains locally reviewed but unaccepted at d05dd6b; no H07B sync or concurrent H07 changes.
+- Reviewed accepted H06 composition and content contracts with existing verification PM. The present catalog/introduction are synthetic; database keys do not isolate by content version. Replacing the fixture asset would not create safe authored progress. Chosen scope is a separate sourced guide/practice with no progress writes, under H10_SCOPE.md.
+- Management checked four official university pages and recorded bounded paraphrased claims, three questions and provenance in SOFTWARE_CONTENT_SOURCES.md. Unknown arrival coordinates/room details and actual mission/story design remain explicit future gates.
+- Main scope commit 9e2386b327b4a089886edf2fe736a86117b24d3c pushed and remote SHA verified. Harness syntax/contracts passed for 11 tasks / 5 profiles. These are planning checks, not app test evidence.
+- Harness created branch campus-content at that exact base in C:/Users/InsuHam/FirstStep-worktrees/h10-campus-content. No credentials copied; no baseline-only feature push.
+- Compact implementation snapshot confirmed idle and no duplicate dispatch. One English H10 dispatch sent to authorized local implementation chat 01a1b03e-8027-7ad3-b54e-53c538832975. Active turn 01a1bb29-af74-7d32-946d-455362dd0539 acknowledged the H10 anchor and preservation of Firebase. This is actual start, not acceptance/completion.
+- Created the one branch journal 412ed980-d97e-81cc-815d-e8e8d8a5376a after checking duplicates. It records rationale, official sources, proposed checks and explicit not-yet-tested status.
+- Next: implementation handoff and independent acceptance/integration under the usual gates. After H10, reassess H07 real configuration and required authored-mission decisions; optional backlog is not automatically authorized.
