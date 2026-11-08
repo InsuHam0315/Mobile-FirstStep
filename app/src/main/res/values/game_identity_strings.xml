@@ -1,0 +1,30 @@
+<resources>
+ <string name="game_identity_title">Google 계정과 첫 프로필</string>
+ <string name="game_identity_live">Firebase Google 로그인</string>
+ <string name="game_identity_fake">모의 인증·프로필 시험 · 실제 Google 연결이 아닙니다</string>
+ <string name="game_identity_emulator">로컬 Firebase 에뮬레이터 시험 · 실제 Google 로그인은 확인하지 않았습니다</string>
+ <string name="game_identity_notice">계정별 프로필만 확인합니다. 기존·예시 탐방 기록은 이 계정으로 가져오거나 업로드하지 않습니다. 입력 정보는 대학 재학 여부를 증명하지 않습니다.</string>
+ <string name="game_identity_unconfigured">Firebase 설정이 없어 로그인할 수 없습니다. 설정 파일과 Google 사용 설정을 확인한 뒤 앱을 다시 빌드해 주세요.</string>
+ <string name="game_identity_logged_out">Google 계정을 선택해 로그인해 주세요.</string>
+ <string name="game_identity_auth_busy">계정 요청을 처리하고 있습니다. 로그아웃으로 취소할 수 있습니다.</string>
+ <string name="game_identity_loading">이 계정의 프로필을 서버에서 확인하고 있습니다.</string>
+ <string name="game_identity_saving">프로필을 서버에 저장하고 확인하고 있습니다.</string>
+ <string name="game_identity_complete">서버에서 확인한 계정 프로필입니다.</string>
+ <string name="game_identity_pending">아직 프로필 완료를 확인하지 못했습니다. 입력 내용을 유지하고 다시 시도할 수 있습니다.</string>
+ <string name="game_identity_cached">이 계정에 남아 있는 임시 프로필입니다. 서버 확인 전에는 완료로 처리하지 않습니다.</string>
+ <string name="game_identity_form_help">이름·학번·학과를 모두 입력해 주세요. 학번의 앞자리 0은 유지됩니다. 학과는 직접 입력하며 공식 목록을 가정하지 않습니다.</string>
+ <string name="game_identity_canceled">요청을 취소했습니다.</string>
+ <string name="game_identity_denied">서버 접근이 거부되었습니다. 이 계정의 권한과 Firestore 규칙을 확인해 주세요.</string>
+ <string name="game_identity_unavailable">네트워크 또는 인증 서비스를 이용할 수 없습니다. 연결을 확인하고 다시 시도해 주세요.</string>
+ <string name="game_identity_failed">요청을 완료하지 못했습니다. 기존 프로필을 지우지 않았습니다.</string>
+ <string name="game_identity_login">Google 계정 선택</string>
+ <string name="game_identity_reselect">다른 Google 계정 선택</string>
+ <string name="game_identity_logout">로그아웃 / 로그인 취소</string>
+ <string name="game_identity_save">프로필 저장</string>
+ <string name="game_identity_retry">다시 시도</string>
+ <string name="game_identity_name">이름 (필수, 최대 80자)</string>
+ <string name="game_identity_student">학번 (필수, 최대 40자)</string>
+ <string name="game_identity_department">학과 (필수, 최대 120자)</string>
+ <string name="game_identity_profile">이름: %1$s\n학번: %2$s\n학과: %3$s\n탐방 기록 동기화는 아직 연결하지 않았습니다.</string>
+ <string name="game_identity_back">닫기</string>
+</resources>
