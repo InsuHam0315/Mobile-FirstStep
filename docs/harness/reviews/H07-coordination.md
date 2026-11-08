@@ -10,3 +10,11 @@
 - No parallel implementation, H01 repair, credentials operation, remote settings deployment, main app integration or exploration synchronization was authorized or performed. Actual project configuration and interactive live checks remain required before identity/profile acceptance and subsequent sync dispatch.
 
 Use current H07_SCOPE.md and actual worktree evidence after compaction. A historical handoff cannot supersede the active assignment. Preserve H01/H07 worktrees and evidence; do not reset, stash or delete work to obtain a clean checkout.
+
+## Tested owner checkpoint publication
+
+- Owner code commit `b92b9f7595bf0ed146baa88759f18ecdf9914666` (`[firebase v1]`) contains 37 scoped files. Management inspected committed paths, config/rules/release factory and retained verification logs before publishing this exact SHA to `origin/firebase`; remote SHA matched. The untracked H07 handoff was not included.
+- The retained committed-source patch hash is `2D60ECB4F713F18EC8AD12C61035CCC55ADA720EAB0AA67A37C95219E105BB7E`; owner reports Sol/Terra source review PASS. Management acceptance review is still pending the complete handoff; publication is not acceptance.
+- Retained final evidence: 130 unit tests with zero failures/errors/skips; Lint zero errors/93 warnings; required verify 51 tasks with 3 executed/48 reused. Each of Portrait and font-1.6 LargeLandscape passed 11 unique cases across two instrumentation invocations (1 transport outage + 10 general), no skips. Not one uninterrupted 11-case run.
+- Evidence summary records 235 pre-existing database hashes unchanged. Real Android SDK uses synthetic local-emulator identity; no actual Google OAuth or deployed-profile verification. Owner reports two explicit UI retries plus SDK network reset for outage recovery, not automatic or single-click recovery.
+- Main app code remains unchanged. No remote Firebase deployment, H07 acceptance, main app integration or H07B dispatch. The owner remains active finalizing/reviewing the English handoff.
