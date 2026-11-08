@@ -1,6 +1,6 @@
 # FirstStep Codex implementation harness
 
-Status (2026-11-08): H01-H06 accepted/integrated; H06 is one simulated fixture-only loop at 25c0e6e (fresh 51 tasks/116 units). H07/firebase candidate d05dd6b passed local source/evidence review but awaits real project/live acceptance; it is not integrated. User authorized independent required work during that wait. H10/campus-content is the sole active implementation slice under H10_SCOPE.md, delivering sourced software-department guidance/practice without progress writes. Preserve H07; sync remains gated. The full authored game is not implemented.
+Status (2026-11-08): H01-H06 and H10 accepted/integrated. H10 final merge cd0f44f adds sourced software-department guidance/practice without progress writes; fresh integration 51 tasks/125 units passed, lint 0 errors/94 existing warnings. See reviews/H10-management.md. H07/firebase d05dd6b remains locally reviewed but awaiting real project/live acceptance, not integrated. No implementation currently dispatched: Firebase configuration and authored mission/arrival decisions remain separate gates; sync waits for H07. The full authored game is not implemented.
 
 ## Start here
 
