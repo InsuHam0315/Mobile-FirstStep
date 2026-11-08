@@ -14,7 +14,7 @@ Use one stable branch per module: `<module>` (no prefix), lowercase kebab-case. 
 | H04 | intro-quiz | intro-quiz |
 | H05 | map-home | map-home |
 | H06 | integration | integration |
-| H07 (pending choice) | firebase | firebase |
+| H07 (identity/profile, then sync) | firebase | firebase |
 | H08 (pending choice) | chatbot | chatbot |
 | H09 | reskin | reskin |
 

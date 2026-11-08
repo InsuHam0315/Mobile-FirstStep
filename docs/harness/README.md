@@ -45,7 +45,7 @@ The initial harness branch is `codex/game-harness`. At the user's explicit reque
 | H04 | intro-quiz | TTS captions, quiz UI, delayed eligibility and notifications | H02 |
 | H05 | map-home | Real map, facility search/favorites, home, local profile, ending; see H05_SCOPE.md | H02, H04 |
 | H06 | integration | One simulated fixture-only loop, isolated progress, recovery and visual tests; H06_SCOPE.md | H03-H05 |
-| H07 | firebase | Optional identity/sync adapter | H06 + explicit cloud selection |
+| H07 | firebase | Approved Google identity/first profile, then separately dispatched progress sync; H07_SCOPE.md | H06 + real configuration/verification gates |
 | H08 | chatbot | Optional sourced Gemini RAG feature/backend | H06 + explicit chatbot selection |
 | H09 | reskin | Apply user references to presentation and assets | H06 + design references |
 

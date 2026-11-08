@@ -20,6 +20,16 @@ Direct user selection on 2026-11-06: option 1, integrate existing facility searc
 
 This approves H05's legacyFeatures gate for these three capabilities only. Reuse existing data/adapters and preserve records; do not delete legacy launchers during this slice. Unverified coordinates stay labeled unverified, and facilities without authored missions must not fabricate an exploration flow. Unknown departments must not silently map to software. Optional photo capture, legacy tracked ARCore, cloud/backend migration and authentication are not approved by this choice. The first complete content target and sequential module gates remain unchanged.
 
+## Firebase identity, profile and later progress sync (2026-11-08)
+
+Direct user selection: option 1, store both profile and exploration progress in Firebase. Implement and verify Google sign-in plus first-login profile first; only after acceptance/integration proceed to exploration-record synchronization. Use Firebase Authentication (Google provider) and Cloud Firestore. H07 is identity/profile; H07B is the subsequent sync slice on the same stable firebase branch/journal, with increasing Korean versioned commits. Selection does not mean the project exists or live OAuth works.
+
+Keep the no-cost Spark plan, no billing upgrade or photo uploads/Functions/RAG in these slices. User configures the console project/Android registration/provider/Firestore. Management supplies verified package/fingerprints and setup instructions. Do not ask again whether Google or Firebase is selected.
+
+Profiles are private by Firebase UID, not student number/email; require name, student number (string, preserving leading zeros) and department before authenticated entry. No assumed student-number length or university enrollment verification. Use truthful department entry without inventing a complete official department catalog. Profile completion requires valid persisted data, not an unchecked local boolean. Cancellation/failed saves/incomplete profiles stay recoverable. Logout/account switch must stop previous user listeners and invalidate delayed callbacks/cache before another profile is shown.
+
+Never attach anonymous legacy data or H06 fixture progress to a signed-in account automatically. H07 writes no exploration records; H07B will define and test account/dataset/mode isolation and conflict handling before sync. Keep original databases and legacy prototypes intact.
+
 ## Clarification practice
 
 The user explicitly requested questions before implementation when product intent is ambiguous or a decision is genuinely required. Consult source documents and recorded decisions first; do not repeatedly ask about confirmed rules. Routine technical implementation, fixes and evidence-based verification remain autonomous. Keep future questions scoped to the next dependent module while progressing independent authorized work.
