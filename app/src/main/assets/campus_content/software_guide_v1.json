@@ -1,0 +1,120 @@
+{
+  "datasetId": "software_guide_v1",
+  "targetId": "digital_information_software",
+  "version": 1,
+  "contentVerification": "official_pages_checked",
+  "arrivalVerification": "unverified",
+  "sources": [
+    {
+      "id": "sw_location",
+      "url": "https://www.kunsan.ac.kr/sw/index.kunsan?menuCd=DOM_000009601004000000",
+      "checkedDate": "2026-11-08",
+      "label": "학과 위치 안내"
+    },
+    {
+      "id": "sw_greeting",
+      "url": "https://www.kunsan.ac.kr/sw/index.kunsan?menuCd=DOM_000009601000000000",
+      "checkedDate": "2026-11-08",
+      "label": "학과 소개"
+    },
+    {
+      "id": "sw_home",
+      "url": "https://www.kunsan.ac.kr/sw/index.kunsan",
+      "checkedDate": "2026-11-08",
+      "label": "소프트웨어학과 홈페이지"
+    },
+    {
+      "id": "college_home",
+      "url": "https://www.kunsan.ac.kr/ssw/index.kunsan",
+      "checkedDate": "2026-11-08",
+      "label": "컴퓨터소프트웨어특성화대학 홈페이지"
+    }
+  ],
+  "claims": [
+    {
+      "id": "college_membership",
+      "sourceId": "college_home",
+      "text": "소프트웨어학과는 컴퓨터소프트웨어특성화대학의 학과 목록에서 확인할 수 있어요."
+    },
+    {
+      "id": "office_guidance",
+      "sourceId": "sw_location",
+      "text": "학과 공식 위치 안내에는 디지털정보관 1층이 안내되어 있어요. 방문 전 최신 안내를 확인해 주세요."
+    },
+    {
+      "id": "learning_values",
+      "sourceId": "sw_greeting",
+      "text": "학과는 소통·융합·공유를 바탕으로 실무 소프트웨어 역량을 키우는 교육을 소개하고 있어요."
+    },
+    {
+      "id": "help_resources",
+      "sourceId": "sw_home",
+      "text": "학과 홈페이지에서 공지사항, 교과과정, 학사안내를 찾아볼 수 있어요. 최신 정보는 공식 홈페이지에서 확인해 주세요."
+    }
+  ],
+  "questions": [
+    {
+      "id": "location",
+      "claimId": "office_guidance",
+      "text": "소프트웨어학과 공식 위치 안내에 적힌 장소는 어디인가요?",
+      "options": [
+        {
+          "id": "digital_first",
+          "text": "디지털정보관 1층"
+        },
+        {
+          "id": "library",
+          "text": "도서관"
+        },
+        {
+          "id": "student_center",
+          "text": "학생회관"
+        }
+      ],
+      "answerId": "digital_first",
+      "explanation": "공식 위치 안내에는 디지털정보관 1층이 기재되어 있어요. 구체적인 방문 장소와 최신 안내는 학과 홈페이지에서 다시 확인해 주세요."
+    },
+    {
+      "id": "values",
+      "claimId": "learning_values",
+      "text": "학과 소개에서 강조하는 세 가지 가치는 무엇인가요?",
+      "options": [
+        {
+          "id": "communicate",
+          "text": "소통·융합·공유"
+        },
+        {
+          "id": "memorize",
+          "text": "암기·속도·경쟁"
+        },
+        {
+          "id": "isolate",
+          "text": "독립·비공개·반복"
+        }
+      ],
+      "answerId": "communicate",
+      "explanation": "학과 소개는 소통·융합·공유를 강조하며 실무 소프트웨어 교육을 설명하고 있어요."
+    },
+    {
+      "id": "notice",
+      "claimId": "help_resources",
+      "text": "학과의 최신 공지와 학사 안내를 확인하려면 어디를 먼저 살펴보면 좋을까요?",
+      "options": [
+        {
+          "id": "official",
+          "text": "학과 공식 홈페이지"
+        },
+        {
+          "id": "old_capture",
+          "text": "예전에 저장한 화면만 확인"
+        },
+        {
+          "id": "rumor",
+          "text": "출처 없는 소문만 확인"
+        }
+      ],
+      "answerId": "official",
+      "explanation": "학과 홈페이지에는 공지사항과 학사안내 메뉴가 있어요. 변경될 수 있는 정보는 공식 페이지에서 확인하는 것이 좋아요."
+    }
+  ]
+}
