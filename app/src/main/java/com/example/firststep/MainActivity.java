@@ -92,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
     page.addView(Ui.text(this, "낯선 캠퍼스에\n첫발자국을 남겨요", 32, Ui.INK, true));
     Ui.gap(page, 16);
     page.addView(Ui.text(this, "다섯 장소에 담긴 기억을 찾으며 우리 학교와 조금 더 친해지는 시간.", 16, Ui.MUTED, false));
+    addSoftwareGuideEntry();
     Ui.gap(page, 32);
     LinearLayout card = Ui.card(this);
     card.addView(Ui.label(this, "YOUR NAME"));
@@ -135,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
         "FIRST STEP  /  CAMPUS JOURNAL",
         repo.getNickname() + "님, 안녕하세요",
         "오늘은 캠퍼스의 어떤 기억을 만나 볼까요?");
+    addSoftwareGuideEntry();
     LinearLayout modeCard = Ui.card(this);
     modeCard.addView(Ui.label(this, mode == AppMode.DEMO ? "DEMO MODE" : "FIELD MODE"));
     Ui.gap(modeCard, 7);
@@ -233,6 +235,16 @@ public class MainActivity extends AppCompatActivity {
       page.addView(ending);
       ending.setOnClickListener(v->startActivity(new Intent(this,EndingActivity.class).putExtra("demo",mode==AppMode.DEMO)));
     }
+  }
+
+  private void addSoftwareGuideEntry() {
+    Ui.gap(page, 12);
+    Button guide = Ui.button(this, getString(R.string.game_guide_entry), false);
+    guide.setId(R.id.game_guide_entry);
+    page.addView(guide);
+    guide.setOnClickListener(v -> startActivity(new Intent(this,
+        com.example.firststep.game.ui.guide.GuideActivity.class)));
+    Ui.gap(page, 12);
   }
 
   private void catalog() {
