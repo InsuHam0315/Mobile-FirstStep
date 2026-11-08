@@ -17,6 +17,7 @@ Use one stable branch per module: `<module>` (no prefix), lowercase kebab-case. 
 | H07 (identity/profile, then sync) | firebase | firebase |
 | H08 (pending choice) | chatbot | chatbot |
 | H09 | reskin | reskin |
+| H10 (independent required content slice) | campus-content | campus-content |
 
 These are implementation responsibility boundaries, not a requirement to create a separate Gradle module for every branch. Existing decision gates and dependencies still apply. Keep main as the reviewed integration branch. Do not create future branches merely to reserve names. A branch can contain several bounded tasks; never create branches per agent or per commit version.
 

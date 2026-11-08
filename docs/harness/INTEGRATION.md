@@ -22,4 +22,6 @@ Historical adoption gate: H01 had a P2 test-isolation finding. It was repaired, 
 
 ## Coordination limits
 
+Authorized sequencing exception, 2026-11-08: the user requested useful independent required development while configuring Firebase. Preserve H07 candidate/worktree/evidence without acceptance or concurrent changes; H10/campus-content may proceed solely on accepted H06 under its bounded scope. H07B sync remains blocked on H07 acceptance. This exception does not authorize arbitrary skipped modules or optional backlog work. After H10 acceptance, reassess configuration and genuine content/field decisions.
+
 This file defines permission and sequencing; it does not start a background monitor or connect chats automatically. Use only available coordination tools and user-authorized destinations. If no authorized destination or active run exists, preserve the next dispatch/handoff and accurately report that implementation has not started. Do not claim an autonomous next module is running merely because its plan is ready.

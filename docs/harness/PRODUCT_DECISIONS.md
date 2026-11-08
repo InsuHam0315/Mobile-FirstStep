@@ -32,4 +32,12 @@ Never attach anonymous legacy data or H06 fixture progress to a signed-in accoun
 
 ## Clarification practice
 
+### Authorized independent work during configuration wait (2026-11-08)
+
+The user asked whether Firebase setup blocks all development and authorized proceeding with other implementable modules. H07 identity/profile candidate d05dd6b remains preserved on firebase, locally reviewed but blocked on real project/live acceptance. This is a sequencing exception, not acceptance or permission to skip cloud verification. H07B still waits for accepted/integrated H07.
+
+Select H10/campus-content as the one active implementation slice: official-source-backed software-department guidance and three-question local practice in the actual APK. It depends on accepted H06 only. Management supplies the bounded fact packet in SOFTWARE_CONTENT_SOURCES.md; implementation must not invent campus facts or survey coordinates. The entry is available without Firebase and explicitly does not award stamps or write exploration/account progress. H06 fixtures remain unchanged. This provides required first-department content before later authenticated/field integration, not a complete authored game episode.
+
+The story/character treatment, building-specific sensor mission rationale, surveyed arrival point/radius and later destinations are still unresolved for real gameplay. H10 does not choose those, expand to other departments, start RAG/photos/ARCore/reskin or imply enrollment verification. When H10 closes, reassess H07 configuration and remaining genuinely dependent choices rather than automatically opening the optional backlog.
+
 The user explicitly requested questions before implementation when product intent is ambiguous or a decision is genuinely required. Consult source documents and recorded decisions first; do not repeatedly ask about confirmed rules. Routine technical implementation, fixes and evidence-based verification remain autonomous. Keep future questions scoped to the next dependent module while progressing independent authorized work.

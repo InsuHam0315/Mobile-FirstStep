@@ -1,6 +1,6 @@
 # FirstStep Codex implementation harness
 
-Status (2026-11-06): H01-H04 integrated; H05/map-home accepted and integrated at4e7654f after three repaired management findings and fresh integration checks (111 units,51 tasks executed,lint0errors/94warnings). See reviews/H05-management.md. H06/integration is the next bounded slice under H06_SCOPE.md: one explicitly simulated fixture-only digital-information/software loop. Real authored content, surveyed arrival and multi-target expansion are not completed or authorized by this technical dispatch. The full new game is not implemented.
+Status (2026-11-08): H01-H06 accepted/integrated; H06 is one simulated fixture-only loop at 25c0e6e (fresh 51 tasks/116 units). H07/firebase candidate d05dd6b passed local source/evidence review but awaits real project/live acceptance; it is not integrated. User authorized independent required work during that wait. H10/campus-content is the sole active implementation slice under H10_SCOPE.md, delivering sourced software-department guidance/practice without progress writes. Preserve H07; sync remains gated. The full authored game is not implemented.
 
 ## Start here
 
@@ -30,7 +30,7 @@ The 2026-11-06 game PDF is a design input, not permission to delete working code
 
 Confirmed core per the supplied game design: five destination episodes, free order, fairy discovery/summoning, TTS + captions, per-building quiz eligibility 15 minutes after introduction, three-question quizzes (2/3 pass), stamps, ending. See CORE_GAME_SCOPE.md. Specification approval is not a claim these features have shipped.
 
-Google sign-in and mandatory first-login name/student-number/department are selected for a later slice; first real content validation targets the software department. See PRODUCT_DECISIONS.md. Existing facility search/favorites/real map integration into H05 was selected in PRODUCT_DECISIONS.md. Still separate choices/configuration: optional photo capture, legacy ARCore, Firebase provider/project configuration, Firestore, cloud photos, Gemini RAG, verified school identity and old backend retention. The PDF excludes servers from its core while later user messages select sign-in. Do not silently expand a local module into cloud integration.
+Google sign-in, mandatory first-login name/student-number/department, Firebase Auth and Firestore are approved; first real content validation targets the software department. See PRODUCT_DECISIONS.md. H07 identity/profile waits for real project configuration; subsequent exploration sync is separately dispatched after acceptance. Existing facility search/favorites/real map were accepted in H05. Optional photo capture, legacy ARCore, cloud photos, Gemini RAG, verified school identity and old backend retention remain separate gates. Selection never implies live configuration or deployment.
 
 The initial harness branch is `codex/game-harness`. At the user's explicit request, pre-existing app edits and the harness were checkpointed together in `6dc8af1` and included on `main`. The task board records that baseline; feature worktrees must descend from it. Pushes are performed only within user authorization, not automatically by task scripts.
 
@@ -48,6 +48,7 @@ The initial harness branch is `codex/game-harness`. At the user's explicit reque
 | H07 | firebase | Approved Google identity/first profile, then separately dispatched progress sync; H07_SCOPE.md | H06 + real configuration/verification gates |
 | H08 | chatbot | Optional sourced Gemini RAG feature/backend | H06 + explicit chatbot selection |
 | H09 | reskin | Apply user references to presentation and assets | H06 + design references |
+| H10 | campus-content | Sourced software-department guide/practice; no progress writes; H10_SCOPE.md | H06 only; authorized independent work during H07 config wait |
 
 Create branches just in time from a reviewed integration commit. Do not create all branches from today's old HEAD. Implement one module at a time, integrating a passing module before the next eligible module. Reordering the planned sequence requires a documented scope decision; a reskin must pass the same behavior checks.
 
