@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuites tests="2" failures="0" errors="0" skipped="0" time="0.000" timestamp="2026-11-09T13:59:45" hostname="qa-host">
+  <testsuite name="com.example.firststep.game.guide.NarrationLifecycleTest" tests="2" failures="0" errors="0" skipped="0" time="9.845" timestamp="2026-11-09T13:59:45" hostname="qa-host">
+    <properties>
+      <property name="device" value="emulator-5580" />
+    </properties>
+    <testcase name="speechErrorDoesNotAdvanceAndFinishRemainsExplicit" classname="com.example.firststep.game.guide.NarrationLifecycleTest" time="5.838" />
+    <testcase name="manualNavigationAndRecreationWithSpeechUnavailable" classname="com.example.firststep.game.guide.NarrationLifecycleTest" time="4.007" />
+  </testsuite>
+</testsuites>

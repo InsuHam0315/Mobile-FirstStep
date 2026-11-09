@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuites tests="5" failures="4" errors="0" skipped="0" time="0.000" timestamp="2026-11-09T14:00:05" hostname="qa-host">
+  <testsuite name="com.example.firststep.game.guide.GuideSmokeTest" tests="5" failures="4" errors="0" skipped="0" time="11.977" timestamp="2026-11-09T14:00:05" hostname="qa-host">
+    <properties>
+      <property name="device" value="emulator-5580" />
+    </properties>
+    <testcase name="practiceWrongRetryCorrectAndRecreationStayReadOnly" classname="com.example.firststep.game.guide.GuideSmokeTest" time="5.257">
+      <failure>java.lang.IllegalStateException: UiAutomationService android.accessibilityservice.IAccessibilityServiceClient$Stub$Proxy@b0b60d7already registered!
+	at android.os.Parcel.createExceptionOrNull(Parcel.java:3250)
+	at android.os.Parcel.createException(Parcel.java:3226)
+	at android.os.Parcel.readException(Parcel.java:3209)
+	at android.os.Parcel.readException(Parcel.java:3151)
+	at android.app.IUiAutomationConnection$Stub$Proxy.connect(IUiAutomationConnection.java:527)
+	at android.app.UiAutomation.connectWithTimeout(UiAutomation.java:385)
+	at android.app.Instrumentation.getUiAutomation(Instrumentation.java:2558)
+	at android.app.Instrumentation.getUiAutomation(Instrumentation.java:2503)
+	at com.example.firststep.game.guide.GuideSmokeTest.evidence(GuideSmokeTest.java:200)
+	at com.example.firststep.game.guide.GuideSmokeTest.practiceWrongRetryCorrectAndRecreationStayReadOnly(GuideSmokeTest.java:347)
+</failure>
+    </testcase>
+    <testcase name="missingAndMalformedBundleFailClosedThenExplicitRetryLoads" classname="com.example.firststep.game.guide.GuideSmokeTest" time="0.789">
+      <failure>java.lang.IllegalStateException: Not connected!
+	at android.os.Parcel.createExceptionOrNull(Parcel.java:3250)
+	at android.os.Parcel.createException(Parcel.java:3226)
+	at android.os.Parcel.readException(Parcel.java:3209)
+	at android.os.Parcel.readException(Parcel.java:3151)
+	at android.app.IUiAutomationConnection$Stub$Proxy.takeScreenshot(IUiAutomationConnection.java:626)
+	at android.app.UiAutomation.takeScreenshot(UiAutomation.java:1276)
+	at com.example.firststep.game.guide.GuideSmokeTest.evidence(GuideSmokeTest.java:200)
+	at com.example.firststep.game.guide.GuideSmokeTest.missingAndMalformedBundleFailClosedThenExplicitRetryLoads(GuideSmokeTest.java:402)
+</failure>
+    </testcase>
+    <testcase name="sourceIntentIsOfficialAndMissingHandlerPreservesChoices" classname="com.example.firststep.game.guide.GuideSmokeTest" time="3.819">
+      <failure>java.lang.IllegalStateException: Not connected!
+	at android.os.Parcel.createExceptionOrNull(Parcel.java:3250)
+	at android.os.Parcel.createException(Parcel.java:3226)
+	at android.os.Parcel.readException(Parcel.java:3209)
+	at android.os.Parcel.readException(Parcel.java:3151)
+	at android.app.IUiAutomationConnection$Stub$Proxy.takeScreenshot(IUiAutomationConnection.java:626)
+	at android.app.UiAutomation.takeScreenshot(UiAutomation.java:1276)
+	at com.example.firststep.game.guide.GuideSmokeTest.evidence(GuideSmokeTest.java:200)
+	at com.example.firststep.game.guide.GuideSmokeTest.sourceIntentIsOfficialAndMissingHandlerPreservesChoices(GuideSmokeTest.java:464)
+</failure>
+    </testcase>
+    <testcase name="actualAndroidParserRejectsMalformedAndUnregisteredBundle" classname="com.example.firststep.game.guide.GuideSmokeTest" time="0.030" />
+    <testcase name="homeEntryLoadsRegisteredGuideWithoutStorageChange" classname="com.example.firststep.game.guide.GuideSmokeTest" time="2.082">
+      <failure>java.lang.IllegalStateException: Not connected!
+	at android.os.Parcel.createExceptionOrNull(Parcel.java:3250)
+	at android.os.Parcel.createException(Parcel.java:3226)
+	at android.os.Parcel.readException(Parcel.java:3209)
+	at android.os.Parcel.readException(Parcel.java:3151)
+	at android.app.IUiAutomationConnection$Stub$Proxy.takeScreenshot(IUiAutomationConnection.java:626)
+	at android.app.UiAutomation.takeScreenshot(UiAutomation.java:1276)
+	at com.example.firststep.game.guide.GuideSmokeTest.evidence(GuideSmokeTest.java:200)
+	at com.example.firststep.game.guide.GuideSmokeTest.homeEntryLoadsRegisteredGuideWithoutStorageChange(GuideSmokeTest.java:305)
+</failure>
+    </testcase>
+  </testsuite>
+</testsuites>

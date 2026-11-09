@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuites tests="5" failures="0" errors="0" skipped="0" time="0.000" timestamp="2026-11-09T14:00:48" hostname="qa-host">
+  <testsuite name="com.example.firststep.game.guide.GuideSmokeTest" tests="5" failures="0" errors="0" skipped="0" time="20.409" timestamp="2026-11-09T14:00:48" hostname="qa-host">
+    <properties>
+      <property name="device" value="emulator-5580" />
+    </properties>
+    <testcase name="practiceWrongRetryCorrectAndRecreationStayReadOnly" classname="com.example.firststep.game.guide.GuideSmokeTest" time="10.820" />
+    <testcase name="missingAndMalformedBundleFailClosedThenExplicitRetryLoads" classname="com.example.firststep.game.guide.GuideSmokeTest" time="2.248" />
+    <testcase name="sourceIntentIsOfficialAndMissingHandlerPreservesChoices" classname="com.example.firststep.game.guide.GuideSmokeTest" time="4.621" />
+    <testcase name="actualAndroidParserRejectsMalformedAndUnregisteredBundle" classname="com.example.firststep.game.guide.GuideSmokeTest" time="0.043" />
+    <testcase name="homeEntryLoadsRegisteredGuideWithoutStorageChange" classname="com.example.firststep.game.guide.GuideSmokeTest" time="2.677" />
+  </testsuite>
+</testsuites>
