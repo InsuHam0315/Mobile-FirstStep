@@ -1,6 +1,16 @@
 # H07 management review
 
-Current addendum (2026-11-09): candidate 4dff932295b46034a360d54f2748fb1b6d7dab66 passes bounded independent source/build review; the v4 lifecycle P2 is closed. Its data-preserving installation and returning server-confirmed profile succeeded, but normal logout remained AUTH_BUSY. This new runtime limitation requires bounded investigation/repair. H07 overall remains in progress, with no main app integration or H07B dispatch. Earlier reviews below are historical.
+Current addendum (2026-11-09): candidate 6770799d9c20325ea366d7371d78ecd752fb88b5 passes exact independent source/build review for the v5 logout repair. It is installed on the same owned emulator with matching APK hash, and the visible logged-out Google entry is ready for the human. Authenticated v6 logout remains a live gate. H07 overall remains in progress, with no main app integration or H07B dispatch. Earlier reviews below are historical.
+
+## v6 confirmed logout cause and repair
+
+Installation handoff: owner performed install -r without reset on emulator-5564, installed SHA matched 959CC6AC5700646C2CA4A1C3E5325CB0694EFD6FF08E93D6E0272954249CD5D7. Sanitized current stage is logged_out with Google로 계속하기 enabled, no profile views, and the existing emulator window was brought forward. Root inspected actual logged-out-only v6-logged-out-entry.png and install/hash/stage/window logs under credential-clear-repair; button and FirstStep header are visible/readable. Google selection/consent was left for the human. This verifies installation and login-entry rendering, not authenticated v6 logout or zero-account addition. Preserve remaining live gates, no main app merge/H07B.
+
+Further same-PID sanitized evidence in auth-lifecycle-repair/logout-allowlisted-stack.log establishes that the provider DID return off-main and Android threw CalledFromWrongThreadException via ViewRootImpl.checkThread, IdentityActivity.render, SessionController.publish, FirebaseAuthPort.finishLogout and GoogleCredentialSource. The earlier absent-terminal observation below was incomplete; provider silence is not the observed root cause.
+
+Candidate 6770799d9c20325ea366d7371d78ecd752fb88b5 adds explicit main Handler dispatch for clear success/error and a single-completion guard. A 10-second cancellation/failure deadline is separate defensive coverage for missing responses, not the observed failure. Late and reentrant provider callbacks cannot deliver twice; FirebaseAuthPort's real in-flight sign-in drain is unchanged. Root inspected the bounded change and reused management verification PM independently returned PASS on the exact committed patch 3A7FEBEE30A3B52940C448088E38101C23D3104780BE85EB662FB47CED3748C0.
+
+Final evidence credential-clear-repair/results.log records 143 units/29 suites, zero failures/errors/skips, including five clear tests. Actual JVM worker-origin success/error delivers only when the owning-thread queue is drained; these tests do not execute Android Handler. Production verify executed 16/reused35 tasks, final test-only verify executed5/reused46; lint0errors93warnings. Frozen APK hash independently matched 959CC6AC5700646C2CA4A1C3E5325CB0694EFD6FF08E93D6E0272954249CD5D7. Normal origin/firebase publication and remote SHA were verified. Installation is authorized; actual authenticated v6 logout and remaining live acceptance still need evidence. Do not equate deadline failure with provider-clear success.
 
 ## New v5 logout runtime limitation
 
