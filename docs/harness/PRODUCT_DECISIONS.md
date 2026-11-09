@@ -32,6 +32,10 @@ Never attach anonymous legacy data or H06 fixture progress to a signed-in accoun
 
 ## Clarification practice
 
+### Social sign-in entry clarification (2026-11-09)
+
+The user clarified that anyone opening the app should see `Google로 계속하기` and continue into Google's official account-selection/add-account flow, including devices with no previously registered Google account. A separate Play Store login is a temporary workaround for the old installed candidate, not the selected product UX. Use the Google-branded button and clean hierarchy of the provided reference within FirstStep's visual system; the reference's other provider and legal text are not requirements. Google passwords remain outside FirstStep-owned UI. This is bounded H07 identity UX, not approval of Kakao/GitHub login, broad redesign or remote permission changes. Live provider behavior and profile persistence still require evidence.
+
 ### Authorized independent work during configuration wait (2026-11-08)
 
 The user asked whether Firebase setup blocks all development and authorized proceeding with other implementable modules. H07 identity/profile candidate d05dd6b remains preserved on firebase, locally reviewed but blocked on real project/live acceptance. This is a sequencing exception, not acceptance or permission to skip cloud verification. H07B still waits for accepted/integrated H07.
