@@ -1,6 +1,16 @@
 # H07 management review
 
-Current addendum (2026-11-09): configuration has been supplied and locally checked; H07 resumes under H07_RESUME.md. The following 2026-11-08 review is preserved historical evidence. Overall acceptance is now PENDING_LIVE, not configuration-absent or accepted. No H07 main integration or H07B dispatch.
+Current addendum (2026-11-09): candidate 91a62b796ab70f4d47d06195553d86ebcb16ec50 is CHANGES_REQUIRED for one P2 lifecycle finding below. Real configuration is supplied, but live OAuth/profile and repaired APK execution remain unverified. No H07 main integration or H07B dispatch. Earlier reviews below are historical.
+
+## v4 button repair review, 2026-11-09
+
+- Management inspected exact five-file app/test delta against d5fccf9 plus owner handoff. Sol management review independently matched patch SHA256 8C66A0C87201CF169B80D74A1AD992CE938AAA2A7A983FEBCCDBB0ACAF662CAE and inspected logs: 131 units/28 suites, zero failures/errors/skips; configured verify 24 executed/27 reused; lint 0 errors/93 warnings. No new management runtime execution.
+- GetSignInWithGoogleOption and existing CustomCredential/GoogleIdTokenCredential type handling match the official button flow. NoCredentialException has a distinct outcome/message. Original observed failure only establishes validated default network, zero device accounts and provider request activity; terminal exception was not captured, so no confirmed OAuth/server-failure diagnosis is claimed.
+- **P2: terminal sign-in failure is discarded across external picker pause.** IdentityActivity.onPause calls SessionController.pause (around line 87), advancing generation/nonce. The pending signIn callback (around line 122) rejects its failure even after resume. FirebaseAuthPort.publish (around line 60) emits nothing for unchanged null UID. The user can therefore return without the new missing-credential/cancel/error guidance. This is a deterministic conditional source finding, not an observed runtime cause.
+- Required repair: preserve only the current auth attempt's terminal non-sensitive outcome across pause/resume; invalidate on newer attempt/logout/session change. Keep account/profile isolation protections. Add deferred-completion regressions for delivery while paused/after resume and superseded-attempt/logout rejection. Root independently confirmed the code path and sent one bounded repair to the existing owner, with no device interference.
+- v4 was normally published to origin/firebase and remote SHA verified. Publication is a tested checkpoint, not acceptance. The fixed APK remains uninstalled while the human's existing Google interaction is preserved. Do not replace it during active sign-in.
+
+Reference: https://developer.android.com/identity/sign-in/credential-manager-siwg-implementation#button-flow
 
 2026-11-08. Local source/evidence review **PASS**; overall acceptance **BLOCKED_CONFIG**. Keep H07 in progress. No main app integration or H07B advancement.
 
