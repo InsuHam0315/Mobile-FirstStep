@@ -1,5 +1,9 @@
 # H07 management review
 
+## v10 account-free Android clear regression — 2026-11-09
+
+Exact test-only candidate a686a263b768082731afd98fe836df7375d64f9d: management root and independent verification PM PASS with no actionable findings. Test patch hash CD48DF78BCC9E051C2B6888D4F0A49D54B4F4DE32EF2E2B7E7E5EDA5F8104DED verified. Guards require explicit opt-in, dedicated QA AVD, foreground and process user 0, no accounts and configured build before invoking production GoogleCredentialSource.clear. Final retained run: one named test/pass, no skips; real provider success on Android main Looper in 163 ms, no wrong-thread markers. Deadline/error fail success assertion. Earlier low-memory-killed attempt excluded. Existing 143 units reused, required verify 3 executed/48 reused, lint 0 errors/93 warnings. Production APK unchanged; normally published origin/firebase SHA verified. This is test/evidence acceptance only, not H07 acceptance. Authenticated logout and live incomplete onboarding await human-selected QA account; preserve existing signed-in emulator-5564. See H07_LIVE_CHECKS.md for current gate matrix.
+
 ## v8 authenticated home installation review, 2026-11-09
 
 Installed outcome: owner completed the guarded update on emulator-5564 and matched the device APK hash below. Allowlisted live-home-stage.log records server_confirmed, Home/title/profile-action visible, login/form/details hidden. The root inspected the actual no-profile-value live-account-home.png and installation/window logs. Existing session and profile survived; no logout, sign-in, profile write or account change was performed. Handoff-only d65941c298b608788e3f3ed1d804093223a5ea7b preserves this outcome; installed code remains ab117d3. Returning-user live Home is verified. Live first-save chronology, authenticated logout retest and second-account checks remain open; no overall acceptance or sync dispatch.
