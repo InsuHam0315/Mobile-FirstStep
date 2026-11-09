@@ -18,6 +18,6 @@ Test unauthenticated/cross-UID denial, late account callbacks, rejected fixtures
 
 ## Genuine remaining dependency
 
-There is currently no sync-eligible authored gameplay episode. H10 provides four sourced claims and three practice questions; it explicitly writes no game progress. Reuse those facts to prepare proposed learning text and quiz rationale, but do not silently convert practice to rewarded gameplay. Story/character treatment, building-specific mission purpose and surveyed safe arrival point/radius remain real product/field inputs. Later college/department destinations are separate choices.
+There is currently no sync-eligible authored gameplay episode. H10 provides four sourced claims and three practice questions; it explicitly writes no game progress. H10B now independently authors a narration preview from those facts. Re-reading PDF pages 1-4 confirms the fairy framework and digital-information SHAKE action were already specified; do not re-ask these choices. Final episode text/art and surveyed safe arrival point/radius remain unfinished. Do not silently convert practice to rewarded gameplay. Later college/department destinations are separate choices.
 
 Firebase selection, UID partitioning, retry implementation and routine tests do not need another user approval. Cross-device drafts or cloud reset need a decision only if added. Preparation does not authorize deploying rules, importing data, implementing H07B before H07 acceptance, or claiming a complete V1.

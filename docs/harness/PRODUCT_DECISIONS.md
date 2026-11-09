@@ -32,6 +32,14 @@ Never attach anonymous legacy data or H06 fixture progress to a signed-in accoun
 
 ## Clarification practice
 
+### Source reconciliation and independent narration continuation (2026-11-09)
+
+Management re-read the original eight-page game PDF through a bounded read-only source audit. Pages 1-2 already approve shy building fairies, a guide provisionally called 첫발이, free-order episodes and short warm polite narration. Pages 3-4 specify direction alignment followed by SHAKE for digital-information; COVER applies to the libraries. The overall fairy framework and digital-information summon action are not missing product choices. Earlier blanket statements that the story/character/sensor treatment was entirely unresolved were too broad and must not trigger repeated approval questions.
+
+Final names/art, exact authored building scripts and unverified facts/arrival coordinates/radii remain distinct unfinished content/field work. The sample 0,0 coordinates and example floor claims are not facts. Later rollout choices do not automatically replace the original five-destination lineup with five departments.
+
+The user's continuation requests authorize useful independent required V1 implementation and parallel chats where useful. H10B continues the actual campus-content branch with a sourced seven-sentence fairy introduction preview, TTS/captions and return to existing practice, under H10B_SCOPE.md. This uses the already-approved fictional framework and existing verified facts; no rewarded gameplay, coordinate guesses, auth dependency or automatic fixture promotion. H07 continues isolated verification while the human's current session is preserved. No extra optional provider/service/design scope is inferred.
+
 ### Social sign-in entry clarification (2026-11-09)
 
 The user clarified that anyone opening the app should see `Google로 계속하기` and continue into Google's official account-selection/add-account flow, including devices with no previously registered Google account. A separate Play Store login is a temporary workaround for the old installed candidate, not the selected product UX. Use the Google-branded button and clean hierarchy of the provided reference within FirstStep's visual system; the reference's other provider and legal text are not requirements. Google passwords remain outside FirstStep-owned UI. This is bounded H07 identity UX, not approval of Kakao/GitHub login, broad redesign or remote permission changes. Live provider behavior and profile persistence still require evidence.
