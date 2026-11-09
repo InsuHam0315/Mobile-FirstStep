@@ -1,6 +1,6 @@
 # FirstStep Codex implementation harness
 
-Status (2026-11-08): H01-H06 and H10 accepted/integrated. H10 final merge cd0f44f adds sourced software-department guidance/practice without progress writes; fresh integration 51 tasks/125 units passed, lint 0 errors/94 existing warnings. See reviews/H10-management.md. H07/firebase d05dd6b remains locally reviewed but awaiting real project/live acceptance, not integrated. No implementation currently dispatched: Firebase configuration and authored mission/arrival decisions remain separate gates; sync waits for H07. The full authored game is not implemented.
+Status (2026-11-09): H01-H06 and H10 accepted/integrated. H10 final merge cd0f44f adds sourced software-department guidance/practice without progress writes; fresh integration 51 tasks/125 units passed, lint 0 errors/94 existing warnings. See reviews/H10-management.md. Real Firebase project configuration is now supplied and locally inspected; H07/firebase resumes identity/profile validation from preserved d05dd6b under H07_RESUME.md. Live Google login/profile acceptance is still pending, not integrated. H07B sync waits for accepted H07. Preserve H10; the full authored game is not implemented.
 
 ## Start here
 
@@ -30,7 +30,7 @@ The 2026-11-06 game PDF is a design input, not permission to delete working code
 
 Confirmed core per the supplied game design: five destination episodes, free order, fairy discovery/summoning, TTS + captions, per-building quiz eligibility 15 minutes after introduction, three-question quizzes (2/3 pass), stamps, ending. See CORE_GAME_SCOPE.md. Specification approval is not a claim these features have shipped.
 
-Google sign-in, mandatory first-login name/student-number/department, Firebase Auth and Firestore are approved; first real content validation targets the software department. See PRODUCT_DECISIONS.md. H07 identity/profile waits for real project configuration; subsequent exploration sync is separately dispatched after acceptance. Existing facility search/favorites/real map were accepted in H05. Optional photo capture, legacy ARCore, cloud photos, Gemini RAG, verified school identity and old backend retention remain separate gates. Selection never implies live configuration or deployment.
+Google sign-in, mandatory first-login name/student-number/department, Firebase Auth and Firestore are approved; first real content validation targets the software department. See PRODUCT_DECISIONS.md. H07 identity/profile now has real configuration and awaits live validation; subsequent exploration sync is separately dispatched after acceptance. Existing facility search/favorites/real map were accepted in H05. Optional photo capture, legacy ARCore, cloud photos, Gemini RAG, verified school identity and old backend retention remain separate gates. Selection never implies live configuration or deployment.
 
 The initial harness branch is `codex/game-harness`. At the user's explicit request, pre-existing app edits and the harness were checkpointed together in `6dc8af1` and included on `main`. The task board records that baseline; feature worktrees must descend from it. Pushes are performed only within user authorization, not automatically by task scripts.
 
