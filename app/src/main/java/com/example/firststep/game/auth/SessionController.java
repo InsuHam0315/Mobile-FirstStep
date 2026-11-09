@@ -14,6 +14,11 @@ public final class SessionController {
     CONFIRM
   }
 
+  private static final class AuthAttempt {
+    // Null means the request is pending. Only a non-sensitive failure survives a pause.
+    Failure failure;
+  }
+
   private final AuthPort auth;
   private final ProfilePort profiles;
   private Listener listener;
@@ -25,6 +30,7 @@ public final class SessionController {
   private long generation, nonce;
   private Retry retry;
   private Profile awaitingConfirmation;
+  private AuthAttempt authAttempt;
 
   public SessionController(AuthPort auth, ProfilePort profiles) {
     this.auth = auth;
@@ -43,7 +49,10 @@ public final class SessionController {
         && state.getStage() != SessionState.Stage.UNCONFIGURED
         && !signingOut
         && state.getStage() != SessionState.Stage.AUTH_BUSY
-        && (uid != null || draft != null)
+        && (uid != null
+            || draft != null
+            || (state.getStage() == SessionState.Stage.LOGGED_OUT
+                && state.getFailure() != null))
         && !Objects.equals(uid, auth.currentUid())) {
       return new SessionState(SessionState.Stage.PROFILE_LOADING, null, null, null, false);
     }
@@ -70,14 +79,21 @@ public final class SessionController {
       return;
     }
     String current = auth.currentUid();
-    reconcile(current);
+    if (current != null || authAttempt == null) {
+      reconcile(current);
+    } else {
+      Failure failure = authAttempt.failure;
+      publish(
+          failure == null ? SessionState.Stage.AUTH_BUSY : SessionState.Stage.LOGGED_OUT,
+          failure,
+          false);
+    }
     subscription =
         auth.observe(
             observed -> {
               if (!active
                   || generation != g
                   || signingOut
-                  || state.getStage() == SessionState.Stage.AUTH_BUSY
                   || !Objects.equals(observed, auth.currentUid())) return;
               if (Objects.equals(observed, uid)) return;
               reconcile(observed);
@@ -114,28 +130,28 @@ public final class SessionController {
     cachedDraft = false;
     retry = null;
     awaitingConfirmation = null;
-    final long g = generation, n = ++nonce;
+    ++nonce;
+    final AuthAttempt attempt = new AuthAttempt();
+    authAttempt = attempt;
     publish(SessionState.Stage.AUTH_BUSY, null, false);
     auth.signIn(
         reselect,
         failure -> {
-          if (!active || generation != g || nonce != n || signingOut) return;
-          ++nonce;
+          if (authAttempt != attempt || attempt.failure != null || signingOut) return;
           String current = auth.currentUid();
-          if (failure != null) {
-            if (current != null) {
-              authFailure(current, failure);
-              return;
-            }
-            publish(SessionState.Stage.LOGGED_OUT, failure, false);
-          } else if (current == null)
-            publish(SessionState.Stage.LOGGED_OUT, Failure.UNKNOWN, false);
-          else reconcile(current);
+          if (current != null) {
+            if (active) reconcile(current);
+            else authAttempt = null;
+            return;
+          }
+          attempt.failure = failure == null ? Failure.UNKNOWN : failure;
+          if (active) publish(SessionState.Stage.LOGGED_OUT, attempt.failure, false);
         });
   }
 
   public void logout() {
     if (!active || !auth.isConfigured()) return;
+    authAttempt = null;
     uid = null;
     draft = null;
     dirty = false;
@@ -206,6 +222,7 @@ public final class SessionController {
   }
 
   private void reconcile(String next) {
+    authAttempt = null;
     ++nonce;
     if (!Objects.equals(uid, next)) {
       uid = next;

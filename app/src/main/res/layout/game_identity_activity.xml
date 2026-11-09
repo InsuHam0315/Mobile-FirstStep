@@ -1,10 +1,21 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/game_identity_root" android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true">
  <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="@dimen/game_space_medium">
-  <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_identity_title" android:textSize="@dimen/game_text_title" android:textColor="@color/game_color_text" />
-  <TextView android:id="@+id/game_identity_environment" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="@dimen/game_text_body" android:textColor="@color/game_color_text" />
-  <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_identity_notice" android:textSize="@dimen/game_text_body" android:textColor="@color/game_color_text" />
-  <TextView android:id="@+id/game_identity_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="@dimen/game_text_body" android:textColor="@color/game_color_text" />
-  <Button android:id="@+id/game_identity_login" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_identity_login" />
+  <ImageView android:layout_width="@dimen/game_touch_min" android:layout_height="@dimen/game_touch_min"
+      android:layout_gravity="center_horizontal" android:importantForAccessibility="no"
+      android:src="@mipmap/ic_launcher_round" />
+  <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+      android:gravity="center" android:text="@string/app_name" android:textColor="@color/game_color_text"
+      android:textSize="@dimen/game_text_title" android:textStyle="bold" />
+  <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+      android:gravity="center" android:text="@string/game_identity_tagline"
+      android:textColor="@color/game_color_text" android:textSize="@dimen/game_text_body" />
+  <com.google.android.material.button.MaterialButton android:id="@+id/game_identity_login"
+      style="@style/GameIdentityGoogleButton" android:layout_width="match_parent"
+      android:layout_height="wrap_content" android:layout_marginTop="@dimen/game_space_large"
+      android:text="@string/game_identity_login" />
+  <TextView android:id="@+id/game_identity_status" android:layout_width="match_parent"
+      android:layout_height="wrap_content" android:layout_marginTop="@dimen/game_space_medium"
+      android:textColor="@color/game_color_text" android:textSize="@dimen/game_text_body" />
   <LinearLayout android:id="@+id/game_identity_form" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:visibility="gone">
    <EditText android:id="@+id/game_identity_name" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="@dimen/game_touch_min" android:inputType="textPersonName" android:singleLine="true" android:importantForAutofill="no" android:saveEnabled="false" android:hint="@string/game_identity_name" />
    <EditText android:id="@+id/game_identity_student" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="@dimen/game_touch_min" android:inputType="textNoSuggestions" android:singleLine="true" android:importantForAutofill="no" android:saveEnabled="false" android:hint="@string/game_identity_student" />
@@ -15,6 +26,12 @@
   <TextView android:id="@+id/game_identity_landing" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="@dimen/game_text_body" android:textColor="@color/game_color_text" />
   <Button android:id="@+id/game_identity_reselect" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_identity_reselect" />
   <Button android:id="@+id/game_identity_logout" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_identity_logout" />
+  <TextView android:id="@+id/game_identity_environment" android:layout_width="match_parent"
+      android:layout_height="wrap_content" android:layout_marginTop="@dimen/game_space_medium"
+      android:textColor="@color/game_color_text" android:textSize="14sp" android:textStyle="bold" />
+  <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+      android:text="@string/game_identity_notice" android:textColor="@color/game_color_text"
+      android:textSize="14sp" />
   <Button android:id="@+id/game_identity_back" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_identity_back" />
  </LinearLayout>
 </ScrollView>

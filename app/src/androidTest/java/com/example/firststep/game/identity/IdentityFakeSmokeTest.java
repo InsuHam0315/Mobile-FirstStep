@@ -160,7 +160,13 @@ public final class IdentityFakeSmokeTest {
           .check(matches(isCompletelyDisplayed()));
       screen.onActivity(
           a -> {
-            TextView button = a.findViewById(R.id.game_identity_login);
+            com.google.android.material.button.MaterialButton button =
+                a.findViewById(R.id.game_identity_login);
+            assertEquals("Google로 계속하기", button.getText().toString());
+            assertNotNull(button.getIcon());
+            assertNull(button.getIconTint());
+            assertEquals(button.getIcon().getIntrinsicWidth(), button.getIcon().getBounds().width());
+            assertEquals(button.getIcon().getIntrinsicHeight(), button.getIcon().getBounds().height());
             assertTrue(button.getHeight() >= 48 * a.getResources().getDisplayMetrics().density);
             assertNotNull(button.getLayout());
             for (int i = 0; i < button.getLayout().getLineCount(); i++)

@@ -12,6 +12,8 @@ public class SessionControllerTest {
     boolean configured = true;
     AuthObserver observer;
     Completion login, logout;
+    int loginCount;
+    boolean emitOnObserve;
 
     public boolean isConfigured() {
       return configured;
@@ -25,11 +27,13 @@ public class SessionControllerTest {
     public Subscription observe(AuthObserver value) {
       if (!configured) throw new AssertionError("unconfigured observer");
       observer = value;
+      if (emitOnObserve) value.onChanged(uid);
       return () -> {};
     }
 
     public void signIn(boolean reselect, Completion callback) {
       login = callback;
+      loginCount++;
     }
 
     public void signOut(Completion callback) {
@@ -284,9 +288,11 @@ public class SessionControllerTest {
     c.signIn(false);
     AuthPort.Completion old = a.login;
     old.onResult(Failure.CANCELED);
+    assertEquals(Failure.CANCELED, c.state().getFailure());
     a.uid = "A";
     old.onResult(null);
-    assertEquals(Failure.CANCELED, c.state().getFailure());
+    assertEquals(SessionState.Stage.PROFILE_LOADING, c.state().getStage());
+    assertNull(c.state().getFailure());
     assertTrue(p.loads.isEmpty());
   }
 
@@ -381,5 +387,155 @@ public class SessionControllerTest {
     assertFalse(new Profile(name80 + emoji, student40, department120).isComplete());
     assertFalse(new Profile(name80, student40 + emoji, department120).isComplete());
     assertFalse(new Profile(name80, student40, department120 + emoji).isComplete());
+  }
+
+  @Test
+  public void pausedAuthFailuresSurviveResumeAndSynchronousNullObservation() {
+    for (Failure failure :
+        new Failure[] {Failure.CANCELED, Failure.NO_CREDENTIAL, Failure.UNAVAILABLE}) {
+      Auth a = new Auth();
+      a.emitOnObserve = true;
+      SessionController c = new SessionController(a, new Store());
+      c.resume();
+      c.signIn(false);
+      c.pause();
+      a.login.onResult(failure);
+      c.resume();
+      assertEquals(SessionState.Stage.LOGGED_OUT, c.state().getStage());
+      assertEquals(failure, c.state().getFailure());
+      c.pause();
+      c.resume();
+      assertEquals(failure, c.state().getFailure());
+    }
+  }
+
+  @Test
+  public void pendingPickerSurvivesPauseAndCannotStartDuplicate() {
+    Auth a = new Auth();
+    a.emitOnObserve = true;
+    SessionController c = new SessionController(a, new Store());
+    c.resume();
+    c.signIn(false);
+    c.pause();
+    c.resume();
+    assertEquals(SessionState.Stage.AUTH_BUSY, c.state().getStage());
+    c.signIn(false);
+    assertEquals(1, a.loginCount);
+    a.login.onResult(Failure.CANCELED);
+    assertEquals(Failure.CANCELED, c.state().getFailure());
+    c.pause();
+    c.resume();
+    assertEquals(Failure.CANCELED, c.state().getFailure());
+  }
+
+  @Test
+  public void observedUidBeforeCompletionWinsAndStaleFailureCannotReload() {
+    Auth a = new Auth();
+    a.emitOnObserve = true;
+    Store p = new Store();
+    SessionController c = new SessionController(a, p);
+    c.resume();
+    c.signIn(false);
+    AuthPort.Completion old = a.login;
+    a.change("A");
+    assertEquals(1, p.loads.size());
+    a.change("B");
+    assertEquals(2, p.loads.size());
+    old.onResult(Failure.UNAVAILABLE);
+    assertEquals(2, p.loads.size());
+    p.server(1, profile("B"));
+    assertEquals("B", c.state().getUid());
+    assertEquals("B", c.state().getDraft().getName());
+  }
+
+  @Test
+  public void deferredFailureLosesToCurrentAccountAndLogoutOrNewAttempt() {
+    Auth a = new Auth();
+    a.emitOnObserve = true;
+    Store p = new Store();
+    SessionController c = new SessionController(a, p);
+    c.resume();
+    c.signIn(false);
+    AuthPort.Completion old = a.login;
+    c.pause();
+    old.onResult(Failure.NO_CREDENTIAL);
+    a.uid = "B";
+    c.resume();
+    p.server(0, profile("B"));
+    assertEquals("B", c.state().getUid());
+    assertNull(c.state().getFailure());
+    c.logout();
+    a.uid = null;
+    a.logout.onResult(null);
+    c.signIn(false);
+    old.onResult(Failure.UNAVAILABLE);
+    assertEquals(SessionState.Stage.AUTH_BUSY, c.state().getStage());
+    a.login.onResult(Failure.CANCELED);
+    c.logout();
+    a.logout.onResult(null);
+    c.pause();
+    c.resume();
+    assertNull(c.state().getFailure());
+  }
+
+  @Test
+  public void successfulLoginAfterResumeLoadsCurrentUidOnce() {
+    Auth a = new Auth();
+    a.emitOnObserve = true;
+    Store p = new Store();
+    SessionController c = new SessionController(a, p);
+    c.resume();
+    c.signIn(false);
+    c.pause();
+    c.resume();
+    a.change("A");
+    a.login.onResult(null);
+    assertEquals(1, p.loads.size());
+    p.server(0, profile("A"));
+    assertEquals(SessionState.Stage.COMPLETE, c.state().getStage());
+    assertEquals("A", c.state().getUid());
+  }
+
+  @Test
+  public void supersededCompletionWaitsForMatchingObserverToLoadLatestAccount() {
+    Auth a = new Auth();
+    a.emitOnObserve = true;
+    Store p = new Store();
+    SessionController c = new SessionController(a, p);
+    c.resume();
+    c.signIn(false);
+    AuthPort.Completion old = a.login;
+    a.change("A");
+    assertEquals(1, p.loads.size());
+    a.uid = "B";
+    old.onResult(Failure.UNAVAILABLE);
+    assertEquals(1, p.loads.size());
+    a.observer.onChanged("B");
+    assertEquals(2, p.loads.size());
+    p.server(1, profile("B"));
+    assertEquals("B", c.state().getUid());
+    assertEquals("B", c.state().getDraft().getName());
+  }
+
+  @Test
+  public void listenerReconciliationClearsLoggedOutFailureBeforeLaterSignOut() {
+    Auth a = new Auth();
+    Store p = new Store();
+    SessionController c = new SessionController(a, p);
+    c.resume();
+    c.signIn(false);
+    a.login.onResult(Failure.NO_CREDENTIAL);
+    a.uid = "A";
+    c.setListener(state -> {});
+    a.change("A");
+    p.server(0, profile("A"));
+    assertEquals(SessionState.Stage.COMPLETE, c.state().getStage());
+    c.pause();
+    a.uid = null;
+    c.resume();
+    assertEquals(SessionState.Stage.LOGGED_OUT, c.state().getStage());
+    assertNull(c.state().getUid());
+    assertNull(c.state().getDraft());
+    assertNull(c.state().getFailure());
   }
 }
