@@ -77,12 +77,7 @@ public final class GoogleCredentialSource implements CredentialSource {
     Pending request = new Pending(callback);
     pending = request;
     try {
-      GetGoogleIdOption option =
-          new GetGoogleIdOption.Builder()
-              .setServerClientId(webClient)
-              .setFilterByAuthorizedAccounts(false)
-              .setAutoSelectEnabled(false)
-              .build();
+      GetSignInWithGoogleOption option = new GetSignInWithGoogleOption.Builder(webClient).build();
       GetCredentialRequest args =
           new GetCredentialRequest.Builder().addCredentialOption(option).build();
       CredentialManager.create(context)
@@ -111,19 +106,18 @@ public final class GoogleCredentialSource implements CredentialSource {
                 }
 
                 public void onError(GetCredentialException e) {
-                  if (e instanceof NoCredentialException) {
-                    request.finish(null, Failure.UNAVAILABLE);
-                  } else
-                    request.finish(
-                        null,
-                        e instanceof GetCredentialCancellationException
-                            ? Failure.CANCELED
-                            : Failure.UNAVAILABLE);
+                  request.finish(null, classifyError(e));
                 }
               });
     } catch (RuntimeException e) {
       request.finish(null, Failure.UNKNOWN);
     }
+  }
+
+  static Failure classifyError(GetCredentialException error) {
+    if (error instanceof NoCredentialException) return Failure.NO_CREDENTIAL;
+    if (error instanceof GetCredentialCancellationException) return Failure.CANCELED;
+    return Failure.UNAVAILABLE;
   }
 
   public void clear(AuthPort.Completion callback) {

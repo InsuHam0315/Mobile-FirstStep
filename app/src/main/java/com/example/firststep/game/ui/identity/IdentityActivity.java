@@ -176,7 +176,9 @@ public final class IdentityActivity extends AppCompatActivity {
                   ? R.string.game_identity_denied
                   : s.getFailure() == Failure.UNAVAILABLE
                       ? R.string.game_identity_unavailable
-                      : R.string.game_identity_failed;
+                      : s.getFailure() == Failure.NO_CREDENTIAL
+                          ? R.string.game_identity_no_credential
+                          : R.string.game_identity_failed;
       text += "\n" + getString(error);
     }
     ((TextView) findViewById(R.id.game_identity_status)).setText(text);
