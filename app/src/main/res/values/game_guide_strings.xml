@@ -1,5 +1,6 @@
 <resources>
     <item type="id" name="game_guide_entry"/>
+    <item type="id" name="game_narration_entry"/>
     <string name="game_guide_entry">소프트웨어학과 안내·연습</string>
     <string name="game_guide_no_progress">탐방 기록과 보상에 반영되지 않는 학습 화면입니다.</string>
     <string name="game_guide_unverified">현장 도착 위치·반경은 아직 검증하지 않았습니다.</string>
@@ -27,4 +28,18 @@
     <string name="game_guide_incorrect">해설을 확인하고 다시 연습해 보세요.</string>
     <string name="game_guide_chosen">고른 답: %1$s</string>
     <string name="game_guide_answer">확인할 답: %1$s</string>
+    <string name="game_narration_title">요정 소개 미리보기</string>
+    <string name="game_narration_limit">이 안내 요정은 미리보기를 위한 허구의 안내자입니다. 탐방 기록과 보상에 반영되지 않습니다. 현장 도착 위치·반경은 아직 검증하지 않았습니다.</string>
+    <string name="game_narration_art">임시 안내 요정 그림</string>
+    <string name="game_narration_position">%1$d / %2$d</string>
+    <string name="game_narration_source">출처: %1$s\n공식 페이지 확인: %2$s\n%3$s\n눌러서 공식 원문 보기</string>
+    <string name="game_narration_source_unavailable">출처를 확인할 수 없습니다. 안내 화면에서 공식 자료를 확인해 주세요.</string>
+    <string name="game_narration_fictional">허구의 안내자 인사</string>
+    <string name="game_narration_editorial">안내를 위해 구성한 문장</string>
+    <string name="game_narration_unavailable">소개를 불러오지 못했습니다. 연습 문제는 계속 이용할 수 있습니다.</string>
+    <string name="game_narration_previous">이전 문장</string>
+    <string name="game_narration_next">다음 문장</string>
+    <string name="game_narration_replay">소리로 다시 듣기</string>
+    <string name="game_narration_skip">건너뛰고 연습하기</string>
+    <string name="game_narration_finish">소개를 마치고 연습하기</string>
 </resources>

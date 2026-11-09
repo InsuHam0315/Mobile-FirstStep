@@ -1,0 +1,48 @@
+{
+  "datasetId": "software_narration_v1",
+  "version": 1,
+  "sentences": [
+    {
+      "id": "greeting",
+      "provenance": "fictional",
+      "claimId": "",
+      "text": "안녕하세요. 디지털정보관을 소개할 안내 요정이에요."
+    },
+    {
+      "id": "invitation",
+      "provenance": "editorial",
+      "claimId": "",
+      "text": "먼저 소프트웨어학과를 함께 알아볼까요?"
+    },
+    {
+      "id": "college",
+      "provenance": "claim",
+      "claimId": "college_membership",
+      "text": "소프트웨어학과는 컴퓨터소프트웨어특성화대학의 학과 목록에서 확인할 수 있어요."
+    },
+    {
+      "id": "visit",
+      "provenance": "claim",
+      "claimId": "office_guidance",
+      "text": "학과 공식 위치 안내에는 디지털정보관 1층이 적혀 있어요."
+    },
+    {
+      "id": "values",
+      "provenance": "claim",
+      "claimId": "learning_values",
+      "text": "학과는 소통·융합·공유를 바탕으로 실무 소프트웨어 역량을 키우는 교육을 소개해요."
+    },
+    {
+      "id": "resources",
+      "provenance": "claim",
+      "claimId": "help_resources",
+      "text": "공지사항, 교과과정, 학사안내는 학과 홈페이지에서 확인해 보세요."
+    },
+    {
+      "id": "freshness",
+      "provenance": "editorial",
+      "claimId": "",
+      "text": "방문하기 전에는 최신 안내를 다시 확인해 주세요."
+    }
+  ]
+}
