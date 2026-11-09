@@ -1,5 +1,12 @@
 # H07 continuation reconciliation
 
+## Configured resumption, 2026-11-09
+
+- Main management packet fdcdcbb/H07_RESUME.md resumes existing firebase candidate d05dd6b with the real ignored configuration; management verified local metadata/hash and copied only that file. Console setup/rules deployment is attributed setup-worker evidence, not live APK acceptance.
+- Implementation turn 01a1bed3-a419-7412-a3e4-dfd1629861f3 initially read the current packet and correct H07 worktree. After compaction it revisited historical H01 and an H01 reviewer instead. Management observed that scope drift, verified clean tracked H01/H07 worktrees, and delivered one bounded correction at the next safe boundary without starting competing implementation.
+- The owner explicitly acknowledged recovery to H07 and reported no H01 tracked changes. Historical H01 checks are excluded from H07 evidence. Preserve all worktrees/logs; no stale H01 commit is to be published or integrated as H07.
+- H07 remains pending live validation. H10/current main stays accepted; H07B is not dispatched. Same firebase/main Notion journals were updated to distinguish received configuration from still-unverified Google login and remote profile persistence.
+
 2026-11-08, management coordination only; no acceptance verdict.
 
 - Before resumption the designated implementation chat `01a1b03e-8027-7ad3-b54e-53c538832975` was idle. Its latest completed turn reported H01 documentation commit `47cb1ef`; this is not H07 completion and must not be published or integrated as H07.
