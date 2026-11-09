@@ -2,6 +2,8 @@
 
 ## v8 authenticated home installation review, 2026-11-09
 
+Installed outcome: owner completed the guarded update on emulator-5564 and matched the device APK hash below. Allowlisted live-home-stage.log records server_confirmed, Home/title/profile-action visible, login/form/details hidden. The root inspected the actual no-profile-value live-account-home.png and installation/window logs. Existing session and profile survived; no logout, sign-in, profile write or account change was performed. Handoff-only d65941c298b608788e3f3ed1d804093223a5ea7b preserves this outcome; installed code remains ab117d3. Returning-user live Home is verified. Live first-save chronology, authenticated logout retest and second-account checks remain open; no overall acceptance or sync dispatch.
+
 Exact candidate ab117d3c9144a6e908f1d51bd0f5932ee24a02d6, source/test/runner patch SHA256 42099919FFE1A2222ECC1A34AACC68EB8A370EB5B1976FB732B0A617C00D0A33. Independent management verification PM reviewed the exact committed patch and evidence: PASS for session-preserving installation, no unresolved actionable finding. The root checked clean feature status, bounded seven-file delta, retained results and actual simulated Home capture. The strict APK runner omission found during review was repaired before this candidate.
 
 COMPLETE for the current server-confirmed profile shows a separate Home. Working profile details and Back actions remain reachable. Non-COMPLETE or UID changes reset the detail panel; hidden form/profile values are cleared. This is an account home, not authenticated exploration synchronization or a claim that H10 is already in this feature build.
