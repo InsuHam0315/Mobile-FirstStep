@@ -3,6 +3,8 @@ package com.example.firststep.game.composition.identity;
 import android.app.Activity;
 import android.content.Context;
 import android.os.CancellationSignal;
+import android.os.Handler;
+import android.os.Looper;
 import androidx.core.content.ContextCompat;
 import androidx.credentials.*;
 import androidx.credentials.exceptions.*;
@@ -16,10 +18,13 @@ import java.lang.ref.WeakReference;
  * back.
  */
 public final class GoogleCredentialSource implements CredentialSource {
+  private static final long CLEAR_DEADLINE_MILLIS = 10_000L;
   private final Context context;
   private final String webClient;
+  private final Handler mainHandler = new Handler(Looper.getMainLooper());
   private WeakReference<Activity> activity = new WeakReference<>(null);
   private Pending pending;
+  private PendingClear pendingClear;
 
   private final class Pending {
     final CancellationSignal signal = new CancellationSignal();
@@ -37,6 +42,21 @@ public final class GoogleCredentialSource implements CredentialSource {
       callback.complete(
           signal.isCanceled() ? null : credential,
           signal.isCanceled() ? Failure.CANCELED : failure);
+    }
+  }
+
+  private final class PendingClear {
+    final CancellationSignal signal = new CancellationSignal();
+    final CredentialClearCompletion completion;
+
+    PendingClear(AuthPort.Completion callback) {
+      completion =
+          new CredentialClearCompletion(
+              failure -> {
+                if (pendingClear == this) pendingClear = null;
+                callback.onResult(failure);
+              },
+              signal::cancel);
     }
   }
 
@@ -121,23 +141,36 @@ public final class GoogleCredentialSource implements CredentialSource {
   }
 
   public void clear(AuthPort.Completion callback) {
+    PendingClear previous = pendingClear;
+    PendingClear request = new PendingClear(callback);
+    pendingClear = request;
+    if (previous != null) previous.completion.cancel();
+    // A previous completion may have reentrantly replaced this request.
+    if (pendingClear != request) return;
+    request.completion.startDeadline(
+        (task, delay) -> {
+          mainHandler.postDelayed(task, delay);
+          return () -> mainHandler.removeCallbacks(task);
+        },
+        CLEAR_DEADLINE_MILLIS);
     try {
       CredentialManager.create(context)
           .clearCredentialStateAsync(
               new ClearCredentialStateRequest(),
-              new CancellationSignal(),
+              request.signal,
               ContextCompat.getMainExecutor(context),
               new CredentialManagerCallback<Void, ClearCredentialException>() {
                 public void onResult(Void unused) {
-                  callback.onResult(null);
+                  // The framework may call its clear-success receiver on a Binder thread.
+                  request.completion.providerSuccess(mainHandler::post);
                 }
 
                 public void onError(ClearCredentialException error) {
-                  callback.onResult(Failure.UNAVAILABLE);
+                  request.completion.providerError(mainHandler::post);
                 }
               });
     } catch (RuntimeException unavailable) {
-      callback.onResult(Failure.UNAVAILABLE);
+      request.completion.error();
     }
   }
 }
