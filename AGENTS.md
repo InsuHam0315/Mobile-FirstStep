@@ -7,6 +7,8 @@
 
 ## Staged game rebuild harness
 
+- Current checkpoint 2026-11-09: H10B narration is accepted/integrated at a3b8f0f; its independent slice is complete. H07 remains open for human-selected separate QA account checks. No active H10 implementation or H07B dispatch. Preserve existing signed-in emulator-5564; QA entry is emulator-5572. Earlier parallel-continuation paragraphs record bounded authorization, not a new dispatch.
+
 - 2026-11-09 parallel continuation: the user authorized useful independent V1 work and additional chats in the existing 모바일프로젝트 sidebar project. H07 keeps sole identity/QA ownership and preserves the human session on emulator-5564. H10B may independently implement the source-reconciled fairy narration preview under H10B_SCOPE.md in the existing campus-content worktree, with no Firebase/progress writes. Management is the single integrator. This bounded exception supersedes single-active wording only for these independent slices; H07B still requires accepted H07. Never share emulator ownership or branch files across the two chats.
 
 - Two-chat ownership: the management chat owns requirements, durable rules, Notion journals and user-facing documentation. The implementation chat owns authorized code, tests, debugging and English evidence handoffs. Implementation agents must not write Notion or revise project-wide planning/rules; follow `docs/harness/ROUTING.md` for the boundary.
