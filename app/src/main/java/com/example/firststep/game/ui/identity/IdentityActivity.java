@@ -4,7 +4,10 @@ import android.os.Bundle;
 import android.text.*;
 import android.view.View;
 import android.widget.*;
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.firststep.R;
@@ -16,8 +19,15 @@ import java.util.Objects;
 public final class IdentityActivity extends AppCompatActivity {
   private IdentityViewModel model;
   private EditText name, student, department;
-  private boolean binding;
+  private boolean binding, viewingProfile;
   private String displayedUid;
+  private final OnBackPressedCallback profileBack =
+      new OnBackPressedCallback(false) {
+        @Override
+        public void handleOnBackPressed() {
+          showHome();
+        }
+      };
 
   public SessionState stateForTest() {
     return model.controller.state();
@@ -27,6 +37,7 @@ public final class IdentityActivity extends AppCompatActivity {
   protected void onCreate(Bundle state) {
     super.onCreate(state);
     setContentView(R.layout.game_identity_activity);
+    getOnBackPressedDispatcher().addCallback(this, profileBack);
     model =
         new ViewModelProvider(
                 this,
@@ -74,7 +85,16 @@ public final class IdentityActivity extends AppCompatActivity {
     findViewById(R.id.game_identity_logout).setOnClickListener(v -> model.controller.logout());
     findViewById(R.id.game_identity_save).setOnClickListener(v -> model.controller.save());
     findViewById(R.id.game_identity_retry).setOnClickListener(v -> model.controller.retry());
-    findViewById(R.id.game_identity_back).setOnClickListener(v -> finish());
+    findViewById(R.id.game_identity_open_profile)
+        .setOnClickListener(v -> {
+          viewingProfile = true;
+          render(model.controller.state());
+        });
+    findViewById(R.id.game_identity_back)
+        .setOnClickListener(v -> {
+          if (viewingProfile) showHome();
+          else finish();
+        });
     findViewById(R.id.game_identity_root).setVisibility(View.INVISIBLE);
   }
 
@@ -106,27 +126,42 @@ public final class IdentityActivity extends AppCompatActivity {
     findViewById(id).setVisibility(show ? View.VISIBLE : View.GONE);
   }
 
+  private void showHome() {
+    viewingProfile = false;
+    render(model.controller.state());
+  }
+
   private void render(SessionState s) {
     binding = true;
     boolean changed = !Objects.equals(displayedUid, s.getUid());
     displayedUid = s.getUid();
     SessionState.Stage stage = s.getStage();
+    Profile p = s.getDraft();
     boolean form =
-        stage == SessionState.Stage.FORM
-            || stage == SessionState.Stage.SAVING
-            || stage == SessionState.Stage.PENDING_FAILURE;
+        s.getUid() != null
+            && p != null
+            && (stage == SessionState.Stage.FORM
+                || stage == SessionState.Stage.SAVING
+                || stage == SessionState.Stage.PENDING_FAILURE);
     boolean editing = s.canEdit();
     boolean complete = stage == SessionState.Stage.COMPLETE;
-    Profile p = s.getDraft();
-    if (p == null) p = new Profile("", "", "");
-    update(name, p.getName(), changed);
-    update(student, p.getStudentNumber(), changed);
-    update(department, p.getDepartment(), changed);
+    if (changed || !complete) viewingProfile = false;
+    View home = findViewById(R.id.game_identity_home);
+    boolean showHome = complete && !viewingProfile;
+    boolean enteringHome = showHome && home.getVisibility() != View.VISIBLE;
+    update(name, form ? p.getName() : "", changed || !form);
+    update(student, form ? p.getStudentNumber() : "", changed || !form);
+    update(department, form ? p.getDepartment() : "", changed || !form);
     name.setEnabled(editing);
     student.setEnabled(editing);
     department.setEnabled(editing);
-    visible(R.id.game_identity_form, form && s.getUid() != null && s.getDraft() != null);
-    visible(R.id.game_identity_landing, complete);
+    visible(R.id.game_identity_form, form);
+    visible(R.id.game_identity_entry, !complete);
+    visible(R.id.game_identity_home, showHome);
+    visible(R.id.game_identity_profile_panel, viewingProfile);
+    profileBack.setEnabled(viewingProfile);
+    ((Button) findViewById(R.id.game_identity_back))
+        .setText(viewingProfile ? R.string.game_identity_home_back : R.string.game_identity_back);
     visible(
         R.id.game_identity_login,
         stage == SessionState.Stage.LOGGED_OUT || stage == SessionState.Stage.UNCONFIGURED);
@@ -191,13 +226,21 @@ public final class IdentityActivity extends AppCompatActivity {
     ((TextView) findViewById(R.id.game_identity_environment)).setText(kind);
     ((TextView) findViewById(R.id.game_identity_landing))
         .setText(
-            complete
+            viewingProfile
                 ? getString(
                     R.string.game_identity_profile,
                     p.getName(),
                     p.getStudentNumber(),
                     p.getDepartment())
                 : "");
+    if (enteringHome) {
+      WindowCompat.getInsetsController(getWindow(), home).hide(WindowInsetsCompat.Type.ime());
+      ScrollView root = findViewById(R.id.game_identity_root);
+      root.post(
+          () -> {
+            if (home.isShown()) root.scrollTo(0, 0);
+          });
+    }
     binding = false;
   }
 

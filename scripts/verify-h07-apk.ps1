@@ -14,7 +14,7 @@ $null=Adb @('shell','settings','put','system','accelerometer_rotation','0')
 $null=Adb @('shell','settings','put','system','user_rotation',$rotation)
 $null=Adb @('shell','settings','put','system','font_scale',$scale)
 $classes='com.example.firststep.game.identity.IdentityFakeSmokeTest,com.example.firststep.game.identity.IdentityConfigurationSmokeTest#cleanUnconfiguredRouteNeverStartsMockLogin'
-$names=@('missingProfileNeedsServerConfirmedSave','returningAndIncompleteProfilesRouteCorrectly','canceledLoginAndFailedSaveRetainDraftForRetry','logoutAndSwitchRejectLateCallbacks','recreationPreservesSameAccountDraftAndClearsOnSwitch','cleanUnconfiguredRouteNeverStartsMockLogin')
+$names=@('missingProfileNeedsServerConfirmedSave','returningAndIncompleteProfilesRouteCorrectly','canceledLoginAndFailedSaveRetainDraftForRetry','logoutAndSwitchRejectLateCallbacks','recreationPreservesSameAccountDraftAndClearsOnSwitch','recreatedHomeRequiresCurrentAccountServerConfirmation','cleanUnconfiguredRouteNeverStartsMockLogin')
 function Run-Instrumentation([string]$ClassFilter,[string[]]$ExpectedNames,[string]$LogName){
  $idle=Adb @('shell','dumpsys','activity','processes')
  if($idle -notmatch 'mForceBackgroundCheck=' -or $idle -match '(?im)^\s*(Active instrumentation:|Instrumentation #)'){throw 'Instrumentation not proven idle'}

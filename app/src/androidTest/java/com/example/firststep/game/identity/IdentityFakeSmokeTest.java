@@ -189,9 +189,20 @@ public final class IdentityFakeSmokeTest {
       screen.onActivity(a -> assertEquals(SessionState.Stage.SAVING, a.stateForTest().getStage()));
       main(() -> fake.latestLoad().onResult(profile("Sample"), ProfilePort.Source.CACHE, null));
       screen.onActivity(a -> assertEquals(SessionState.Stage.SAVING, a.stateForTest().getStage()));
+      onView(withId(R.id.game_identity_home)).check(matches(withEffectiveVisibility(Visibility.GONE)));
       main(() -> fake.serverLatest(profile("Sample")));
+      onView(withId(R.id.game_identity_home_title)).check(matches(isDisplayed()));
+      onView(withId(R.id.game_identity_entry)).check(matches(withEffectiveVisibility(Visibility.GONE)));
+      onView(withId(R.id.game_identity_landing)).check(matches(withText("")));
+      onView(withId(R.id.game_identity_name)).check(matches(withText("")));
+      onView(withId(R.id.game_identity_student)).check(matches(withText("")));
+      onView(withId(R.id.game_identity_department)).check(matches(withText("")));
+      tap(R.id.game_identity_open_profile);
       onView(withId(R.id.game_identity_landing)).perform(reveal()).check(matches(isDisplayed()));
-      evidence("complete");
+      androidx.test.espresso.Espresso.pressBack();
+      onView(withId(R.id.game_identity_home_title)).check(matches(isDisplayed()));
+      onView(withId(R.id.game_identity_landing)).check(matches(withText("")));
+      evidence("account-home");
     }
   }
 
@@ -201,6 +212,7 @@ public final class IdentityFakeSmokeTest {
     try (ActivityScenario<IdentityActivity> screen = launch()) {
       main(() -> fake.latestLoad().onResult(profile("Cached"), ProfilePort.Source.CACHE, null));
       main(() -> fake.latestLoad().onResult(null, ProfilePort.Source.SERVER, Failure.UNAVAILABLE));
+      onView(withId(R.id.game_identity_home)).check(matches(withEffectiveVisibility(Visibility.GONE)));
       screen.onActivity(
           a -> {
             assertEquals(SessionState.Stage.PENDING_FAILURE, a.stateForTest().getStage());
@@ -218,10 +230,14 @@ public final class IdentityFakeSmokeTest {
       tap(R.id.game_identity_retry);
       main(() -> fake.serverLatest(profile("Returning")));
       screen.onActivity(a -> assertFalse(a.stateForTest().isCached()));
+      onView(withId(R.id.game_identity_home_title)).check(matches(isDisplayed()));
+      tap(R.id.game_identity_open_profile);
       onView(withId(R.id.game_identity_landing)).perform(reveal()).check(matches(isDisplayed()));
+      tap(R.id.game_identity_back);
       tap(R.id.game_identity_reselect);
       main(() -> fake.loginAs("B"));
       main(() -> fake.serverLatest(new Profile("", "00123", "Sample department")));
+      onView(withId(R.id.game_identity_home)).check(matches(withEffectiveVisibility(Visibility.GONE)));
       onView(withId(R.id.game_identity_student))
           .perform(reveal())
           .check(matches(withText("00123")));
@@ -317,6 +333,35 @@ public final class IdentityFakeSmokeTest {
       onView(withId(R.id.game_identity_name)).perform(reveal()).check(matches(withText("")));
       screen.onActivity(a -> assertEquals("B", a.stateForTest().getUid()));
       evidence("switch-form");
+    }
+  }
+
+  @Test
+  public void recreatedHomeRequiresCurrentAccountServerConfirmation() throws Exception {
+    fake.uid = "A";
+    try (ActivityScenario<IdentityActivity> screen = launch()) {
+      ProfilePort.ProfileCallback oldLoad = fake.latestLoad();
+      main(() -> fake.serverLatest(profile("Account A")));
+      onView(withId(R.id.game_identity_home_title)).check(matches(isDisplayed()));
+      tap(R.id.game_identity_open_profile);
+      screen.moveToState(Lifecycle.State.CREATED);
+      main(() -> fake.uid = "B");
+      screen.moveToState(Lifecycle.State.RESUMED);
+      screen.recreate();
+      main(() -> oldLoad.onResult(profile("Account A"), ProfilePort.Source.SERVER, null));
+      main(() -> fake.latestLoad().onResult(profile("Cached B"), ProfilePort.Source.CACHE, null));
+      onView(withId(R.id.game_identity_home)).check(matches(withEffectiveVisibility(Visibility.GONE)));
+      onView(withId(R.id.game_identity_landing)).check(matches(withText("")));
+      main(() -> fake.serverLatest(profile("Account B")));
+      onView(withId(R.id.game_identity_home_title)).check(matches(isDisplayed()));
+      onView(withId(R.id.game_identity_name)).check(matches(withText("")));
+      onView(withId(R.id.game_identity_student)).check(matches(withText("")));
+      onView(withId(R.id.game_identity_department)).check(matches(withText("")));
+      screen.onActivity(
+          a -> {
+            assertEquals("B", a.stateForTest().getUid());
+            assertEquals("Account B", a.stateForTest().getDraft().getName());
+          });
     }
   }
 }

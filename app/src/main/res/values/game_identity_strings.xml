@@ -1,6 +1,10 @@
 <resources>
  <string name="game_identity_title">Google 계정과 첫 프로필</string>
  <string name="game_identity_tagline">캠퍼스 탐방의 첫걸음</string>
+ <string name="game_identity_home_title">첫발자국 홈</string>
+ <string name="game_identity_home_intro">서버에서 확인한 내 프로필을 보고 로그인 계정을 관리할 수 있어요.</string>
+ <string name="game_identity_home_profile">내 프로필</string>
+ <string name="game_identity_home_back">홈으로</string>
  <string name="game_identity_live">Firebase Google 로그인</string>
  <string name="game_identity_fake">모의 인증·프로필 시험 · 실제 Google 연결이 아닙니다</string>
  <string name="game_identity_emulator">로컬 Firebase 에뮬레이터 시험 · 실제 Google 로그인은 확인하지 않았습니다</string>
