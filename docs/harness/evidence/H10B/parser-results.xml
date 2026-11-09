@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuites tests="1" failures="0" errors="0" skipped="0" time="0.000" timestamp="2026-11-09T13:58:55" hostname="qa-host">
+  <testsuite name="com.example.firststep.game.guide.NarrationParserTest" tests="1" failures="0" errors="0" skipped="0" time="0.001" timestamp="2026-11-09T13:58:55" hostname="qa-host">
+    <properties>
+      <property name="device" value="emulator-5580" />
+    </properties>
+    <testcase name="bundledExactApprovedCopyAndStrictParser" classname="com.example.firststep.game.guide.NarrationParserTest" time="0.001" />
+  </testsuite>
+</testsuites>
