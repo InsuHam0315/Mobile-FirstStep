@@ -1,5 +1,15 @@
 # H07 management review
 
+## v8 authenticated home installation review, 2026-11-09
+
+Exact candidate ab117d3c9144a6e908f1d51bd0f5932ee24a02d6, source/test/runner patch SHA256 42099919FFE1A2222ECC1A34AACC68EB8A370EB5B1976FB732B0A617C00D0A33. Independent management verification PM reviewed the exact committed patch and evidence: PASS for session-preserving installation, no unresolved actionable finding. The root checked clean feature status, bounded seven-file delta, retained results and actual simulated Home capture. The strict APK runner omission found during review was repaired before this candidate.
+
+COMPLETE for the current server-confirmed profile shows a separate Home. Working profile details and Back actions remain reachable. Non-COMPLETE or UID changes reset the detail panel; hidden form/profile values are cleared. This is an account home, not authenticated exploration synchronization or a claim that H10 is already in this feature build.
+
+Retained final evidence reports 143 units/29 suites with zero failures/errors/skips; required verify tasks ran with 15 executed/36 reused, lint zero errors/93 existing warnings. Separate owned API35 portrait fake-identity instrumentation has six expected starts and six passes, with no skips. It covers confirmation gating, first/returning/pending/failure/missing states, profile/back and stale UID/recreation. Full local SDK matrix was not rerun for this presentation-only patch; runner syntax and names/count parity were checked. Reviewers did not operate the human device.
+
+Frozen APK hash independently matched 6C9B931420EC8E87CD1EDFF2A1C3EB5F9C77EC7F9E6FAE64B99A92B2CFAE6918. Normal origin/firebase publication at ab117d3 and remote SHA were verified. The owner is authorized to install -r on the same emulator-5564 after foreground preflight, preserve the signed-in session/profile, verify the live Home, and bring the owned window forward. No logout/account change for this handoff. Actual installation/live Home evidence and remaining H07 live gates are separate from this source/build PASS; no H07 main app merge or H07B dispatch yet.
+
 Current addendum (2026-11-09): candidate 6770799d9c20325ea366d7371d78ecd752fb88b5 passes exact independent source/build review for the v5 logout repair. It is installed on the same owned emulator with matching APK hash, and the visible logged-out Google entry is ready for the human. Authenticated v6 logout remains a live gate. H07 overall remains in progress, with no main app integration or H07B dispatch. Earlier reviews below are historical.
 
 ## v6 confirmed logout cause and repair
