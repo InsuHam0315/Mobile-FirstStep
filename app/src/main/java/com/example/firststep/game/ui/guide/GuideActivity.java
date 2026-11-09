@@ -1,6 +1,7 @@
 package com.example.firststep.game.ui.guide;
 
 import android.os.Bundle;
+import android.content.Intent;
 import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +21,7 @@ public final class GuideActivity extends AppCompatActivity {
   private Object renderedKey;
   private int restoredScroll = -1;
   private boolean binding;
+  private boolean pendingPreviewPractice;
   private final Map<RadioButton, String[]> choices = new LinkedHashMap<>();
 
   public GuideBundle guideForTest() {
@@ -43,6 +45,7 @@ public final class GuideActivity extends AppCompatActivity {
     super.onCreate(saved);
     setContentView(R.layout.game_guide_activity);
     GuideViewModel.Saved restored = readSaved(saved);
+    pendingPreviewPractice = saved != null && saved.getBoolean("guide_pending_preview_practice", false);
     if (saved != null) restoredScroll = Math.max(0, saved.getInt("guide_scroll", 0));
     model =
         new ViewModelProvider(
@@ -96,6 +99,11 @@ public final class GuideActivity extends AppCompatActivity {
   }
 
   private void render() {
+    if (pendingPreviewPractice && !model.loading && !model.unavailable && model.guide != null) {
+      pendingPreviewPractice = false;
+      model.startPractice();
+      return;
+    }
     boolean available = !model.loading && !model.unavailable && model.guide != null;
     status.setText(
         model.loading
@@ -192,7 +200,24 @@ public final class GuideActivity extends AppCompatActivity {
     content.addView(button, new LinearLayout.LayoutParams(-1, -2));
   }
 
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+    if (requestCode == 101 && resultCode == RESULT_OK) {
+      pendingPreviewPractice = true;
+      if (!model.loading && !model.unavailable && model.guide != null) {
+        pendingPreviewPractice = false;
+        model.startPractice();
+      }
+    }
+  }
+
   private void showIntroduction() {
+    Button preview = (Button) getLayoutInflater().inflate(R.layout.game_guide_source_button, content, false);
+    preview.setId(R.id.game_narration_entry);
+    preview.setText(R.string.game_narration_title);
+    preview.setOnClickListener(v -> startActivityForResult(new Intent(this, NarrationActivity.class), 101));
+    content.addView(preview, new LinearLayout.LayoutParams(-1, -2));
     text(getString(R.string.game_guide_sequence), true);
     for (GuideBundle.Claim claim : model.guide.getClaims()) {
       text(claim.getText(), false);
@@ -318,6 +343,7 @@ public final class GuideActivity extends AppCompatActivity {
       state.putStringArrayList("guide_questions", new ArrayList<>(saved.answers.keySet()));
       state.putStringArrayList("guide_options", new ArrayList<>(saved.answers.values()));
     }
+    state.putBoolean("guide_pending_preview_practice", pendingPreviewPractice);
     state.putInt("guide_scroll", scroll.getScrollY());
     super.onSaveInstanceState(state);
   }

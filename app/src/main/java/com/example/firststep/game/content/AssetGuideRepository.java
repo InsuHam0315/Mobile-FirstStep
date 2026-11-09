@@ -56,7 +56,7 @@ public final class AssetGuideRepository implements GuidePorts.BundleLoader {
     }
   }
 
-  private static Object value(JsonReader reader, int depth) throws IOException {
+  static Object value(JsonReader reader, int depth) throws IOException {
     if (depth > 16) throw new IOException("Guide nesting limit");
     switch (reader.peek()) {
       case BEGIN_OBJECT:

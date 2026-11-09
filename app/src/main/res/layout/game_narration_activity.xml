@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView android:id="@+id/narration_scroll" xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true">
+  <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="@dimen/game_space_medium">
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_narration_title" android:textSize="@dimen/game_text_title" android:textColor="@color/game_color_text" android:accessibilityHeading="true" />
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_narration_limit" android:textSize="@dimen/game_text_body" android:textColor="@color/game_color_text" />
+    <ImageView android:layout_width="96dp" android:layout_height="96dp" android:layout_gravity="center" android:src="@drawable/game_discovery_placeholder" android:contentDescription="@string/game_narration_art" />
+    <TextView android:id="@+id/narration_position" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="@dimen/game_text_body" android:textColor="@color/game_color_text" />
+    <TextView android:id="@+id/narration_caption" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="@dimen/game_text_title" android:textColor="@color/game_color_text" android:accessibilityLiveRegion="polite" />
+    <TextView android:id="@+id/narration_source" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="@dimen/game_text_body" android:textColor="@color/game_color_text" />
+    <TextView android:id="@+id/narration_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="@dimen/game_text_body" android:textColor="@color/game_color_text" android:accessibilityLiveRegion="polite" />
+    <LinearLayout android:id="@+id/narration_controls" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+      <Button android:id="@+id/narration_previous" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_narration_previous" />
+      <Button android:id="@+id/narration_next" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_narration_next" />
+      <Button android:id="@+id/narration_replay" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_narration_replay" />
+    </LinearLayout>
+    <Button android:id="@+id/narration_skip" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_narration_skip" />
+    <Button android:id="@+id/narration_finish" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_narration_finish" />
+  </LinearLayout>
+</ScrollView>
