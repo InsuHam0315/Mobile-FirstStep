@@ -22,7 +22,8 @@ public final class NavigationStore {
   }
 
   private String key(IntegrationContext c) {
-    return c.runId + "_" + c.mode.name();
+    return (IntegrationContext.DATASET.equals(c.datasetId) ? "" : c.datasetId + "_")
+        + c.runId + "_" + c.mode.name();
   }
 
   private boolean commit(String k, SharedPreferences.Editor editor) {
@@ -39,6 +40,7 @@ public final class NavigationStore {
   public boolean bindClock(IntegrationContext c) {
     synchronized (LOCK) {
       try {
+        if (!IntegrationComposition.allowedContext(c, com.example.firststep.BuildConfig.DEBUG)) return false;
         String k = key(c);
         if (POISONED.contains(k)) return false;
         String old = prefs.getString(k + "_clock", null);
@@ -54,6 +56,7 @@ public final class NavigationStore {
   }
 
   private boolean bound(IntegrationContext c) {
+    if (!IntegrationComposition.allowedContext(c, com.example.firststep.BuildConfig.DEBUG)) return false;
     String k = key(c);
     if (POISONED.contains(k) || !c.clock.name().equals(prefs.getString(k + "_clock", null)))
       return false;

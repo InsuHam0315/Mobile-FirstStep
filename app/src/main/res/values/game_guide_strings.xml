@@ -1,5 +1,8 @@
 <resources>
     <item type="id" name="game_guide_entry"/>
+    <item type="id" name="game_guide_demo_entry"/>
+    <string name="game_guide_demo_entry">소프트웨어학과 탐방 시연</string>
+    <string name="game_guide_demo_unavailable">시연 자료를 불러오지 못했습니다. 다시 시도해 주세요.</string>
     <item type="id" name="game_narration_entry"/>
     <string name="game_guide_entry">소프트웨어학과 안내·연습</string>
     <string name="game_guide_no_progress">탐방 기록과 보상에 반영되지 않는 학습 화면입니다.</string>

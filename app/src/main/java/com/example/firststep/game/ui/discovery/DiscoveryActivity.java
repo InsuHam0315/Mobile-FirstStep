@@ -131,19 +131,26 @@ public final class DiscoveryActivity extends AppCompatActivity
     controller = host.controller();
     if (integrationRequest != null) {
       findViewById(R.id.game_discovery_method_light).setVisibility(View.GONE);
-      ((TextView) findViewById(R.id.game_integration_discovery_context))
-          .setText(
-              getString(
-                  R.string.game_integration_description,
-                  getString(R.string.game_integration_disclosure),
-                  getString(
-                      R.string.game_integration_context,
-                      integrationRequest.context.runId,
-                      integrationRequest.context.mode.name(),
-                      getString(
-                          integrationRequest.context.clock == IntegrationContext.Clock.REAL
-                              ? R.string.game_integration_real_clock
-                              : R.string.game_integration_fake_clock))));
+      boolean softwareDemo =
+          IntegrationContext.SOFTWARE_DATASET.equals(integrationRequest.context.datasetId);
+      if (softwareDemo) {
+        ((TextView) findViewById(R.id.game_integration_discovery_context))
+            .setText(R.string.game_software_demo_discovery_disclosure);
+      } else {
+        ((TextView) findViewById(R.id.game_integration_discovery_context))
+            .setText(
+                getString(
+                    R.string.game_integration_description,
+                    getString(R.string.game_integration_disclosure),
+                    getString(
+                        R.string.game_integration_context,
+                        integrationRequest.context.runId,
+                        integrationRequest.context.mode.name(),
+                        getString(
+                            integrationRequest.context.clock == IntegrationContext.Clock.REAL
+                                ? R.string.game_integration_real_clock
+                                : R.string.game_integration_fake_clock))));
+      }
       findViewById(R.id.game_integration_discovery_context).setVisibility(View.VISIBLE);
       findViewById(R.id.game_integration_discovery_continue)
           .setOnClickListener(v -> continueIntegration());

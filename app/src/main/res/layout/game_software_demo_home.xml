@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@id/game_home_scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/game_color_surface"
+        android:orientation="vertical"
+        android:padding="@dimen/game_space_medium">
+        <TextView
+            android:id="@+id/game_software_demo_home_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/game_software_demo_title"
+            android:textColor="@color/game_color_text"
+            android:textSize="@dimen/game_text_title" />
+        <TextView
+            android:id="@id/game_home_context"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/game_software_demo_mode"
+            android:textColor="@color/game_color_text"
+            android:textSize="@dimen/game_text_body" />
+        <TextView
+            android:id="@id/game_integration_home_context"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/game_color_text"
+            android:textSize="@dimen/game_text_body" />
+        <Button
+            android:id="@id/game_home_back"
+            style="@style/GameActionButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/game_home_back" />
+        <TextView
+            android:id="@id/game_home_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:accessibilityLiveRegion="polite"
+            android:text="@string/game_integration_loading"
+            android:textColor="@color/game_color_text"
+            android:textSize="@dimen/game_text_body" />
+        <Button
+            android:id="@id/game_home_retry"
+            style="@style/GameActionButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/game_home_retry"
+            android:visibility="gone" />
+        <LinearLayout
+            android:id="@id/game_home_panel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+            <TextView
+                android:id="@id/game_home_progress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/game_color_text"
+                android:textSize="@dimen/game_text_body" />
+            <Button
+                android:id="@id/game_home_prototype"
+                style="@style/GameActionButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/game_software_demo_discover" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>
