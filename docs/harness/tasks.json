@@ -5,16 +5,17 @@
   "coordinationScope": "docs/harness/IMPLEMENTATION_FIRST.md",
   "activeBranches": [
     "campus-content",
-    "app-entry"
+    "home-progress"
   ],
   "appEntryCheckpoint": {
     "branch": "app-entry",
-    "candidateSha": "be9364390bd1e69c8f59aa193bbe5475cb8c1a29",
+    "candidateSha": "43175ebba6a1545429a6fb43e7ff2b4c500b90e4",
     "integratedSha": "02eadec6744cd16f919a33918013f32ed5a2ce7c",
-    "status": "graph_integrated_runtime_pending",
+    "status": "graph_and_readback_facade_integrated_ui_runtime_pending",
     "combinedValidation": "36 selected JVM tests/APK/test compilation/lint PASS at934d9b0; runtime pending",
     "installedDevice": "QA5572 remains user-held on v1 6fbb872",
-    "graphIntegratedSha": "b240a0369869f9cae485068f360beb4dc2116696"
+    "graphIntegratedSha": "b240a0369869f9cae485068f360beb4dc2116696",
+    "readbackIntegratedSha": "a1bd986f2cf0a0a2bfad6d154b2c984ce52bfc37"
   },
   "activeTask": "H10",
   "parallelTasks": [
@@ -395,8 +396,8 @@
   "progressSyncCheckpoint": {
     "branch": "progress-sync",
     "candidateSha": "b996ac9e6ab2a09d708f103bea4e88d967412189",
-    "integratedSha": "934d9b0a5b30b4e36b9bc2a21d167534dbe44f58",
-    "status": "guard_source_reconciler_and_identity_graph_integrated_gameplay_host_active",
+    "integratedSha": "5c180cab04f247195aef548e088aae6e8c7c160f",
+    "status": "core_guard_recovery_integrated_actual_normal_callers_under_repair",
     "productionRegistry": "empty; no live progress access enabled",
     "recoveryIntegratedSha": "5c180cab04f247195aef548e088aae6e8c7c160f"
   },
@@ -407,5 +408,12 @@
     "normalActivation": "not enabled; surveyed configuration absent",
     "published": false,
     "integrated": false
+  },
+  "homeProgressCheckpoint": {
+    "branch": "home-progress",
+    "status": "ready",
+    "scopePath": "docs/harness/HOME_PROGRESS_SCOPE.md",
+    "owner": "implementation_pm",
+    "required": "account Home progress/waiting quiz/favorites and best-effort authored reminder caller"
   }
 }

@@ -20,6 +20,8 @@ The owner retains authored host/UI and the narrow CampusHome route. Own additive
 
 ## Checkpoint and delivery
 
+The separate home-progress owner will supply authored Home summaries and a best-effort reminder port. Coordinate its actual signature; campus owner retains the scheduling call after durable intro completion and explicit intro Skip behavior already specified by H04. Do not block quiz when notifications are refused/unavailable. Do not edit the parallel owner's new account-home/notification files. A reminder adapter without this call is not completion.
+
 Use Sol PM and Terra/Luna leaves with disjoint responsibilities where useful. Focused tests: location freshness/quality/distance/source, permission/lifecycle, trusted arrival -> direction/SHAKE -> intro, stale/replay/cancel/session isolation, post-intro away/wait/quiz/retry/restart, flush overlap. Short APK and Android test compilation; retain exact commands/counts and distinguish pure synthetic checks from Android runtime. No protected-device action, real account write, production registration activation, Firestore rules deployment or field claim.
 
 Commit Korean campus-content revisions above v13, update own module contract and handoff with actual remaining gaps. Do not change management tasks/rules, push, merge, Notion or begin design. Report coherent checkpoints; management independently reviews and integrates, then applies latest teammate design and combined validation.
