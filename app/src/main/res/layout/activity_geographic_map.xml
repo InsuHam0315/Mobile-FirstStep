@@ -1,21 +1,232 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/map_root"
- android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="#FAF7EF">
- <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="캠퍼스 지도" android:textSize="24sp" android:textStyle="bold" android:textColor="#1E2B39" android:padding="16dp" />
- <TextView android:id="@+id/map_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="지도 불러오는 중 · 미션 지점은 현장 확인 후 표시합니다." android:textColor="#636969" android:paddingHorizontal="16dp" android:textSize="13sp" />
- <com.example.firststep.map.CampusMapView android:id="@+id/campus_map" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:layout_marginTop="12dp" />
- <TextView android:id="@+id/map_attribution" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="© OpenStreetMap contributors · 지도 출처/이용 조건" android:textSize="12sp" android:textColor="#2262A2" android:padding="8dp" android:minHeight="40dp" android:gravity="center" />
- <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
-  <Button android:id="@+id/map_zoom_in" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="확대" />
-  <Button android:id="@+id/map_zoom_out" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="축소" />
-  <Button android:id="@+id/map_campus" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="학교" />
- </LinearLayout>
- <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
-  <Button android:id="@+id/map_location" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="내 위치" />
-  <Button android:id="@+id/map_retry" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="다시 불러오기" />
- </LinearLayout>
- <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
-  <Button android:id="@+id/map_route" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="탐방 순서도" />
-  <Button android:id="@+id/map_back" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="돌아가기" />
- </LinearLayout>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/map_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF">
+
+    <!-- 미니멀 헤더 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="14dp"
+        android:background="#FFFFFF">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="FIRST STEP"
+                android:textColor="#D35488"
+                android:textSize="11sp"
+                android:letterSpacing="0.15"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="캠퍼스 탐험"
+                android:textColor="#22212B"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:layout_marginTop="4dp"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="5 SPOTS"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="#BD4979"
+            android:background="#FCE5EE"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="9dp"/>
+
+    </LinearLayout>
+
+    <!-- 넓은 지도 영역 -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#F2F2F2">
+
+        <com.example.firststep.map.CampusMapView
+            android:id="@+id/campus_map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <!-- 지도 상태 -->
+        <TextView
+            android:id="@+id/map_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:layout_margin="12dp"
+            android:background="#F2FFFFFF"
+            android:padding="12dp"
+            android:text="군산대학교 캠퍼스를 탐험해 보세요."
+            android:textColor="#4B4B55"
+            android:textSize="12sp"
+            android:elevation="3dp"/>
+
+        <!-- 지도 위 플로팅 버튼 -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginEnd="12dp"
+            android:orientation="vertical"
+            android:background="#FAFFFFFF"
+            android:elevation="5dp">
+
+            <Button
+                android:id="@+id/map_zoom_in"
+                android:layout_width="56dp"
+                android:layout_height="52dp"
+                android:text="+"
+                android:textSize="23sp"
+                android:textColor="#292631"
+                android:backgroundTint="#FFFFFF"/>
+
+            <Button
+                android:id="@+id/map_zoom_out"
+                android:layout_width="56dp"
+                android:layout_height="52dp"
+                android:text="−"
+                android:textSize="23sp"
+                android:textColor="#292631"
+                android:backgroundTint="#FFFFFF"/>
+
+            <Button
+                android:id="@+id/map_location"
+                android:layout_width="56dp"
+                android:layout_height="52dp"
+                android:text="◎"
+                android:textSize="21sp"
+                android:textColor="#C65382"
+                android:backgroundTint="#FFFFFF"/>
+
+        </LinearLayout>
+
+        <!-- 학교 중심 버튼 -->
+        <Button
+            android:id="@+id/map_campus"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_gravity="bottom|start"
+            android:layout_margin="12dp"
+            android:text="학교 중심"
+            android:textSize="12sp"
+            android:textColor="#35303A"
+            android:backgroundTint="#FFFFFF"
+            android:elevation="5dp"/>
+
+    </FrameLayout>
+
+    <!-- 하단 탐험 패널 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#FFFFFF"
+        android:paddingStart="18dp"
+        android:paddingEnd="18dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="8dp"
+        android:elevation="8dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="나의 캠퍼스 탐험"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#252530"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="건물을 선택하고 첫 번째 기억을 찾아보세요."
+            android:textSize="12sp"
+            android:textColor="#85818A"
+            android:layout_marginTop="4dp"/>
+
+        <Button
+            android:id="@+id/map_buildings"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="12dp"
+            android:text="탐험할 건물 선택하기  →"
+            android:textAllCaps="false"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#C65382"/>
+
+        <!-- 보조 기능 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/map_route"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:text="탐방 안내"
+                android:textSize="12sp"
+                android:textColor="#4C4652"
+                android:backgroundTint="#F3EEF1"/>
+
+            <Button
+                android:id="@+id/map_retry"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:text="새로고침"
+                android:textSize="12sp"
+                android:textColor="#4C4652"
+                android:backgroundTint="#F3EEF1"/>
+
+            <Button
+                android:id="@+id/map_back"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:text="돌아가기"
+                android:textSize="12sp"
+                android:textColor="#4C4652"
+                android:backgroundTint="#F3EEF1"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/map_attribution"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="28dp"
+            android:gravity="center"
+            android:text="© OpenStreetMap contributors · 지도 이용 조건"
+            android:textSize="10sp"
+            android:textColor="#99939B"
+            android:padding="5dp"/>
+
+    </LinearLayout>
+
 </LinearLayout>

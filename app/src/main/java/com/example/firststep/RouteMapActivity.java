@@ -27,12 +27,80 @@ public final class RouteMapActivity extends AppCompatActivity {
         });
         findViewById(R.id.map_zoom_in).setOnClickListener(v->map.zoom(1));
         findViewById(R.id.map_zoom_out).setOnClickListener(v->map.zoom(-1));
-        findViewById(R.id.map_campus).setOnClickListener(v->map.campus());
+        findViewById(R.id.map_campus).setOnClickListener(v->{stopLocation();map.current(null);map.campus();status.setText("군산대학교 캠퍼스 중심으로 이동했습니다.");});
         findViewById(R.id.map_retry).setOnClickListener(v->map.retry());
         findViewById(R.id.map_attribution).setOnClickListener(v->startActivity(new android.content.Intent(android.content.Intent.ACTION_VIEW,android.net.Uri.parse("https://www.openstreetmap.org/copyright"))));
         findViewById(R.id.map_location).setOnClickListener(v->locate());
+        findViewById(R.id.map_buildings).setOnClickListener(v->showBuildingList());
         findViewById(R.id.map_route).setOnClickListener(v->{stopLocation();map.close();map=null;route();});
         findViewById(R.id.map_back).setOnClickListener(v->finish());
+    }
+
+    private void showBuildingList() {
+
+        java.util.List<com.example.firststep.data.Mission> missions =
+            com.example.firststep.data.MissionRepository
+                .getInstance(this).getMissions();
+
+        if (missions == null || missions.isEmpty()) {
+            new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("건물 목록")
+                .setMessage("등록된 건물이 없습니다.")
+                .setPositiveButton("확인", null)
+                .show();
+            return;
+        }
+
+        String[] names = new String[missions.size()];
+
+        for (int i = 0; i < missions.size(); i++) {
+            com.example.firststep.data.Mission m = missions.get(i);
+
+            names[i] = (i + 1) + ". " + m.place;
+        }
+
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("탐험할 건물 선택")
+            .setItems(names, (dialog, which) -> {
+
+                com.example.firststep.data.Mission selected =
+                    missions.get(which);
+
+                showBuildingInfo(selected, which);
+            })
+            .setNegativeButton("닫기", null)
+            .show();
+    }
+
+    private void showBuildingInfo(
+        com.example.firststep.data.Mission mission,
+        int index
+    ) {
+
+        String message =
+            mission.explanation
+            + "\n\n현재 건물 정보는 MVP 임시 데이터입니다."
+            + "\n실제 위치 및 시설 정보는 검증 전입니다."
+            + "\n\n테스트 모드에서는 현장 도착 없이 체험할 수 있습니다.";
+
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle(mission.place)
+            .setMessage(message)
+            .setPositiveButton("테스트 미션 시작", (dialog, which) -> {
+
+                android.content.Intent intent =
+                    new android.content.Intent(
+                        this,
+                        BuildingDiscoveryActivity.class
+                    );
+
+                intent.putExtra("missionIndex", index);
+                intent.putExtra("demo", true);
+
+                startActivity(intent);
+            })
+            .setNegativeButton("취소", null)
+            .show();
     }
     private void locate() {
         if(!com.example.firststep.location.LocationController.hasPermission(this)) {

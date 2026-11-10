@@ -63,14 +63,42 @@ public class MainActivity extends AppCompatActivity {
     Ui.applyInsets(root);
     page = findViewById(R.id.page);
     nav = findViewById(R.id.navigation);
-    String[] labels = {"코스", "시설 도감", "내 기록"};
-    String[] tabs = {"home", "catalog", "profile"};
+    String[] labels = {"홈", "지도", "마이페이지"};
+    String[] tabs = {"home", "map", "profile"};
     for (int i = 0; i < 3; i++) {
       final String target = tabs[i];
       TextView t = Ui.text(this, labels[i], 14, target.equals(tab) ? Ui.RUST : Ui.MUTED, true);
       t.setGravity(android.view.Gravity.CENTER);
-      nav.addView(t, new LinearLayout.LayoutParams(0, Ui.dp(this, 48), 1));
+            // FIRSTSTEP_NAV_STYLE_V1
+      t.setTextSize(12);
+      t.setLineSpacing(Ui.dp(this, 3), 1.0f);
+      t.setTextColor(target.equals(tab) ? 0xFFAD5277 : 0xFF85818A);
+      t.setPadding(0, Ui.dp(this, 4), 0, Ui.dp(this, 4));
+
+      android.graphics.drawable.GradientDrawable navBackground =
+          new android.graphics.drawable.GradientDrawable();
+
+      navBackground.setColor(
+          target.equals(tab) ? 0xFFFFE2EC : 0xFFFFFFFF
+      );
+      navBackground.setCornerRadius(Ui.dp(this, 14));
+
+      t.setBackground(navBackground);
+
+      LinearLayout.LayoutParams navParams =
+          new LinearLayout.LayoutParams(0, Ui.dp(this, 52), 1);
+
+      navParams.setMargins(
+          Ui.dp(this, 3), Ui.dp(this, 3),
+          Ui.dp(this, 3), Ui.dp(this, 3)
+      );
+
+      nav.addView(t, navParams);
       t.setOnClickListener(v -> {
+        if ("map".equals(target)) {
+          startActivity(new Intent(this, RouteMapActivity.class));
+          return;
+        }
         tab = target;
         render();
       });
@@ -135,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
         "FIRST STEP  /  CAMPUS JOURNAL",
         repo.getNickname() + "님, 안녕하세요",
         "오늘은 캠퍼스의 어떤 기억을 만나 볼까요?");
+
     LinearLayout modeCard = Ui.card(this);
     modeCard.addView(Ui.label(this, mode == AppMode.DEMO ? "DEMO MODE" : "FIELD MODE"));
     Ui.gap(modeCard, 7);
@@ -159,9 +188,48 @@ public class MainActivity extends AppCompatActivity {
     });
     page.addView(modeCard);
     Ui.gap(page, 12);
-    Button routeMap = Ui.button(this, "코스 안내도", false);
-    page.addView(routeMap);
-    routeMap.setOnClickListener(v -> startActivity(new Intent(this, RouteMapActivity.class)));
+    Button guideButton = Ui.button(this, "학교 시설 안내", false);
+    page.addView(guideButton);
+    guideButton.setOnClickListener(v -> {
+      tab = "catalog";
+      render();
+    });
+    Ui.gap(page, 12);
+
+        // FIRSTSTEP_HOME_CARD_V1
+    LinearLayout exploreCard = Ui.card(this);
+
+    exploreCard.addView(
+        Ui.text(this, "CAMPUS ADVENTURE", 12, 0xFFAD5277, true)
+    );
+
+    Ui.gap(exploreCard, 12);
+
+    exploreCard.addView(
+        Ui.text(this, "오늘의 캠퍼스 탐험", 24, Ui.INK, true)
+    );
+
+    Ui.gap(exploreCard, 10);
+
+    exploreCard.addView(
+        Ui.text(this,
+            "지도에서 건물을 선택하고 숨겨진 캐릭터와 미션을 만나보세요.",
+            15, Ui.MUTED, false)
+    );
+
+    Ui.gap(exploreCard, 18);
+
+    Button exploreStart = Ui.button(
+        this, "지도에서 탐험 시작하기", true
+    );
+
+    exploreCard.addView(exploreStart);
+
+    exploreStart.setOnClickListener(v ->
+        startActivity(new Intent(this, RouteMapActivity.class))
+    );
+
+    page.addView(exploreCard);
     Ui.gap(page, 26);
     page.addView(Ui.label(this, "YOUR ROUTE"));
     Ui.gap(page, 8);
@@ -307,6 +375,168 @@ public class MainActivity extends AppCompatActivity {
     AuthSession account = new AuthSession(this);
     boolean guest = "guest".equals(account.currentUserId());
     header("MY JOURNAL", repo.getNickname() + "의 기록", guest ? "계정 없이 이 기기에 기록하고 있어요." : "완료 기록과 사진을 이 기기에 보관하고 계정별로 서버와 동기화합니다.");
+        // FIRSTSTEP_PROFILE_V1
+
+    int totalPlaces = missions.size();
+    int completedPlaces = completions.size();
+
+    int progressPercent = totalPlaces == 0
+        ? 0
+        : Math.min(100, (completedPlaces * 100) / totalPlaces);
+
+    LinearLayout profileSummary = Ui.card(this);
+
+    android.graphics.drawable.GradientDrawable profileBg =
+        new android.graphics.drawable.GradientDrawable(
+            android.graphics.drawable.GradientDrawable.Orientation.TL_BR,
+            new int[] {
+                0xFFFFDCE8,
+                0xFFFFF5F9
+            }
+        );
+
+    profileBg.setCornerRadius(Ui.dp(this, 24));
+
+    profileSummary.setBackground(profileBg);
+
+    profileSummary.setPadding(
+        Ui.dp(this, 22),
+        Ui.dp(this, 24),
+        Ui.dp(this, 22),
+        Ui.dp(this, 24)
+    );
+
+    profileSummary.addView(
+        Ui.text(
+            this,
+            "MY CAMPUS JOURNAL",
+            12,
+            0xFFAD5277,
+            true
+        )
+    );
+
+    Ui.gap(profileSummary, 12);
+
+    profileSummary.addView(
+        Ui.text(
+            this,
+            "나의 탐험 현황",
+            25,
+            Ui.INK,
+            true
+        )
+    );
+
+    Ui.gap(profileSummary, 8);
+
+    profileSummary.addView(
+        Ui.text(
+            this,
+            "캠퍼스에서 모은 소중한 기억을 확인해 보세요.",
+            14,
+            Ui.MUTED,
+            false
+        )
+    );
+
+    Ui.gap(profileSummary, 22);
+
+    LinearLayout countRow = new LinearLayout(this);
+
+    countRow.setOrientation(LinearLayout.HORIZONTAL);
+    countRow.setGravity(android.view.Gravity.CENTER_VERTICAL);
+
+    TextView countLabel = Ui.text(
+        this,
+        "완료한 장소",
+        16,
+        Ui.INK,
+        true
+    );
+
+    countRow.addView(
+        countLabel,
+        new LinearLayout.LayoutParams(0, -2, 1)
+    );
+
+    TextView countValue = Ui.text(
+        this,
+        completedPlaces + " / " + totalPlaces,
+        25,
+        0xFFAD5277,
+        true
+    );
+
+    countRow.addView(countValue);
+
+    profileSummary.addView(countRow);
+
+    Ui.gap(profileSummary, 16);
+
+    android.widget.ProgressBar progressBar =
+        new android.widget.ProgressBar(
+            this,
+            null,
+            android.R.attr.progressBarStyleHorizontal
+        );
+
+    progressBar.setMax(100);
+    progressBar.setProgress(progressPercent);
+
+    progressBar.setProgressTintList(
+        android.content.res.ColorStateList.valueOf(
+            0xFFE58CAC
+        )
+    );
+
+    progressBar.setProgressBackgroundTintList(
+        android.content.res.ColorStateList.valueOf(
+            0xFFFFC8DA
+        )
+    );
+
+    profileSummary.addView(
+        progressBar,
+        new LinearLayout.LayoutParams(
+            -1,
+            Ui.dp(this, 12)
+        )
+    );
+
+    Ui.gap(profileSummary, 12);
+
+    profileSummary.addView(
+        Ui.text(
+            this,
+            "전체 탐험 진행률 " + progressPercent + "%",
+            14,
+            Ui.MUTED,
+            false
+        )
+    );
+
+    Ui.gap(profileSummary, 16);
+
+    String encouragement = completedPlaces == 0
+        ? "첫 번째 캠퍼스 기억을 찾아보세요."
+        : completedPlaces >= totalPlaces
+            ? "모든 캠퍼스 기억을 완성했어요!"
+            : "좋아요! 다음 장소의 기억도 찾아보세요.";
+
+    profileSummary.addView(
+        Ui.text(
+            this,
+            encouragement,
+            14,
+            0xFFAD5277,
+            true
+        )
+    );
+
+    page.addView(profileSummary);
+
+    Ui.gap(page, 22);
     LinearLayout accountCard = Ui.card(this);
     accountCard.addView(Ui.label(this, guest ? "기기에서 이용 중" : "계정에 연결됨"));Ui.gap(accountCard, 8);
     accountCard.addView(Ui.text(this, guest ? "로그인 없이도 탐방할 수 있어요" : account.userNickname(), 20, Ui.INK, true));Ui.gap(accountCard, 8);
@@ -393,7 +623,7 @@ public class MainActivity extends AppCompatActivity {
     page.addView(
         Ui.text(
             this,
-            "콘텐츠 초안 2026.10.06 · 정보 확인 전\n시설 정보와 좌표는 현장 확인 전의 후보 내용입니다.",
+            "콘텐츠 초안 2026.10.06 · 정보 확인 전\n시설 정보와 좌표는 현장 확인 전의  내용입니다.",
             13,
             Ui.MUTED,
             false));
