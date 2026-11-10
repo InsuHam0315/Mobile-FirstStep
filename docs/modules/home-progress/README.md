@@ -11,6 +11,12 @@ Campus Home displays the local NORMAL record for the registered software-departm
 
 The production registry remains empty. The software guide and demo do not grant a NORMAL intro, quiz or stamp.
 
+## Facility directory and real map
+
+`CampusHomeActivity` opens the existing directory and real browse map. A directory detail can update the device-local favorite and open `RouteMapActivity.facilityBrowseIntent(context, facilityId)`. The map's facility lookup opens `FacilityDirectoryActivity.mapLookupIntent(context)`, which offers the same search, filters, favorites and details. Choosing a facility returns its stable ID through `selectedFacilityId(result)` to the current map. Cancelling retains the current selection.
+
+Browse map resolves the ID against the existing local catalog and retains it across recreation. The selected name is shown beside an explicit unverified-location message, outside the map canvas. Unknown IDs display a recoverable unavailable state. The route does not translate catalog names into coordinates or import legacy missions. No facility coordinate or authored target mapping is approved yet.
+
 ## Reminder caller contract
 
 Create an `AuthoredReminder` with `AuthoredReminderAndroid.create(context, registry, owner)`. The authored host calls `schedule(scope, committedProgress)` after the local intro is durable, including a replay of that committed intro when permission is granted later. A stamped snapshot invalidates its pending ticket. Schedule outcomes are informational. Local save, waiting and quiz re-entry proceed regardless of notification permission or Android scheduling failure.

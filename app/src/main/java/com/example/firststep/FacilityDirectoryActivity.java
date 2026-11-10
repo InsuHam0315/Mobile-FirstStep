@@ -2,6 +2,7 @@ package com.example.firststep;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.Context;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,6 +34,19 @@ public final class FacilityDirectoryActivity extends AppCompatActivity {
       MUTED = Color.rgb(102, 99, 102),
       LINE = Color.rgb(232, 222, 221),
       BLUSH = Color.rgb(249, 231, 235);
+  private static final String EXTRA_MAP_LOOKUP = "facility_directory_map_lookup";
+  private static final String EXTRA_SELECTED_FACILITY_ID = "facility_directory_selected_id";
+
+  /** Opens the same directory as a map facility picker. */
+  public static Intent mapLookupIntent(Context context) {
+    return new Intent(context, FacilityDirectoryActivity.class).putExtra(EXTRA_MAP_LOOKUP, true);
+  }
+
+  /** Returns the selected catalog ID, or null for a missing result. */
+  public static String selectedFacilityId(Intent result) {
+    return result == null ? null : result.getStringExtra(EXTRA_SELECTED_FACILITY_ID);
+  }
+
   private static final String[] CATEGORIES = {"전체", "학습", "학생지원", "진로·취업", "생활"};
   private FacilityRepository repository;
   private List<Facility> facilities = Collections.emptyList();
@@ -245,7 +259,16 @@ public final class FacilityDirectoryActivity extends AppCompatActivity {
     }
   }
 
+  private int favoriteAction(String id) {
+    return repository.favorites().contains(id)
+        ? R.string.facility_detail_unfavorite : R.string.facility_detail_favorite;
+  }
+
   private void details(Facility f) {
+    AlertDialog detail = new AlertDialog.Builder(this)
+        .setTitle(f.name)
+        .setPositiveButton("닫기", null)
+        .create();
     LinearLayout panel = Ui.column(this);
     panel.setPadding(Ui.dp(this, 24), Ui.dp(this, 8), Ui.dp(this, 24), Ui.dp(this, 20));
     panel.addView(text(f.category, 13, ROSE, true));
@@ -273,6 +296,28 @@ public final class FacilityDirectoryActivity extends AppCompatActivity {
             MUTED,
             false));
     Ui.gap(panel, 18);
+    Button favorite = button(getString(favoriteAction(f.id)), false);
+    panel.addView(favorite, new LinearLayout.LayoutParams(-1, Ui.dp(this, 52)));
+    favorite.setOnClickListener(v -> {
+      repository.setFavorite(f.id, !repository.favorites().contains(f.id));
+      favorite.setText(favoriteAction(f.id));
+      renderResults();
+    });
+    Ui.gap(panel, 10);
+    boolean picker = getIntent().getBooleanExtra(EXTRA_MAP_LOOKUP, false);
+    Button map = button(getString(picker ? R.string.facility_map_select : R.string.facility_map_open), false);
+    panel.addView(map, new LinearLayout.LayoutParams(-1, Ui.dp(this, 52)));
+    map.setOnClickListener(v -> {
+      v.setEnabled(false);
+      detail.dismiss();
+      if (picker) {
+        setResult(RESULT_OK, new Intent().putExtra(EXTRA_SELECTED_FACILITY_ID, f.id));
+        finish();
+      } else {
+        startActivity(RouteMapActivity.facilityBrowseIntent(this, f.id));
+      }
+    });
+    Ui.gap(panel, 10);
     Button link = button("공식 안내 열기 ↗", true);
     panel.addView(link, new LinearLayout.LayoutParams(-1, Ui.dp(this, 52)));
     link.setOnClickListener(v -> {
@@ -289,10 +334,7 @@ public final class FacilityDirectoryActivity extends AppCompatActivity {
     });
     ScrollView scroll = new ScrollView(this);
     scroll.addView(panel);
-    new AlertDialog.Builder(this)
-        .setTitle(f.name)
-        .setView(scroll)
-        .setPositiveButton("닫기", null)
-        .show();
+    detail.setView(scroll);
+    detail.show();
   }
 }
