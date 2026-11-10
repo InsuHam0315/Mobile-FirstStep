@@ -1,6 +1,6 @@
 # Account progress sync
 
-Status: implemented H07B core and adapters. Combined account/gameplay binding and live validation are pending.
+The H07B core, adapters, confirmed-owner guard and durable gameplay reconciliation are implemented. The identity graph connection, authored registration and runtime validation are pending.
 
 ## Entry points
 
@@ -43,10 +43,19 @@ Callers can display the locally committed result before requesting a flush. Rech
 - `OutboxState` exposes `confirmed`, `pending`, `effective()` and a status. Retryable errors preserve pending data for an explicit flush. Permanent failures stop flushing that revision until a meaningful new milestone is queued. There is no background retry scheduler or cloud delete API.
 - Progress summaries do not become local quiz attempts. Current H06 fixtures, software DEMO, guide/practice and legacy data are ineligible, including fixture records that happen to be labeled NORMAL.
 
+## Confirmed owner and committed gameplay
+
+- `ConfirmedSessionOwner(String projectId)` is the reentrant `SessionOwner` implementation. Feed `onAuthChanged(uid)` from the identity graph's auth observer, and call `confirm(uid)` only after the identity controller's stale-response checks accept a server-confirmed profile. Those checks must reject old confirmations even after the same UID signs in again. Map loss of confirmation to `revoke()`. An ordinary Activity pause has no owner event. Repeated unchanged events preserve the epoch. Revocation, a changed UID or a new confirmation invalidates older captures.
+- `capture(datasetId, mode, buildingId)` returns a `SyncScope` for the current confirmed owner or throws `SessionOwner.StaleSession`. Capture does not register the dataset. `DatasetRegistry` checks eligibility before the repository or reconciler accesses storage.
+- `SQLiteAuthoredProgressStore(context, registry)` opens `firststep-authored-gameplay.db` lazily. Its composite key is project, UID, dataset, mode and building. Each transaction saves the `Progress` aggregate and observed first-pass commit timestamp together. The gameplay host owns the store lifetime.
+- `AuthoredProgressRepository(registry, owner, scope, authoredStore, clock)` implements `ProgressRepository` and `CommittedMilestoneSource`. The repository is bound to one building and captured account epoch. Supply it to `ProgressService`, and rebind after the owner epoch changes. Its `readAll` covers only the bound building.
+- `MilestoneReconciler(registry, owner, source, sync, worker).reconcile(scope)` reads a committed milestone, then enqueues it through the coordinator. Use it after a successful gameplay save and when reopening gameplay. A crash between those actions leaves the source record recoverable. Replay after an enqueue is idempotent. Call `flush` separately when appropriate.
+- The first-pass timestamp records the actual observed commit time. A clock rollback can make the milestone fail validation even though H02 already allowed the quiz attempt. The repository keeps the local pass and timestamp, and `latest` reports `UnusableMilestone` without replacing pending sync data. The caller can surface this failure separately from gameplay completion.
+
 ## Dependencies and integration gates
 
-Uses Android SQLite, existing Firebase Firestore and the existing NORMAL timing constant. The adapter has no Firebase initialization, account selection or route registration. Account composition still needs to supply a reentrant session guard, the matching Firestore instance and an authorized authored registry. Gameplay composition must emit committed milestones reliably. Combined validation must exercise the delivery boundary between the gameplay database and this separate outbox.
+Uses Android SQLite, existing Firebase Firestore and the existing NORMAL timing constant. The identity composition must connect the existing named app's auth observer and confirmed-profile events to the guard, then supply its matching Firestore instance. The gameplay composition must open a separately registered authored NORMAL episode, use the authored repository and invoke reconciliation on save and reopen. Production registration remains empty until approved authored content and arrival data are supplied.
 
-The Android Java compilation and 12 focused JVM contract tests passed. Tests cover scope admission, merge ordering, stale callbacks, explicit retry, the versioned payload codec and reopening pending bytes through a fake store. Actual Android SQLite restart behavior, Firestore SDK transactions against an emulator or live service, deployed rules, account Home and cross-device readback remain pending. See [H07B handoff](../../harness/handoffs/H07B.md).
+Android Java compilation and 22 focused JVM tests passed. These cover the original sync contracts plus confirmation and revocation, authored transaction rollback in a fake store, crash-gap replay, stale reconciliation and clock rollback. Actual Android SQLite restart behavior, Firestore SDK transactions against an emulator or live service, deployed rules, account Home and cross-device readback remain pending. See [H07B handoff](../../harness/handoffs/H07B.md).
 
 SDK references: [FirebaseFirestore](https://firebase.google.com/docs/reference/android/com/google/firebase/firestore/FirebaseFirestore), [Transaction](https://firebase.google.com/docs/reference/android/com/google/firebase/firestore/Transaction), [Source](https://firebase.google.com/docs/reference/android/com/google/firebase/firestore/Source).
