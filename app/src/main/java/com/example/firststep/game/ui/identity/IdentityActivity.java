@@ -1,13 +1,16 @@
 package com.example.firststep.game.ui.identity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.*;
 import android.view.View;
 import android.widget.*;
+import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.firststep.BuildConfig;
@@ -15,20 +18,23 @@ import com.example.firststep.R;
 import com.example.firststep.game.auth.*;
 import com.example.firststep.game.composition.home.CampusHomeRoute;
 import com.example.firststep.game.composition.identity.*;
+import com.example.firststep.game.ui.guide.GuideActivity;
 import java.util.Objects;
 
-/** Replaceable account-only shell. Never reads or presents legacy/fixture exploration progress. */
+/** Welcome and account shell. Guest entry opens the standalone campus guide. */
 public final class IdentityActivity extends AppCompatActivity {
+  private static final String ACCOUNT_ENTRY_OPEN = "identity_account_entry_open";
   private IdentityViewModel model;
   private EditText name, student, department;
   private boolean binding, viewingProfile;
+  private boolean choosingAccount;
   private boolean openingCampusHome;
   private String displayedUid;
-  private final OnBackPressedCallback profileBack =
+  private final OnBackPressedCallback accountBack =
       new OnBackPressedCallback(false) {
         @Override
         public void handleOnBackPressed() {
-          showHome();
+          closeAccountScreen();
         }
       };
 
@@ -39,8 +45,10 @@ public final class IdentityActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle state) {
     super.onCreate(state);
+    EdgeToEdge.enable(this);
     setContentView(R.layout.game_identity_activity);
-    getOnBackPressedDispatcher().addCallback(this, profileBack);
+    choosingAccount = state != null && state.getBoolean(ACCOUNT_ENTRY_OPEN);
+    getOnBackPressedDispatcher().addCallback(this, accountBack);
     model =
         new ViewModelProvider(
                 this,
@@ -55,8 +63,7 @@ public final class IdentityActivity extends AppCompatActivity {
     name = findViewById(R.id.game_identity_name);
     student = findViewById(R.id.game_identity_student);
     department = findViewById(R.id.game_identity_department);
-    androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(
-        findViewById(R.id.game_identity_root),
+    androidx.core.view.OnApplyWindowInsetsListener insetContent =
         (view, insets) -> {
           androidx.core.graphics.Insets bars =
               insets.getInsets(
@@ -64,7 +71,13 @@ public final class IdentityActivity extends AppCompatActivity {
                       | androidx.core.view.WindowInsetsCompat.Type.displayCutout());
           view.setPadding(bars.left, bars.top, bars.right, bars.bottom);
           return insets;
-        });
+        };
+    androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(
+        findViewById(R.id.game_identity_root), insetContent);
+    androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(
+        findViewById(R.id.game_identity_welcome_scroll), insetContent);
+    androidx.core.view.ViewCompat.setAccessibilityHeading(
+        findViewById(R.id.game_identity_welcome_title), true);
     TextWatcher watcher =
         new TextWatcher() {
           public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -82,6 +95,19 @@ public final class IdentityActivity extends AppCompatActivity {
     name.addTextChangedListener(watcher);
     student.addTextChangedListener(watcher);
     department.addTextChangedListener(watcher);
+    findViewById(R.id.game_identity_welcome_login).setOnClickListener(v -> {
+      choosingAccount = true;
+      render(model.controller.state());
+    });
+    findViewById(R.id.game_identity_welcome_guest).setOnClickListener(v -> {
+      if (isSignedOut(model.controller.state())) {
+        startActivity(new Intent(this, GuideActivity.class));
+      }
+    });
+    if (BuildConfig.DEBUG) {
+      ((TextView) findViewById(R.id.game_identity_welcome_guest_note))
+          .setText(R.string.game_welcome_guest_debug_note);
+    }
     findViewById(R.id.game_identity_login).setOnClickListener(v -> model.controller.signIn(false));
     findViewById(R.id.game_identity_reselect)
         .setOnClickListener(v -> model.controller.signIn(true));
@@ -96,11 +122,8 @@ public final class IdentityActivity extends AppCompatActivity {
           render(model.controller.state());
         });
     findViewById(R.id.game_identity_back)
-        .setOnClickListener(v -> {
-          if (viewingProfile) showHome();
-          else finish();
-        });
-    findViewById(R.id.game_identity_root).setVisibility(View.INVISIBLE);
+        .setOnClickListener(v -> closeAccountScreen());
+    findViewById(R.id.game_identity_host).setVisibility(View.INVISIBLE);
   }
 
   @Override
@@ -111,12 +134,12 @@ public final class IdentityActivity extends AppCompatActivity {
     model.controller.resume();
     model.controller.setListener(this::render);
     render(model.controller.state());
-    findViewById(R.id.game_identity_root).setVisibility(View.VISIBLE);
+    findViewById(R.id.game_identity_host).setVisibility(View.VISIBLE);
   }
 
   @Override
   protected void onPause() {
-    findViewById(R.id.game_identity_root).setVisibility(View.INVISIBLE);
+    findViewById(R.id.game_identity_host).setVisibility(View.INVISIBLE);
     model.controller.pause();
     model.controller.setListener(null);
     super.onPause();
@@ -126,6 +149,29 @@ public final class IdentityActivity extends AppCompatActivity {
   protected void onDestroy() {
     model.runtime.detach(this);
     super.onDestroy();
+  }
+
+  @Override
+  protected void onSaveInstanceState(Bundle state) {
+    state.putBoolean(ACCOUNT_ENTRY_OPEN, choosingAccount);
+    super.onSaveInstanceState(state);
+  }
+
+  private static boolean isSignedOut(SessionState state) {
+    return state.getUid() == null
+        && (state.getStage() == SessionState.Stage.LOGGED_OUT
+            || state.getStage() == SessionState.Stage.UNCONFIGURED);
+  }
+
+  private void closeAccountScreen() {
+    if (viewingProfile) {
+      showHome();
+    } else if (choosingAccount && isSignedOut(model.controller.state())) {
+      choosingAccount = false;
+      render(model.controller.state());
+    } else {
+      finish();
+    }
   }
 
   private void visible(int id, boolean show) {
@@ -158,6 +204,13 @@ public final class IdentityActivity extends AppCompatActivity {
     boolean editing = s.canEdit();
     boolean complete = stage == SessionState.Stage.COMPLETE;
     if (changed || !complete) viewingProfile = false;
+    boolean showWelcome = isSignedOut(s) && !choosingAccount;
+    visible(R.id.game_identity_welcome, showWelcome);
+    visible(R.id.game_identity_root, !showWelcome);
+    WindowInsetsControllerCompat bars =
+        WindowCompat.getInsetsController(getWindow(), findViewById(R.id.game_identity_host));
+    bars.setAppearanceLightStatusBars(!showWelcome);
+    bars.setAppearanceLightNavigationBars(!showWelcome);
     View home = findViewById(R.id.game_identity_home);
     boolean showHome = complete && !viewingProfile;
     boolean enteringHome = showHome && home.getVisibility() != View.VISIBLE;
@@ -171,7 +224,7 @@ public final class IdentityActivity extends AppCompatActivity {
     visible(R.id.game_identity_entry, !complete);
     visible(R.id.game_identity_home, showHome);
     visible(R.id.game_identity_profile_panel, viewingProfile);
-    profileBack.setEnabled(viewingProfile);
+    accountBack.setEnabled(viewingProfile || (choosingAccount && isSignedOut(s)));
     ((Button) findViewById(R.id.game_identity_back))
         .setText(viewingProfile ? R.string.game_identity_home_back : R.string.game_identity_back);
     visible(

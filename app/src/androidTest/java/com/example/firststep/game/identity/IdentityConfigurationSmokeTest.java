@@ -25,6 +25,9 @@ public final class IdentityConfigurationSmokeTest {
           a -> {
             assertEquals(SessionState.Stage.UNCONFIGURED, a.stateForTest().getStage());
             assertNull(a.stateForTest().getUid());
+            assertTrue(a.findViewById(R.id.game_identity_welcome).isShown());
+            assertTrue(a.findViewById(R.id.game_identity_welcome_login).performClick());
+            assertTrue(a.findViewById(R.id.game_identity_login).isShown());
             assertFalse(a.findViewById(R.id.game_identity_login).isEnabled());
           });
     }

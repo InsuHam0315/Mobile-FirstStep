@@ -99,6 +99,9 @@ public final class IdentityEmulatorSmokeTest {
           s.onActivity(a -> ok[0] = a.getResources().getConfiguration().orientation == orientation);
           return ok[0];
         });
+    boolean[] welcome = {false};
+    s.onActivity(a -> welcome[0] = a.findViewById(R.id.game_identity_welcome).isShown());
+    if (welcome[0]) tap(R.id.game_identity_welcome_login);
     return s;
   }
 

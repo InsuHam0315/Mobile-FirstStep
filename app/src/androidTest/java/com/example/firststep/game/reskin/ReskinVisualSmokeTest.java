@@ -84,7 +84,16 @@ public final class ReskinVisualSmokeTest {
       ready(IdentityActivity.class, activity ->
           activity.stateForTest().getStage() == SessionState.Stage.UNCONFIGURED
               && activity.stateForTest().getUid() == null
-              && activity.findViewById(R.id.game_identity_root).isShown());
+              && activity.findViewById(R.id.game_identity_welcome).isShown());
+      capture(IdentityActivity.class, "identity-welcome");
+      tap(R.id.game_identity_welcome_guest);
+      ready(GuideActivity.class, activity ->
+          activity.guideForTest() != null && "GUIDE".equals(activity.panelForTest()));
+      androidx.test.espresso.Espresso.pressBack();
+      ready(IdentityActivity.class, activity ->
+          activity.stateForTest().getUid() == null
+              && activity.findViewById(R.id.game_identity_welcome).isShown());
+      tap(R.id.game_identity_welcome_login);
       capture(IdentityActivity.class, "identity-unconfigured");
       onView(withId(R.id.game_identity_login)).perform(reveal()).check(matches(
           allOf(withText(R.string.game_identity_login), not(isEnabled()), isDisplayed())));

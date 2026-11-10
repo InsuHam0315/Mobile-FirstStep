@@ -76,13 +76,16 @@ public final class IdentityFakeSmokeTest {
       } while (SystemClock.elapsedRealtime() < deadline);
       assertEquals(expected, actual[0]);
     }
+    boolean[] welcome = {false};
     screen.onActivity(
         a -> {
+          welcome[0] = a.findViewById(R.id.game_identity_welcome).isShown();
           String scale = InstrumentationRegistry.getArguments().getString("h07FontScale");
           if (scale != null)
             assertEquals(
                 Float.parseFloat(scale), a.getResources().getConfiguration().fontScale, 0.01f);
         });
+    if (welcome[0]) tap(R.id.game_identity_welcome_login);
     onView(withId(R.id.game_identity_environment))
         .check(matches(withText(R.string.game_identity_fake)));
     screen.onActivity(
@@ -309,7 +312,8 @@ public final class IdentityFakeSmokeTest {
             fake.logout.onResult(null);
             late.onResult(profile("Old"), ProfilePort.Source.SERVER, null);
           });
-      onView(withId(R.id.game_identity_login)).perform(reveal()).check(matches(isDisplayed()));
+      onView(withId(R.id.game_identity_welcome_login))
+          .perform(reveal()).check(matches(isDisplayed()));
       screen.onActivity(a -> assertNull(a.stateForTest().getDraft()));
       evidence("logged-out");
     }
