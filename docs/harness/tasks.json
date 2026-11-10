@@ -5,7 +5,8 @@
   "coordinationScope": "docs/harness/IMPLEMENTATION_FIRST.md",
   "activeBranches": [
     "campus-content",
-    "home-progress"
+    "home-progress",
+    "progress-sync"
   ],
   "appEntryCheckpoint": {
     "branch": "app-entry",
@@ -411,9 +412,17 @@
   },
   "homeProgressCheckpoint": {
     "branch": "home-progress",
-    "status": "ready",
+    "status": "in_progress",
     "scopePath": "docs/harness/HOME_PROGRESS_SCOPE.md",
     "owner": "implementation_pm",
-    "required": "account Home progress/waiting quiz/favorites and best-effort authored reminder caller"
+    "required": "account Home progress/waiting quiz/favorites and best-effort authored reminder caller",
+    "baseSha": "77fd17a2dbbe48fa4f7538f5adebd7e2081afcd4"
+  },
+  "progressRulesCheckpoint": {
+    "branch": "progress-sync",
+    "baseSha": "c4c0eba615ee07b141730fccd16c850cf56ddc71",
+    "scopePath": "docs/harness/PROGRESS_RULES_SCOPE.md",
+    "status": "in_progress",
+    "productionDeployment": "unchanged; not authorized by this code task"
   }
 }
