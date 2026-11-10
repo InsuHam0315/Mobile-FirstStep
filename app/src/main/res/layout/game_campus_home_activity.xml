@@ -48,6 +48,12 @@
             android:layout_height="wrap_content"
             android:text="@string/game_campus_home_guide" />
         <Button
+            android:id="@+id/game_campus_home_authored"
+            style="@style/GameActionButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/game_authored_entry" />
+        <Button
             android:id="@+id/game_campus_home_back"
             style="@style/GameActionButton"
             android:layout_width="match_parent"

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/game_discovery_preview_height">
+    <androidx.camera.view.PreviewView
+        android:id="@+id/game_authored_preview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    <ImageView
+        android:layout_width="@dimen/game_discovery_art_size"
+        android:layout_height="@dimen/game_discovery_art_size"
+        android:layout_gravity="center"
+        android:contentDescription="@string/game_discovery_art"
+        android:src="@drawable/game_discovery_placeholder" />
+</FrameLayout>

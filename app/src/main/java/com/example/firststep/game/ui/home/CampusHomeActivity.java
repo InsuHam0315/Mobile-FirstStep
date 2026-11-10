@@ -9,6 +9,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.firststep.FacilityDirectoryActivity;
 import com.example.firststep.R;
 import com.example.firststep.RouteMapActivity;
+import com.example.firststep.game.ui.authored.AuthoredEpisodeActivity;
 import com.example.firststep.game.ui.guide.GuideActivity;
 
 /** Campus browsing surface. Session validation belongs to its caller. */
@@ -32,6 +33,8 @@ public final class CampusHomeActivity extends AppCompatActivity {
         .setOnClickListener(v -> startActivity(new Intent(this, FacilityDirectoryActivity.class)));
     findViewById(R.id.game_campus_home_guide)
         .setOnClickListener(v -> startActivity(new Intent(this, GuideActivity.class)));
+    findViewById(R.id.game_campus_home_authored)
+        .setOnClickListener(v -> startActivity(AuthoredEpisodeActivity.intent(this)));
     findViewById(R.id.game_campus_home_back).setOnClickListener(v -> finish());
   }
 }

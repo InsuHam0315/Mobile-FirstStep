@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/game_authored_scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@color/game_color_surface">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/game_space_medium">
+        <TextView
+            android:id="@+id/game_authored_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/game_authored_entry"
+            android:textColor="@color/game_color_text"
+            android:textSize="@dimen/game_text_title" />
+        <TextView
+            android:id="@+id/game_authored_synthetic_runtime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/game_authored_synthetic_runtime"
+            android:textColor="@color/game_color_text"
+            android:textSize="@dimen/game_text_body"
+            android:visibility="gone" />
+        <TextView
+            android:id="@+id/game_authored_state"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:accessibilityLiveRegion="polite"
+            android:textColor="@color/game_color_text"
+            android:textSize="@dimen/game_text_body" />
+        <LinearLayout
+            android:id="@+id/game_authored_body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+        <TextView
+            android:id="@+id/game_authored_sync"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:accessibilityLiveRegion="polite"
+            android:textColor="@color/game_color_text"
+            android:textSize="@dimen/game_text_body" />
+        <TextView
+            android:id="@+id/game_authored_remote"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/game_color_text"
+            android:textSize="@dimen/game_text_body" />
+        <Button
+            android:id="@+id/game_authored_sync_read"
+            style="@style/GameActionButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/game_authored_sync_read"
+            android:visibility="gone" />
+        <Button
+            android:id="@+id/game_authored_sync_retry"
+            style="@style/GameActionButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/game_authored_sync_retry"
+            android:visibility="gone" />
+        <Button
+            android:id="@+id/game_authored_back"
+            style="@style/GameActionButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/game_campus_home_back" />
+    </LinearLayout>
+</ScrollView>
