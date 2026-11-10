@@ -34,6 +34,8 @@ Inventory before touching a device. FirstStep_H10B_QA, historically 5580, is bei
 
 The opening-only H10B demo task must conclude before dispatching this same implementation chat for H10C. Do not interrupt the handoff or start competing work in that worktree. On 2026-11-10 that task concluded after the user stopped screen control with Esc; installed APK hash matched, but the requested guide screen was not visually confirmed. Do not retry that UI action through another tool. H10C may start independent code and non-UI verification; interactive device setup/control and actual APK UI acceptance wait for renewed human authorization. Do not label the interrupted demonstration ready or the later runtime acceptance passed.
 
+Subsequent explicit human reply to resuming the demonstration: “좀만 이따 하자”. Continue only non-conflicting code, builds, unit/static checks and review. Preserve 5564/5572/5580; no automatic screen interaction or scheduled restart. Elapsed time and completion of code checks do not authorize resumption. Await an explicit user request before further demo/device interaction; UI acceptance stays pending.
+
 Retain a reproducible debug APK at `.local/harness/H10C/delivery/firststep-software-demo.apk` in this worktree, plus SHA256, exact source commit, build command, target device and entry instructions in the handoff. This is the demo build, not a combined authenticated production release. Preserve the previous accepted APK/evidence. A new APK path is not evidence of a successful run; verify actual installed behavior before claiming it.
 
 ## Required acceptance evidence
