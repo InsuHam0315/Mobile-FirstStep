@@ -1,0 +1,466 @@
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\java\com\example\firststep\data\AccountSync.java:97: Warning: Consider using apply() instead; commit writes its data to persistent storage immediately, whereas apply will handle it in the background [ApplySharedPref]
+      repository.syncPreferences.edit().putInt(mode.name(), generation).commit();
+                                                                        ~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\java\com\example\firststep\data\AccountSync.java:108: Warning: Consider using apply() instead; commit writes its data to persistent storage immediately, whereas apply will handle it in the background [ApplySharedPref]
+        edit.commit();
+             ~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\java\com\example\firststep\auth\AuthSession.java:50: Warning: Consider using apply() instead; commit writes its data to persistent storage immediately, whereas apply will handle it in the background [ApplySharedPref]
+        preferences.edit().clear().commit();
+                                   ~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\java\com\example\firststep\auth\AuthSession.java:92: Warning: Consider using apply() instead; commit writes its data to persistent storage immediately, whereas apply will handle it in the background [ApplySharedPref]
+  public void clear() { synchronized (LOCK) { preferences.edit().clear().commit(); } }
+                                                                         ~~~~~~~~
+
+   Explanation for issues of type "ApplySharedPref":
+   Consider using apply() instead of commit on shared preferences. Whereas
+   commit blocks and writes its data to persistent storage immediately, apply
+   will handle it in the background.
+
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\java\com\example\firststep\data\CloudPhotos.java:7: Warning: Avoid using android.media.ExifInterface; use androidx.exifinterface.media.ExifInterface instead [ExifInterface]
+import android.media.ExifInterface;
+       ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\java\com\example\firststep\Ui.java:94: Warning: Avoid using android.media.ExifInterface; use androidx.exifinterface.media.ExifInterface instead [ExifInterface]
+          new android.media.ExifInterface(path)
+              ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\java\com\example\firststep\Ui.java:96: Warning: Avoid using android.media.ExifInterface; use androidx.exifinterface.media.ExifInterface instead [ExifInterface]
+                  android.media.ExifInterface.TAG_ORIENTATION,
+                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\java\com\example\firststep\Ui.java:97: Warning: Avoid using android.media.ExifInterface; use androidx.exifinterface.media.ExifInterface instead [ExifInterface]
+                  android.media.ExifInterface.ORIENTATION_NORMAL);
+                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\java\com\example\firststep\Ui.java:99: Warning: Avoid using android.media.ExifInterface; use androidx.exifinterface.media.ExifInterface instead [ExifInterface]
+        case android.media.ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
+             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\java\com\example\firststep\Ui.java:102: Warning: Avoid using android.media.ExifInterface; use androidx.exifinterface.media.ExifInterface instead [ExifInterface]
+        case android.media.ExifInterface.ORIENTATION_ROTATE_180:
+             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\java\com\example\firststep\Ui.java:105: Warning: Avoid using android.media.ExifInterface; use androidx.exifinterface.media.ExifInterface instead [ExifInterface]
+        case android.media.ExifInterface.ORIENTATION_FLIP_VERTICAL:
+             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\java\com\example\firststep\Ui.java:108: Warning: Avoid using android.media.ExifInterface; use androidx.exifinterface.media.ExifInterface instead [ExifInterface]
+        case android.media.ExifInterface.ORIENTATION_TRANSPOSE:
+             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\java\com\example\firststep\Ui.java:112: Warning: Avoid using android.media.ExifInterface; use androidx.exifinterface.media.ExifInterface instead [ExifInterface]
+        case android.media.ExifInterface.ORIENTATION_ROTATE_90:
+             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\java\com\example\firststep\Ui.java:115: Warning: Avoid using android.media.ExifInterface; use androidx.exifinterface.media.ExifInterface instead [ExifInterface]
+        case android.media.ExifInterface.ORIENTATION_TRANSVERSE:
+             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\java\com\example\firststep\Ui.java:119: Warning: Avoid using android.media.ExifInterface; use androidx.exifinterface.media.ExifInterface instead [ExifInterface]
+        case android.media.ExifInterface.ORIENTATION_ROTATE_270:
+             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "ExifInterface":
+   The android.media.ExifInterface implementation has some known security bugs
+   in older versions of Android. There is a new implementation available of
+   this library in the support library, which is preferable.
+
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\layout\game_narration_activity.xml:4: Warning: Attribute accessibilityHeading is only used in API level 28 and higher (current min is 24) [UnusedAttribute]
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_narration_title" android:textSize="@dimen/game_text_title" android:textColor="@color/game_color_text" android:accessibilityHeading="true" />
+                                                                                                                                                                                                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "UnusedAttribute":
+   This check finds attributes set in XML files that were introduced in a
+   version newer than the oldest version targeted by your application (with
+   the minSdkVersion attribute).
+
+   This is not an error; the application will simply ignore the attribute.
+   However, if the attribute is important to the appearance or functionality
+   of your application, you should consider finding an alternative way to
+   achieve the same result with only available attributes, and then you can
+   optionally create a copy of the layout in a layout-vNN folder which will be
+   used on API NN or higher where you can take advantage of the newer
+   attribute.
+
+   Note: This check does not only apply to attributes. For example, some tags
+   can be unused too, such as the new <tag> element in layouts introduced in
+   API 21.
+
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\java\com\example\firststep\AuthActivity.java:145: Warning: Call to CredentialManager.getCredential without use of NoCredentialException [CredentialManagerMisuse]
+      CredentialManager.create(this).getCredentialAsync(this, request, credentialCancellation,
+      ^
+
+   Explanation for issues of type "CredentialManagerMisuse":
+   When calling CredentialManager.getCredential or
+   CredentialManager.getCredentialAsync, you should handle
+   NoCredentialException somewhere in your project.
+
+   https://developer.android.com/identity/sign-in/credential-manager#handle-exceptions
+
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\gradle\libs.versions.toml:2: Warning: A newer version of com.android.application than 9.4.1 is available: 9.5.1 [AndroidGradlePluginVersion]
+agp = "9.4.1"
+      ~~~~~~~
+
+   Explanation for issues of type "AndroidGradlePluginVersion":
+   This detector looks for usage of the Android Gradle Plugin where the
+   version you are using is not the current stable release. Using older
+   versions is fine, and there are cases where you deliberately want to stick
+   with an older version. However, you may simply not be aware that a more
+   recent version is available, and that is what this lint check helps find.
+
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\build.gradle.kts:53: Warning: A newer version of androidx.camera:camera-core than 1.4.2 is available: 1.6.2 [GradleDependency]
+    implementation("androidx.camera:camera-core:1.4.2")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\build.gradle.kts:54: Warning: A newer version of androidx.camera:camera-camera2 than 1.4.2 is available: 1.6.2 [GradleDependency]
+    implementation("androidx.camera:camera-camera2:1.4.2")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\build.gradle.kts:55: Warning: A newer version of androidx.camera:camera-lifecycle than 1.4.2 is available: 1.6.2 [GradleDependency]
+    implementation("androidx.camera:camera-lifecycle:1.4.2")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\build.gradle.kts:56: Warning: A newer version of androidx.camera:camera-view than 1.4.2 is available: 1.6.2 [GradleDependency]
+    implementation("androidx.camera:camera-view:1.4.2")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\build.gradle.kts:57: Warning: A newer version of androidx.room:room-runtime than 2.7.2 is available: 2.8.5 [GradleDependency]
+    implementation("androidx.room:room-runtime:2.7.2")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\build.gradle.kts:58: Warning: A newer version of androidx.room:room-compiler than 2.7.2 is available: 2.8.5 [GradleDependency]
+    annotationProcessor("androidx.room:room-compiler:2.7.2")
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\build.gradle.kts:59: Warning: A newer version of com.google.ar:core than 1.48.0 is available: 1.57.0 [GradleDependency]
+    implementation("com.google.ar:core:1.48.0")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "GradleDependency":
+   This detector looks for usages of libraries where the version you are using
+   is not the current stable release. Using older versions is fine, and there
+   are cases where you deliberately want to stick with an older version.
+   However, you may simply not be aware that a more recent version is
+   available, and that is what this lint check helps find.
+
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\java\com\example\firststep\map\CampusMapView.java:135: Warning: Avoid object allocations during draw/layout operations (preallocate and reuse instead) [DrawAllocation]
+    Set<String> visible = new HashSet<>();
+                          ~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\java\com\example\firststep\map\CampusMapView.java:145: Warning: Avoid object allocations during draw/layout operations (preallocate and reuse instead) [DrawAllocation]
+            new RectF(
+            ^
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\java\com\example\firststep\CompassDialView.java:63: Warning: Avoid object allocations during draw/layout operations (preallocate and reuse instead) [DrawAllocation]
+    Path arrow = new Path();
+                 ~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\java\com\example\firststep\RouteMapActivity.java:75: Warning: Avoid object allocations during draw/layout operations (preallocate and reuse instead) [DrawAllocation]
+            Path path=new Path();path.moveTo(xs[0],top);
+                      ~~~~~~~~~~
+
+   Explanation for issues of type "DrawAllocation":
+   You should avoid allocating objects during a drawing or layout operation.
+   These are called frequently, so a smooth UI can be interrupted by garbage
+   collection pauses caused by the object allocations.
+
+   The way this is generally handled is to allocate the needed objects up
+   front and to reuse them for each drawing operation.
+
+   Some methods allocate memory on your behalf (such as Bitmap.create), and
+   these should be handled in the same way.
+
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\layout\activity_ar_discovery.xml:4: Warning: Possible overdraw: Root element paints background #FAF7F0 with a theme that also paints a background (inferred theme is @style/Theme.FirstStep) [Overdraw]
+    android:orientation="vertical" android:background="#FAF7F0">
+                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\layout\activity_facility_directory.xml:2: Warning: Possible overdraw: Root element paints background #FAF7F3 with a theme that also paints a background (inferred theme is @style/Theme.FirstStep) [Overdraw]
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/facility_root" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="#FAF7F3">
+                                                                                                                                                                                                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\layout\activity_geographic_map.xml:3: Warning: Possible overdraw: Root element paints background #FAF7EF with a theme that also paints a background (inferred theme is @style/Theme.FirstStep) [Overdraw]
+ android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="#FAF7EF">
+                                                                                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\layout\activity_main.xml:4: Warning: Possible overdraw: Root element paints background #FAF7EF with a theme that also paints a background (inferred theme is @style/Theme.FirstStep) [Overdraw]
+    android:orientation="vertical" android:background="#FAF7EF">
+                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\layout\activity_mission.xml:5: Warning: Possible overdraw: Root element paints background #FAF7EF with a theme that also paints a background (inferred theme is @style/Theme.FirstStep) [Overdraw]
+    android:fillViewport="true" android:background="#FAF7EF">
+                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\layout\activity_route_map.xml:4: Warning: Possible overdraw: Root element paints background #FAF7EF with a theme that also paints a background (inferred theme is @style/Theme.FirstStep) [Overdraw]
+    android:fillViewport="true" android:background="#FAF7EF">
+                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "Overdraw":
+   If you set a background drawable on a root view, then you should use a
+   custom theme where the theme background is null. Otherwise, the theme
+   background will be painted first, only to have your custom background
+   completely cover it; this is called "overdraw".
+
+   NOTE: This detector relies on figuring out which layouts are associated
+   with which activities based on scanning the Java code, and it's currently
+   doing that using an inexact pattern matching algorithm. Therefore, it can
+   incorrectly conclude which activity the layout is associated with and then
+   wrongly complain that a background-theme is hidden.
+
+   If you want your custom background on multiple pages, then you should
+   consider making a custom theme with your custom background and just using
+   that theme instead of a root element background.
+
+   Of course it's possible that your custom drawable is translucent and you
+   want it to be mixed with the background. However, you will get better
+   performance if you pre-mix the background with your drawable and use that
+   resulting image or color as a custom theme background instead.
+
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\values\colors.xml:3: Warning: The resource R.color.black appears to be unused [UnusedResources]
+    <color name="black">#FF000000</color>
+           ~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\values\colors.xml:4: Warning: The resource R.color.white appears to be unused [UnusedResources]
+    <color name="white">#FFFFFFFF</color>
+           ~~~~~~~~~~~~
+
+   Explanation for issues of type "UnusedResources":
+   Unused resources make applications larger and slow down builds.
+
+
+   The unused resource check can ignore tests. If you want to include
+   resources that are only referenced from tests, consider packaging them in a
+   test source set instead.
+
+   You can include test sources in the unused resource check by setting the
+   system property lint.unused-resources.include-tests=true, and to exclude
+   them (usually for performance reasons), use
+   lint.unused-resources.exclude-tests=true.
+
+   Available options:
+
+   **skip-libraries** (default is true):
+   Whether the unused resource check should skip reporting unused resources in libraries.
+
+   Many libraries will declare resources that are part of the library surface; other modules depending on the library will also reference the resources. To avoid reporting all these resources as unused (in the context of a library), the unused resource check normally skips reporting unused resources in libraries. Instead, run the unused resource check on the consuming app module (along with `checkDependencies=true`).
+
+   However, there are cases where you want to check that all the resources declared in a library are used; in that case, you can disable the skip option.
+
+   To configure this option, use a `lint.xml` file with an <option> like this:
+
+   ```xml
+   <lint>
+       <issue id="UnusedResources">
+           <option name="skip-libraries" value="true" />
+       </issue>
+   </lint>
+   ```
+
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\layout\activity_facility_directory.xml:3: Warning: This ScrollView layout or its LinearLayout parent is possibly unnecessary; transfer the background attribute to the other view [UselessParent]
+    <ScrollView android:id="@+id/facility_scroll" android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true">
+     ~~~~~~~~~~
+
+   Explanation for issues of type "UselessParent":
+   A layout with children that has no siblings, is not a scrollview or a root
+   layout, and does not have a background, can be removed and have its
+   children moved directly into the parent for a flatter and more efficient
+   layout hierarchy.
+
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\layout\activity_geographic_map.xml:9: Warning: Buttons in button bars should be borderless; use style="?android:attr/buttonBarButtonStyle" (and ?android:attr/buttonBarStyle on the parent) [ButtonStyle]
+  <Button android:id="@+id/map_zoom_in" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="확대" />
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\layout\activity_geographic_map.xml:10: Warning: Buttons in button bars should be borderless; use style="?android:attr/buttonBarButtonStyle" (and ?android:attr/buttonBarStyle on the parent) [ButtonStyle]
+  <Button android:id="@+id/map_zoom_out" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="축소" />
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\layout\activity_geographic_map.xml:11: Warning: Buttons in button bars should be borderless; use style="?android:attr/buttonBarButtonStyle" (and ?android:attr/buttonBarStyle on the parent) [ButtonStyle]
+  <Button android:id="@+id/map_campus" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="학교" />
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\layout\activity_geographic_map.xml:14: Warning: Buttons in button bars should be borderless; use style="?android:attr/buttonBarButtonStyle" (and ?android:attr/buttonBarStyle on the parent) [ButtonStyle]
+  <Button android:id="@+id/map_location" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="내 위치" />
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\layout\activity_geographic_map.xml:15: Warning: Buttons in button bars should be borderless; use style="?android:attr/buttonBarButtonStyle" (and ?android:attr/buttonBarStyle on the parent) [ButtonStyle]
+  <Button android:id="@+id/map_retry" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="다시 불러오기" />
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\layout\activity_geographic_map.xml:18: Warning: Buttons in button bars should be borderless; use style="?android:attr/buttonBarButtonStyle" (and ?android:attr/buttonBarStyle on the parent) [ButtonStyle]
+  <Button android:id="@+id/map_route" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="탐방 순서도" />
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\layout\activity_geographic_map.xml:19: Warning: Buttons in button bars should be borderless; use style="?android:attr/buttonBarButtonStyle" (and ?android:attr/buttonBarStyle on the parent) [ButtonStyle]
+  <Button android:id="@+id/map_back" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="돌아가기" />
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "ButtonStyle":
+   Button bars typically use a borderless style for the buttons. Set the
+   style="?android:attr/buttonBarButtonStyle" attribute on each of the
+   buttons, and set style="?android:attr/buttonBarStyle" on the parent layout
+
+   https://d.android.com/r/studio-ui/designer/material/dialogs
+
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\build.gradle.kts:50: Warning: Use version catalog instead [UseTomlInstead]
+    implementation("androidx.credentials:credentials:1.6.0")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\build.gradle.kts:51: Warning: Use version catalog instead [UseTomlInstead]
+    implementation("androidx.credentials:credentials-play-services-auth:1.6.0")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\build.gradle.kts:52: Warning: Use version catalog instead [UseTomlInstead]
+    implementation("com.google.android.libraries.identity.googleid:googleid:1.2.1")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\build.gradle.kts:53: Warning: Use version catalog instead [UseTomlInstead]
+    implementation("androidx.camera:camera-core:1.4.2")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\build.gradle.kts:54: Warning: Use version catalog instead [UseTomlInstead]
+    implementation("androidx.camera:camera-camera2:1.4.2")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\build.gradle.kts:55: Warning: Use version catalog instead [UseTomlInstead]
+    implementation("androidx.camera:camera-lifecycle:1.4.2")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\build.gradle.kts:56: Warning: Use version catalog instead [UseTomlInstead]
+    implementation("androidx.camera:camera-view:1.4.2")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\build.gradle.kts:57: Warning: Use version catalog instead [UseTomlInstead]
+    implementation("androidx.room:room-runtime:2.7.2")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\build.gradle.kts:58: Warning: Use version catalog instead [UseTomlInstead]
+    annotationProcessor("androidx.room:room-compiler:2.7.2")
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\build.gradle.kts:59: Warning: Use version catalog instead [UseTomlInstead]
+    implementation("com.google.ar:core:1.48.0")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "UseTomlInstead":
+   If your project is using a libs.versions.toml file, you should place all
+   Gradle dependencies in the TOML file. This lint check looks for version
+   declarations outside of the TOML file and suggests moving them (and in the
+   IDE, provides a quickfix to performing the operation automatically).
+
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\java\com\example\firststep\ArDiscoveryActivity.java:41: Warning: Custom view `GLSurfaceView` has setOnTouchListener called on it but does not override performClick [ClickableViewAccessibility]
+        surface.setOnTouchListener((view, event) -> {
+        ^
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\java\com\example\firststep\MissionActivity.java:623: Warning: Custom view `Button` has setOnTouchListener called on it but does not override performClick [ClickableViewAccessibility]
+    hold.setOnTouchListener((v, e) -> {
+    ^
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\java\com\example\firststep\MissionActivity.java:623: Warning: onTouch lambda should call View#performClick when a click is detected [ClickableViewAccessibility]
+    hold.setOnTouchListener((v, e) -> {
+                            ^
+
+   Explanation for issues of type "ClickableViewAccessibility":
+   If a View that overrides onTouchEvent or uses an OnTouchListener does not
+   also implement performClick and call it when clicks are detected, the View
+   may not handle accessibility actions properly. Logic handling the click
+   actions should ideally be placed in View#performClick as some accessibility
+   services invoke performClick when a click action should occur.
+
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\java\com\example\firststep\ArDiscoveryActivity.java:59: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            status.setText("AR은 카메라 권한이 필요해요. 권한 없이 일반 카드를 선택할 수도 있어요.");
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\java\com\example\firststep\ArDiscoveryActivity.java:66: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+                if (availability.isUnsupported()) { status.setText("이 기기는 공간 추적 AR을 지원하지 않아요. 일반 카드로 진행해 주세요."); return; }
+                                                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\java\com\example\firststep\ArDiscoveryActivity.java:78: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            status.setText("AR을 시작할 수 없어요. Google Play AR 서비스와 카메라 상태를 확인하거나 일반 카드로 진행해 주세요.");
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\java\com\example\firststep\AuthActivity.java:93: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+          configStatus.setText((developmentEnabled ? "개발용 계정 서버 연결을 확인했어요." : "서버에서 개발용 계정 로그인을 허용하지 않습니다.")
+                               ^
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\java\com\example\firststep\CameraCheckActivity.java:67: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+                if(!provider.hasCamera(camera)){status.setText("사용 가능한 카메라가 없어요. 에뮬레이터의 Back camera를 VirtualScene으로 설정해 주세요.");return;}
+                                                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\java\com\example\firststep\CameraCheckActivity.java:85: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+                status.setText("촬영 완료 · JPEG "+Math.max(1,next.length()/1024)+" KB\n카메라가 만든 사진 파일을 다시 읽어 표시했어요.");
+                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\java\com\example\firststep\CameraCheckActivity.java:85: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+                status.setText("촬영 완료 · JPEG "+Math.max(1,next.length()/1024)+" KB\n카메라가 만든 사진 파일을 다시 읽어 표시했어요.");
+                               ~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\java\com\example\firststep\DeviceLabActivity.java:68: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+    private void display(){readings.setText("조도  "+light+"\n가속도 XYZ  "+movement+"\n자기장 XYZ  "+magnetic);}
+                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\java\com\example\firststep\FacilityDirectoryActivity.java:187: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+    count.setText(visible.size() + "개 시설");
+                  ~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\java\com\example\firststep\MissionActivity.java:254: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+                        "거리 약 "
+                        ^
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\java\com\example\firststep\MissionActivity.java:577: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+                  "기준 " + Math.round(lightChallenge.getBaseline()) + " lx · 센서를 0.8초 가려 주세요");
+                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\java\com\example\firststep\MissionActivity.java:577: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+                  "기준 " + Math.round(lightChallenge.getBaseline()) + " lx · 센서를 0.8초 가려 주세요");
+                                                                     ~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\java\com\example\firststep\MissionActivity.java:843: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+                  status.setText(reason + "\n금속 물체에서 떨어져 휴대전화를 천천히 8자 모양으로 움직이거나 대체 조작을 이용해 주세요.");
+                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\java\com\example\firststep\MissionActivity.java:847: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+      status.setText("방향 측정 시작을 누른 뒤 표시된 목표를 맞춰 주세요. 허용 오차는 ±12°이며 정확도가 낮으면 다시 보정합니다.");
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\java\com\example\firststep\MissionActivity.java:904: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+      status.setText("움직임 " + count + " / 5");
+                     ~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "SetTextI18n":
+   When calling TextView#setText
+   * Never call Number#toString() to format numbers; it will not handle
+   fraction separators and locale-specific digits properly. Consider using
+   String#format with proper format specifications (%d or %f) instead.
+   * Do not pass a string literal (e.g. "Hello") to display text. Hardcoded
+   text can not be properly translated to other languages. Consider using
+   Android resource strings instead.
+   * Do not build messages by concatenating text chunks. Such messages can not
+   be properly translated.
+
+   https://developer.android.com/guide/topics/resources/localization.html
+
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\layout\activity_ar_discovery.xml:6: Warning: Hardcoded string "기억 조각 발견", should use @string resource [HardcodedText]
+        android:text="기억 조각 발견" android:textSize="24sp" android:textStyle="bold"
+        ~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\layout\activity_ar_discovery.xml:10: Warning: Hardcoded string "주변 공간에서 기억 조각을 찾는 AR 카메라", should use @string resource [HardcodedText]
+        android:contentDescription="주변 공간에서 기억 조각을 찾는 AR 카메라" />
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\layout\activity_ar_discovery.xml:13: Warning: Hardcoded string "안전한 곳에 멈춰 주변 바닥을 천천히 비춰 주세요.", should use @string resource [HardcodedText]
+        android:text="안전한 곳에 멈춰 주변 바닥을 천천히 비춰 주세요." />
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\layout\activity_ar_discovery.xml:15: Warning: Hardcoded string "AR로 찾기", should use @string resource [HardcodedText]
+        android:layout_marginHorizontal="20dp" android:text="AR로 찾기" />
+                                               ~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\layout\activity_ar_discovery.xml:17: Warning: Hardcoded string "일반 카드로 기억 발견하기", should use @string resource [HardcodedText]
+        android:layout_marginHorizontal="20dp" android:text="일반 카드로 기억 발견하기" />
+                                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\layout\activity_ar_discovery.xml:19: Warning: Hardcoded string "돌아가기", should use @string resource [HardcodedText]
+        android:layout_marginHorizontal="20dp" android:text="돌아가기" />
+                                               ~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\layout\activity_geographic_map.xml:4: Warning: Hardcoded string "국립군산대 캠퍼스 지도", should use @string resource [HardcodedText]
+ <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="국립군산대 캠퍼스 지도" android:textSize="24sp" android:textStyle="bold" android:textColor="#1E2B39" android:padding="16dp" />
+                                                                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\layout\activity_geographic_map.xml:5: Warning: Hardcoded string "지도 불러오는 중 · 미션 지점은 현장 확인 후 표시합니다.", should use @string resource [HardcodedText]
+ <TextView android:id="@+id/map_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="지도 불러오는 중 · 미션 지점은 현장 확인 후 표시합니다." android:textColor="#636969" android:paddingHorizontal="16dp" android:textSize="13sp" />
+                                                                                                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\layout\activity_geographic_map.xml:7: Warning: Hardcoded string "© OpenStreetMap contributors · 지도 출처/이용 조건", should use @string resource [HardcodedText]
+ <TextView android:id="@+id/map_attribution" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="© OpenStreetMap contributors · 지도 출처/이용 조건" android:textSize="12sp" android:textColor="#2262A2" android:padding="8dp" android:minHeight="40dp" android:gravity="center" />
+                                                                                                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\layout\activity_geographic_map.xml:9: Warning: Hardcoded string "확대", should use @string resource [HardcodedText]
+  <Button android:id="@+id/map_zoom_in" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="확대" />
+                                                                                                                                  ~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\layout\activity_geographic_map.xml:10: Warning: Hardcoded string "축소", should use @string resource [HardcodedText]
+  <Button android:id="@+id/map_zoom_out" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="축소" />
+                                                                                                                                   ~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\layout\activity_geographic_map.xml:11: Warning: Hardcoded string "학교", should use @string resource [HardcodedText]
+  <Button android:id="@+id/map_campus" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="학교" />
+                                                                                                                                 ~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\layout\activity_geographic_map.xml:14: Warning: Hardcoded string "내 위치", should use @string resource [HardcodedText]
+  <Button android:id="@+id/map_location" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="내 위치" />
+                                                                                                                                   ~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\layout\activity_geographic_map.xml:15: Warning: Hardcoded string "다시 불러오기", should use @string resource [HardcodedText]
+  <Button android:id="@+id/map_retry" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="다시 불러오기" />
+                                                                                                                                ~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\layout\activity_geographic_map.xml:18: Warning: Hardcoded string "탐방 순서도", should use @string resource [HardcodedText]
+  <Button android:id="@+id/map_route" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="탐방 순서도" />
+                                                                                                                                ~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\layout\activity_geographic_map.xml:19: Warning: Hardcoded string "돌아가기", should use @string resource [HardcodedText]
+  <Button android:id="@+id/map_back" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="돌아가기" />
+                                                                                                                               ~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\layout\activity_route_map.xml:7: Warning: Hardcoded string "CAMPUS ROUTE", should use @string resource [HardcodedText]
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="CAMPUS ROUTE"
+                                                                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\layout\activity_route_map.xml:9: Warning: Hardcoded string "다섯 기억을 잇는 길", should use @string resource [HardcodedText]
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="다섯 기억을 잇는 길"
+                                                                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\layout\activity_route_map.xml:12: Warning: Hardcoded string "탐방 순서를 보여 주는 개념 안내도입니다. 실제 건물 배치나 보행 경로를 나타내지 않습니다.", should use @string resource [HardcodedText]
+            android:text="탐방 순서를 보여 주는 개념 안내도입니다. 실제 건물 배치나 보행 경로를 나타내지 않습니다."
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\layout\activity_route_map.xml:15: Warning: Hardcoded string "수업 건물, 도서관, 생활시설, 야외 지점, 활동 공간 순으로 이어지는 탐방", should use @string resource [HardcodedText]
+            android:layout_marginTop="24dp" android:contentDescription="수업 건물, 도서관, 생활시설, 야외 지점, 활동 공간 순으로 이어지는 탐방" />
+                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\layout\activity_route_map.xml:17: Warning: Hardcoded string "현장 확인 후 정식 안내도 제공n출입구 · 안전한 보행로 · 장소 좌표를 답사하여 반영합니다. 현재 위치와 거리 안내는 좌표가 검증된 현장 미션에서만 사용할 수 있습니다.", should use @string resource [HardcodedText]
+            android:text="현장 확인 후 정식 안내도 제공\n출입구 · 안전한 보행로 · 장소 좌표를 답사하여 반영합니다. 현재 위치와 거리 안내는 좌표가 검증된 현장 미션에서만 사용할 수 있습니다."
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\qa-user\FirstStep-worktrees\h10-campus-content\app\src\main\res\layout\activity_route_map.xml:20: Warning: Hardcoded string "코스로 돌아가기", should use @string resource [HardcodedText]
+            android:text="코스로 돌아가기" android:layout_marginTop="24dp" />
+            ~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "HardcodedText":
+   Hardcoding text attributes directly in layout files is bad for several
+   reasons:
+
+   * When creating configuration variations (for example for landscape or
+   portrait) you have to repeat the actual text (and keep it up to date when
+   making changes)
+
+   * The application cannot be translated to other languages by just adding
+   new translations for existing string resources.
+
+   There are quickfixes to automatically extract this hardcoded string into a
+   resource lookup.
+
+0 errors, 95 warnings

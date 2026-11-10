@@ -140,8 +140,12 @@ public final class GameHomeActivity extends AppCompatActivity {
     super.onCreate(saved);
     getOnBackPressedDispatcher().addCallback(this, backCallback);
     locationResultPending = saved != null && saved.getBoolean("locationResultPending");
-    setContentView(R.layout.game_home_activity);
-    map = findViewById(R.id.game_map_view);
+    boolean integration = IntegrationIntentCodec.hasIntegrationContext(getIntent());
+    integrationContext =
+        integration && BuildConfig.DEBUG ? IntegrationIntentCodec.readContext(getIntent()) : null;
+    setContentView(
+        softwareDemo() ? R.layout.game_software_demo_home : R.layout.game_home_activity);
+    if (!softwareDemo()) map = findViewById(R.id.game_map_view);
     androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(
         findViewById(R.id.game_home_scroll),
         (view, insets) -> {
@@ -152,15 +156,15 @@ public final class GameHomeActivity extends AppCompatActivity {
           view.setPadding(bars.left, bars.top, bars.right, bars.bottom);
           return insets;
         });
-    if (IntegrationIntentCodec.hasIntegrationContext(getIntent())) {
-      integrationContext =
-          BuildConfig.DEBUG ? IntegrationIntentCodec.readContext(getIntent()) : null;
+    if (integration) {
       if (saved != null) {
         Intent retained = saved.getParcelable("h06_context");
         if (retained != null) {
           IntegrationContext c = IntegrationIntentCodec.readContext(retained);
           if (c == null
               || integrationContext == null
+              || !c.datasetId.equals(integrationContext.datasetId)
+              || !c.targetId.equals(integrationContext.targetId)
               || !c.runId.equals(integrationContext.runId)
               || c.clock != integrationContext.clock) {
             failIntegration();
@@ -171,6 +175,10 @@ public final class GameHomeActivity extends AppCompatActivity {
         launchedNonce = saved.getString("h06_nonce");
         String desired = saved.getString("h06_pending_mode");
         if (desired != null) {
+          if (softwareDemo()) {
+            failIntegration();
+            return;
+          }
           try {
             pendingIntegrationMode = Progress.Mode.valueOf(desired);
           } catch (IllegalArgumentException invalid) {
@@ -184,6 +192,7 @@ public final class GameHomeActivity extends AppCompatActivity {
         failIntegration();
         return;
       }
+      if (softwareDemo()) prepareSoftwareDemoHome();
       IntegrationContext requested = integrationContext;
       integrationWorker.execute(
           () -> {
@@ -235,12 +244,12 @@ public final class GameHomeActivity extends AppCompatActivity {
             : saved != null && saved.containsKey("clock")
                 ? saved.getLong("clock")
                 : getIntent().getLongExtra(EXTRA_DEBUG_CLOCK, 0);
-    host = new HomeHost(this, run, fake, now);
+    host = new HomeHost(this, run, fake, now, integrationContext);
     controller = new HomeController(host, this::render);
     host.attach(controller);
     if (integrationContext != null)
       controller.restore(HomeState.Screen.HOME, integrationContext.mode, "", "", false, null);
-    if (saved != null) {
+    if (saved != null && !softwareDemo()) {
       mapFromDetail = saved.getBoolean("mapFromDetail");
       try {
         controller.restore(
@@ -255,24 +264,26 @@ public final class GameHomeActivity extends AppCompatActivity {
       } catch (Exception ignored) {
       }
     }
-    map.configure(
-        Collections.emptyList(),
-        new CampusMapView.Listener() {
-          public void status(String m) {
-            controller.tile(m);
-          }
+    if (!softwareDemo()) {
+      map.configure(
+          Collections.emptyList(),
+          new CampusMapView.Listener() {
+            public void status(String m) {
+              controller.tile(m);
+            }
 
-          public void selected(Mission ignored) {}
-        });
-    location =
-        new H05LocationAdapter(
-            this,
-            (fix, message) -> {
-              map.current(fix);
-              controller.location(message);
-            });
+            public void selected(Mission ignored) {}
+          });
+      location =
+          new H05LocationAdapter(
+              this,
+              (fix, message) -> {
+                map.current(fix);
+                controller.location(message);
+              });
+    }
     bind();
-    if (integrationContext != null) {
+    if (integrationContext != null && !softwareDemo()) {
       findViewById(R.id.game_home_discovery).setVisibility(View.GONE);
       ((TextView) findViewById(R.id.game_home_prototype))
           .setText(R.string.game_integration_home_action);
@@ -288,6 +299,10 @@ public final class GameHomeActivity extends AppCompatActivity {
   private void bind() {
     click(R.id.game_home_back, this::navigateBack);
     click(R.id.game_home_retry, () -> controller.retry());
+    if (softwareDemo()) {
+      click(R.id.game_home_prototype, this::openIntegration);
+      return;
+    }
     click(
         R.id.game_home_mode,
         () -> {
@@ -408,22 +423,78 @@ public final class GameHomeActivity extends AppCompatActivity {
     integrationBusy = true;
     integrationFailed = true;
     ((TextView) findViewById(R.id.game_home_status)).setText(R.string.game_integration_error);
-    for (int id :
-        new int[] {
-          R.id.game_home_panel,
-          R.id.game_home_search_panel,
-          R.id.game_home_detail_panel,
-          R.id.game_map_panel,
-          R.id.game_profile_content,
-          R.id.game_ending_content,
-          R.id.game_home_retry
-        }) show(id, false);
+    show(R.id.game_home_panel, false);
+    show(R.id.game_home_retry, false);
+    if (!softwareDemo())
+      for (int id :
+          new int[] {
+            R.id.game_home_search_panel,
+            R.id.game_home_detail_panel,
+            R.id.game_map_panel,
+            R.id.game_profile_content,
+            R.id.game_ending_content
+          }) show(id, false);
     show(R.id.game_home_back, true);
     findViewById(R.id.game_home_back).setOnClickListener(v -> finish());
   }
 
+  private boolean softwareDemo() {
+    return integrationContext != null
+        && IntegrationContext.SOFTWARE_DATASET.equals(integrationContext.datasetId);
+  }
+
+  private void prepareSoftwareDemoHome() {
+    androidx.core.view.ViewCompat.setAccessibilityHeading(
+        findViewById(R.id.game_software_demo_home_title), true);
+    click(R.id.game_home_back, this::finish);
+    renderIntegrationStatus();
+  }
+
+  private void renderSoftwareDemoHome(HomeState state) {
+    show(R.id.game_home_panel, true);
+    show(R.id.game_home_retry, state.error != null);
+    ((TextView) findViewById(R.id.game_home_context)).setText(R.string.game_software_demo_mode);
+    ((TextView) findViewById(R.id.game_home_status))
+        .setText(
+            state.loading
+                ? R.string.game_home_loading
+                : state.error == null ? R.string.game_software_demo_ready : R.string.game_home_error);
+    Progress progress = state.progress;
+    ((TextView) findViewById(R.id.game_home_progress))
+        .setText(
+            progress == null
+                ? R.string.game_home_loading
+                : progress.stamp
+                    ? R.string.game_software_demo_stamp
+                    : progress.introDoneAt == null
+                        ? R.string.game_software_demo_not_started
+                        : R.string.game_home_progress_ready);
+    renderIntegrationStatus();
+  }
+
   private void renderIntegrationStatus() {
     if (integrationContext == null) return;
+    if (softwareDemo()) {
+      String text = getString(R.string.game_software_demo_disclosure);
+      if (!integrationMessage.isEmpty()) text += "\n" + integrationMessage;
+      ((TextView) findViewById(R.id.game_integration_home_context)).setText(text);
+      show(R.id.game_integration_home_context, true);
+      HomeState state = snapshot();
+      boolean discovered = integrationState != null
+          && (integrationState.phase == NavigationPolicy.Phase.ACCEPTED
+              || integrationState.phase == NavigationPolicy.Phase.CONSUMED);
+      Progress progress = state == null ? null : state.progress;
+      ((Button) findViewById(R.id.game_home_prototype))
+          .setText(
+              progress != null && progress.stamp
+                  ? R.string.game_software_demo_review_result
+                  : discovered || (progress != null && progress.introDoneAt != null)
+                      ? R.string.game_software_demo_resume
+                      : R.string.game_software_demo_discover);
+      findViewById(R.id.game_home_prototype)
+          .setEnabled(!integrationBusy && state != null && !state.loading && state.error == null);
+      return;
+    }
     String clock =
         getString(
             integrationContext.clock == IntegrationContext.Clock.REAL
@@ -448,7 +519,7 @@ public final class GameHomeActivity extends AppCompatActivity {
   }
 
   private void switchIntegrationMode() {
-    if (integrationBusy || !resumed || controller == null) return;
+    if (softwareDemo() || integrationBusy || !resumed || controller == null) return;
     pendingIntegrationMode =
         integrationContext.mode == Progress.Mode.NORMAL ? Progress.Mode.DEMO : Progress.Mode.NORMAL;
     integrationBusy = true;
@@ -521,7 +592,9 @@ public final class GameHomeActivity extends AppCompatActivity {
             Progress progress = IntegrationRouteAccess.readProgress(this, state.context);
             Intent destination;
             String nonce = null;
-            if (progress.introDoneAt != null || state.phase == NavigationPolicy.Phase.CONSUMED) {
+            if (state.phase == NavigationPolicy.Phase.CONSUMED
+                || (!IntegrationContext.SOFTWARE_DATASET.equals(requested.datasetId)
+                    && progress.introDoneAt != null)) {
               destination = new Intent(this, IntroQuizActivity.class);
               IntegrationIntentCodec.writeContext(destination, state.context);
             } else if (state.phase == NavigationPolicy.Phase.ACCEPTED) {
@@ -691,6 +764,10 @@ public final class GameHomeActivity extends AppCompatActivity {
       return;
     }
     if (s == null) return;
+    if (softwareDemo()) {
+      renderSoftwareDemoHome(s);
+      return;
+    }
     backCallback.setEnabled(s.screen != HomeState.Screen.HOME);
     binding = true;
     show(R.id.game_home_back, s.screen != HomeState.Screen.HOME);
@@ -848,7 +925,7 @@ public final class GameHomeActivity extends AppCompatActivity {
     resumed = true;
     refreshIntegration();
     if (controller != null) {
-      map.active(true);
+      if (!softwareDemo()) map.active(true);
       controller.resume();
       if (pendingIntegrationMode != null) resolvePendingIntegrationMode();
       consumeLocationResult();
@@ -863,8 +940,8 @@ public final class GameHomeActivity extends AppCompatActivity {
     handler.removeCallbacks(tick);
     if (controller != null) {
       controller.pause();
-      location.stop();
-      map.active(false);
+      if (location != null) location.stop();
+      if (!softwareDemo()) map.active(false);
     }
     super.onPause();
   }

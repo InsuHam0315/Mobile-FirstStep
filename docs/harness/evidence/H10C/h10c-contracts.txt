@@ -1,0 +1,7 @@
+
+com.example.firststep.game.composition.integration.SoftwareEpisodeIntentCodecTest:..
+com.example.firststep.game.integration.SoftwareEpisodeStorageTest:.
+
+Time: 0.149
+
+OK (3 tests)

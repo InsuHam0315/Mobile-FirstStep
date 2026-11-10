@@ -1,0 +1,1 @@
+Starting: Intent { cmp=com.example.firststep/.game.ui.home.GameHomeActivity (has extras) }

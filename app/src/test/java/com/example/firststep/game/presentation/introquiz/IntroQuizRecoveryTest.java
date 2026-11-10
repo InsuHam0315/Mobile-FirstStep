@@ -189,6 +189,35 @@ public class IntroQuizRecoveryTest {
   }
 
   @Test
+  public void demoPausedCallbackAndRepeatedSubmissionRemainSafe() {
+    Fixture f = new Fixture();
+    List<Runnable> queue = new ArrayList<>();
+    IntroQuizController paused = f.controller(Progress.Mode.DEMO, true, queue::add);
+    paused.resume();
+    paused.pause();
+    queue.remove(0).run();
+    assertEquals(IntroQuizController.Stage.LOADING, paused.snapshot().stage);
+
+    IntroQuizController demo = f.controller(Progress.Mode.DEMO, true, Runnable::run);
+    demo.resume();
+    demo.finish();
+    demo.start();
+    Progress.Attempt attempt = demo.snapshot().progress.active;
+    selectAll(demo, "a");
+    Map<String, String> submitted = new LinkedHashMap<>(demo.snapshot().answers);
+    demo.submit();
+    IntroQuizController restored = f.controller(Progress.Mode.DEMO, true, Runnable::run);
+    restored.restore(0, false, submitted, attempt.id, attempt.contentVersion, null,
+        attempt.id, attempt.contentVersion, submitted);
+    restored.resume();
+    Progress result = f.repo.read(Progress.Mode.DEMO, B);
+    assertTrue(result.stamp);
+    assertEquals(1, result.history.size());
+    assertTrue(restored.snapshot().result.passed);
+    assertFalse(f.repo.read(Progress.Mode.NORMAL, B).stamp);
+  }
+
+  @Test
   public void storageFailureRetryDoesNotEraseProgress() {
     Fixture f = new Fixture();
     IntroQuizController c = f.started();
