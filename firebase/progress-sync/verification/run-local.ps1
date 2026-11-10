@@ -5,6 +5,11 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+trap {
+    Write-Error -Message "Progress SDK launcher failed: $($_.Exception.Message)" -ErrorAction Continue
+    exit 1
+}
+
 if ($PSVersionTable.PSVersion.Major -lt 7) { throw 'Use PowerShell 7 or newer.' }
 if ($Serial -in 'emulator-5564', 'emulator-5572', 'emulator-5580') {
     throw 'Select the disposable progress SDK emulator.'
@@ -12,7 +17,11 @@ if ($Serial -in 'emulator-5564', 'emulator-5572', 'emulator-5580') {
 $adb = (Resolve-Path -LiteralPath (Join-Path $AndroidSdk 'platform-tools/adb.exe')).Path
 $javaBin = (Resolve-Path -LiteralPath (Join-Path $JavaHome 'bin')).Path
 $cli = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '../../node_modules/firebase-tools/lib/bin/firebase.js')).Path
-$node = (Get-Command node.exe -CommandType Application).Source
+$nodeCommand = Get-Command node.exe -CommandType Application -All | Select-Object -First 1
+$node = (Resolve-Path -LiteralPath $nodeCommand.Source).ProviderPath
+if (-not (Test-Path -LiteralPath $node -PathType Leaf)) {
+    throw 'The selected node.exe is not a file.'
+}
 $cache = (Resolve-Path -LiteralPath (Join-Path $env:USERPROFILE '.cache/firebase/emulators')).Path
 $cliLib = Split-Path -Parent (Split-Path -Parent $cli)
 $emulatorInfo = Get-Content -LiteralPath (Join-Path $cliLib 'emulator/downloadableEmulatorInfo.json') -Raw |
