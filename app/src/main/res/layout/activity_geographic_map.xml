@@ -3,6 +3,14 @@
  android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="#FAF7EF">
  <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="국립군산대 캠퍼스 지도" android:textSize="24sp" android:textStyle="bold" android:textColor="#1E2B39" android:padding="16dp" />
  <TextView android:id="@+id/map_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="지도 불러오는 중 · 미션 지점은 현장 확인 후 표시합니다." android:textColor="#636969" android:paddingHorizontal="16dp" android:textSize="13sp" />
+ <TextView
+     android:id="@+id/map_facility_context"
+     android:layout_width="match_parent"
+     android:layout_height="wrap_content"
+     android:accessibilityLiveRegion="polite"
+     android:paddingHorizontal="16dp"
+     android:textColor="#1E2B39"
+     android:visibility="gone" />
  <com.example.firststep.map.CampusMapView android:id="@+id/campus_map" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:layout_marginTop="12dp" />
  <TextView android:id="@+id/map_attribution" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="© OpenStreetMap contributors · 지도 출처/이용 조건" android:textSize="12sp" android:textColor="#2262A2" android:padding="8dp" android:minHeight="40dp" android:gravity="center" />
  <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
@@ -16,6 +24,13 @@
  </LinearLayout>
  <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
   <Button android:id="@+id/map_route" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="탐방 순서도" />
+  <Button
+      android:id="@+id/map_facility_lookup"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_weight="1"
+      android:text="@string/map_facility_lookup"
+      android:visibility="gone" />
   <Button android:id="@+id/map_back" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="돌아가기" />
  </LinearLayout>
 </LinearLayout>

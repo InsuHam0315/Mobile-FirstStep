@@ -1,11 +1,12 @@
 {
   "schemaVersion": 1,
   "baselineSha": "a3b8f0f7589a501f8a086e1dc9cda11889ec452d",
-  "baselineNote": "Implementation-first: main c78211a contains account graph and campus navigation. Authored host b2795f1 review CHANGES_REQUIRED (away quiz, flush overlap); actual NORMAL GPS/discovery/readback implementation remains. Design deferred.",
+  "baselineNote": "Main596f7f9 includes explicit readback and isolated rules candidate. Provisional e19c10e combines authored/Home; silent-heading repair and required facility bridge active. Validation test sources prepared in parallel; design last, comprehensive gate afterward.",
   "coordinationScope": "docs/harness/IMPLEMENTATION_FIRST.md",
   "activeBranches": [
     "campus-content",
-    "home-progress"
+    "home-progress",
+    "validation"
   ],
   "appEntryCheckpoint": {
     "branch": "app-entry",
@@ -338,11 +339,11 @@
       "activeSlice": "authored-normal-flow",
       "continuationScopePath": "docs/harness/AUTHORED_FLOW_CONTINUATION.md",
       "priorSliceStatus": "H10 guide/practice and H10B narration accepted/integrated a3b8f0f",
-      "candidateSha": "b2795f1d47ae769dabe1e947e30481ad95cac339",
+      "candidateSha": "262af20ad7452c95c8f52b0f9e0064fd7b89cdb9",
       "publishedSha": "0e2628e15d771cbcc447dae0f73bb09b4d40ba81",
       "verifiedSha": null,
       "integratedSha": null,
-      "managementReview": "CHANGES_REQUIRED_two_P2_and_required_normal_flow_missing",
+      "managementReview": "CHANGES_REQUIRED_silent_heading",
       "reviewPath": "docs/harness/reviews/AUTHORED_HOST-management.md",
       "baseSha": "8024f390606acbde7324d34f0e89570d93b1a821",
       "coordinationPath": "docs/harness/reviews/H10-coordination.md",
@@ -380,7 +381,7 @@
         "Retry, idempotent stamp, restart and stale/cancel/mismatch handling verified; existing flows preserved",
         "Required checks, exact candidate independent review and isolated integration pass; field/cloud scope excluded"
       ],
-      "executionState": "repair_and_complete_gps_discovery_readback_before_design",
+      "executionState": "bounded_sensor_silence_repair",
       "priorAcceptedSlice": {
         "name": "H10B",
         "candidateSha": "0e2628e15d771cbcc447dae0f73bb09b4d40ba81",
@@ -389,7 +390,7 @@
         "reviewPath": "docs/harness/reviews/H10B-management.md"
       },
       "navigationIntegratedSha": "02eadec6744cd16f919a33918013f32ed5a2ce7c",
-      "activeScope": "docs/harness/AUTHORED_HOST_SCOPE.md",
+      "activeScope": "docs/harness/AUTHORED_FLOW_CONTINUATION.md",
       "activeBaseSha": "dd4b45894bc4bc6a4f3c06bf9fd0e821fb2e544d"
     }
   ],
@@ -402,20 +403,23 @@
     "recoveryIntegratedSha": "5c180cab04f247195aef548e088aae6e8c7c160f"
   },
   "authoredHostCheckpoint": {
-    "candidateSha": "b2795f1d47ae769dabe1e947e30481ad95cac339",
-    "status": "changes_required",
+    "candidateSha": "262af20ad7452c95c8f52b0f9e0064fd7b89cdb9",
+    "status": "changes_required_silent_heading_only",
     "scopePath": "docs/harness/AUTHORED_FLOW_CONTINUATION.md",
     "normalActivation": "not enabled; surveyed configuration absent",
     "published": false,
-    "integrated": false
+    "integrated": false,
+    "checks": "42 focused JVM PASS; actual Activity tests compiled only; old two P2s closed"
   },
   "homeProgressCheckpoint": {
     "branch": "home-progress",
-    "status": "in_progress",
+    "status": "home_checkpoint_ready_facility_bridge_in_progress",
     "scopePath": "docs/harness/HOME_PROGRESS_SCOPE.md",
     "owner": "implementation_pm",
     "required": "account Home progress/waiting quiz/favorites and best-effort authored reminder caller",
-    "baseSha": "77fd17a2dbbe48fa4f7538f5adebd7e2081afcd4"
+    "baseSha": "77fd17a2dbbe48fa4f7538f5adebd7e2081afcd4",
+    "candidateSha": "fab2016cdd0f1e0eeea5aa2f6293a7c96e210b1a",
+    "checks": "14 focused JVM PASS; APK and Android tests compile; runtime pending"
   },
   "progressRulesCheckpoint": {
     "branch": "progress-sync",
@@ -426,5 +430,12 @@
     "candidateSha": "eabed511d98274e6454e7dc7f00b34ddddfcb07c",
     "integratedSha": "eca793885406c034bf66d075b49264d6c92bdfac",
     "checks": "14 isolated emulator cases PASS, exact independent review PASS, production rules unchanged"
+  },
+  "validationCheckpoint": {
+    "branch": "validation",
+    "baseSha": "e19c10e",
+    "status": "instrumentation_source_preparation",
+    "ownerThread": "01a1b03e-8027-7ad3-b54e-53c538832975",
+    "runtime": "deferred until functional integration and final design; protected devices unchanged"
   }
 }
