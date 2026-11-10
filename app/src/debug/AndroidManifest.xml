@@ -7,19 +7,12 @@
         </intent>
     </queries>
     <application android:networkSecurityConfig="@xml/debug_network_security">
-        <activity android:name=".game.ui.integration.IntegrationEntryActivity" android:exported="true" android:label="@string/game_integration_title" android:theme="@style/Theme.FirstStep.GamePreview">
-            <intent-filter><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LAUNCHER" /></intent-filter>
-        </activity>
+        <activity android:name=".game.ui.integration.IntegrationEntryActivity" android:exported="true" android:label="@string/game_integration_title" android:theme="@style/Theme.FirstStep.GamePreview" />
         <activity
             android:name=".game.ui.home.GameHomeActivity"
             android:exported="true"
             android:label="@string/game_home_title"
-            android:theme="@style/Theme.FirstStep.GamePreview">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:theme="@style/Theme.FirstStep.GamePreview" />
         <receiver
             android:name=".game.notifications.IntroQuizReminderReceiver"
             android:exported="false" />
@@ -27,31 +20,16 @@
             android:name=".game.ui.intro.IntroQuizActivity"
             android:exported="true"
             android:label="@string/game_intro_title"
-            android:theme="@style/Theme.FirstStep.GamePreview">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:theme="@style/Theme.FirstStep.GamePreview" />
         <activity
             android:name=".game.ui.discovery.DiscoveryActivity"
             android:exported="true"
             android:label="@string/game_discovery_title"
-            android:theme="@style/Theme.FirstStep.GamePreview">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:theme="@style/Theme.FirstStep.GamePreview" />
         <activity
             android:name=".game.ui.preview.GamePreviewActivity"
             android:exported="true"
             android:label="@string/game_preview_title"
-            android:theme="@style/Theme.FirstStep.GamePreview">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:theme="@style/Theme.FirstStep.GamePreview" />
     </application>
 </manifest>

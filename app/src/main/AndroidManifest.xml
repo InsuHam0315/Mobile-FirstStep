@@ -16,7 +16,7 @@
         <activity android:name=".game.ui.home.CampusHomeActivity" android:exported="false" android:theme="@style/Theme.FirstStep.GamePreview" />
         <activity android:name=".game.ui.guide.GuideActivity" android:exported="false" android:label="@string/game_guide_entry" android:theme="@style/Theme.FirstStep.GamePreview" />
         <provider android:name="com.google.firebase.provider.FirebaseInitProvider" tools:node="remove" />
-        <activity android:name=".game.ui.identity.IdentityActivity" android:exported="true" android:label="@string/game_identity_title" android:theme="@style/Theme.FirstStep.GamePreview">
+        <activity android:name=".game.ui.identity.IdentityActivity" android:exported="true" android:label="@string/app_name" android:theme="@style/Theme.FirstStep.GamePreview">
             <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
         </activity>
         <meta-data android:name="com.google.ar.core" android:value="optional" />
@@ -28,8 +28,6 @@
         <activity android:name=".RouteMapActivity" android:exported="false" />
         <activity android:name=".EndingActivity" android:exported="false" />
         <activity android:name=".MissionActivity" android:exported="false" />
-        <activity android:name=".MainActivity" android:exported="true" android:windowSoftInputMode="adjustResize">
-            <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
-        </activity>
+        <activity android:name=".MainActivity" android:exported="true" android:windowSoftInputMode="adjustResize" />
     </application>
 </manifest>

@@ -25,7 +25,7 @@ For a UI or integration check, first reach account Home with a server-confirmed 
 
 - The identity controller supplies the session gate and owns UID/profile handling. App entry reads the stage without passing UID, profile values, progress, or storage identifiers. See the [H07 identity handoff](../../harness/handoffs/H07.md).
 - Campus content supplies `CampusHomeRoute` and owns the map, directory, and guide destinations. The guide resolves its own packaged content and constructs the registered software DEMO context only through its debug entry. Its progress stays in the local demo store. See the [campus content contract](../campus-content/README.md) and the [H10C demo handoff](../../harness/handoffs/H10C.md).
-- The app manifest registers `CampusHomeActivity` in the same package for the explicit intent. The existing identity and legacy launchers remain entry points. See [IdentityActivity](../../../app/src/main/java/com/example/firststep/game/ui/identity/IdentityActivity.java), [CampusHomeRoute](../../../app/src/main/java/com/example/firststep/game/composition/home/CampusHomeRoute.java), and the [manifest](../../../app/src/main/AndroidManifest.xml).
+- The app manifest registers `CampusHomeActivity` in the same package for the explicit intent. Android's launcher opens `IdentityActivity` through the single **첫발자국** icon in debug and release. The legacy `MainActivity` and the debug preview activities remain registered for explicit callers. See [IdentityActivity](../../../app/src/main/java/com/example/firststep/game/ui/identity/IdentityActivity.java), [CampusHomeRoute](../../../app/src/main/java/com/example/firststep/game/composition/home/CampusHomeRoute.java), and the [manifest](../../../app/src/main/AndroidManifest.xml).
 
 Before changing the binding to another destination, check its module contract or current handoff for the Activity component, export status, intent extras, result semantics, and storage owner.
 
@@ -46,6 +46,8 @@ The production registry is empty, and no Activity or authored composition calls 
 For an explicit fetch action, pass the scope from `capture(datasetId, buildingId)` to `public CompletableFuture<OutboxState> refresh(SyncScope scope)`. The coordinator reads the server and updates the local sync projection without uploading or changing authored gameplay. The caller should recheck the captured scope through `owner().whileCurrent(...)` before applying the result to the current account. The registry rejects ineligible scopes before scheduling work. A stale owner fails the future and cannot apply a delayed result. The campus authored composition owns the future UI action and must keep remote summaries separate from gameplay attempts and rewards. The [readback checkpoint](../../harness/handoffs/APP_ENTRY.md#explicit-account-progress-readback) records the fake backend and retained coordinator checks.
 
 ## Implementation and verification
+
+The v7 launcher correction passed merged manifest checks for debug and release, plus a binary manifest and label check on the debug APK. The [launcher verification handoff](../../harness/handoffs/APP_ENTRY.md#single-launcher-entry) records the build and check limits.
 
 The v3 binding uses the campus route from the prepared `8158893` candidate. Its build and source checks are recorded in the [app-entry verification handoff](../../harness/handoffs/APP_ENTRY.md). The unified route still needs runtime validation.
 

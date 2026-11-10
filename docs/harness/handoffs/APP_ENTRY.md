@@ -63,3 +63,11 @@ The root implemented the patch and ran the checks. The independent `/root/h07_ex
 The production registry stays closed. This checkpoint includes no UI caller, startup fetch, account operation, service access, emulator run or real-device verification. Live cross-device readback remains pending.
 
 Journal update: pending management review.
+
+## Single launcher entry
+
+`app-entry` v7 uses base `0190041f91c94ed9a82ded716a30e382e2f2c9f4` in `C:/Users/InsuHam/FirstStep-worktrees/app-entry`. The implementation owner `/root/launcher_fix` changed the main and debug manifests. The legacy and five preview Activities keep their declarations and lose their launcher filters. `IdentityActivity` retains the sole `MAIN`/`LAUNCHER` filter and uses `@string/app_name`, which resolves to **첫발자국**.
+
+With Android Studio JBR and the local Android SDK, `.\gradlew.bat :app:processDebugManifest :app:processReleaseManifest :app:testDebugUnitTest :app:assembleDebug :app:lintDebug :app:assembleDebugAndroidTest --console=plain` passed with 54 executed and 31 up-to-date tasks. All 233 JVM tests passed. Lint reported zero errors and 109 warnings. Each merged manifest contained one exported launcher targeting `IdentityActivity`. `aapt2 dump xmltree --file AndroidManifest.xml` on the debug APK returned one launcher category. `aapt2 dump badging` confirmed the Korean label **첫발자국** and the same component. The debug build uses the worktree's existing local configuration and its APK SHA256 is `50DC2C8626D117DA0324544120C7B6BB386C8AE2CC8662FA56E9CF13B96165FA`.
+
+The Android test APK compiled. The device launcher UI and Google account flow were outside this build verification. Management owns publication, integration and the journal update.
