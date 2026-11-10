@@ -26,3 +26,16 @@ local.properties
 __pycache__/
 *.py[cod]
 /app/google-services.json
+
+# H07 local Firebase configuration/emulators; no private credentials in Git.
+**/google-services.json
+/firebase/node_modules/
+/firebase/*-debug.log
+/firebase/.firebase/
+/firebase/firestore-debug.log
+/firebase/ui-debug.log
+**/service-account*.json
+**/*serviceAccount*.json
+
+/firestore-debug.log
+/firebase-debug.log

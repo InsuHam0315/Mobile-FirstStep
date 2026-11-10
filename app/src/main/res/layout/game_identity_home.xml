@@ -1,0 +1,32 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/game_identity_home"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:visibility="gone">
+
+    <TextView
+        android:id="@+id/game_identity_home_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/game_identity_home_title"
+        android:textColor="@color/game_color_text"
+        android:textSize="@dimen/game_text_title"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/game_space_medium"
+        android:text="@string/game_identity_home_intro"
+        android:textColor="@color/game_color_text"
+        android:textSize="@dimen/game_text_body" />
+
+    <Button
+        android:id="@+id/game_identity_open_profile"
+        style="@style/GameActionButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/game_space_medium"
+        android:text="@string/game_identity_home_profile" />
+</LinearLayout>

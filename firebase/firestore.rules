@@ -1,0 +1,29 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function owner(uid) { return request.auth != null && request.auth.uid == uid; }
+    function text(value, limit) {
+      return value is string && value.size() > 0 && value.size() <= limit
+        && !value.matches('(?s)^[\\x00-\\x20].*') && !value.matches('(?s).*[\\x00-\\x20]$');
+    }
+    function valid(uid) {
+      let d = request.resource.data;
+      return d.keys().hasAll(['schemaVersion','uid','name','studentNumber','department','createdAt','updatedAt'])
+        && d.keys().hasOnly(['schemaVersion','uid','name','studentNumber','department','createdAt','updatedAt'])
+        && d.schemaVersion is int && d.schemaVersion == 1 && d.uid == uid
+        && text(d.name,80) && text(d.studentNumber,40) && text(d.department,120)
+        && d.createdAt is timestamp && d.updatedAt is timestamp && d.updatedAt == request.time;
+    }
+    match /users/{uid} {
+      allow get: if owner(uid);
+      allow list, delete: if false;
+      allow create: if owner(uid) && valid(uid) && request.resource.data.createdAt == request.time;
+      allow update: if owner(uid) && valid(uid)
+        && resource.data.uid == uid && request.resource.data.uid == resource.data.uid
+        && request.resource.data.schemaVersion == resource.data.schemaVersion
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name','studentNumber','department','updatedAt']);
+    }
+    match /{document=**} { allow read, write: if false; }
+  }
+}
