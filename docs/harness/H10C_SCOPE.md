@@ -36,6 +36,8 @@ The opening-only H10B demo task must conclude before dispatching this same imple
 
 Subsequent explicit human reply to resuming the demonstration: “좀만 이따 하자”. Continue only non-conflicting code, builds, unit/static checks and review. Preserve 5564/5572/5580; no automatic screen interaction or scheduled restart. Elapsed time and completion of code checks do not authorize resumption. Await an explicit user request before further demo/device interaction; UI acceptance stays pending.
 
+Latest restriction while the user practises Android Studio: “나 안스 실습 좀 하고”. This temporarily narrows the preceding check allowance: code/read-only review in the isolated worktree only where it cannot interfere with the exercise; defer heavy builds, instrumentation and resource-intensive background jobs. Do not operate the IDE, desktop windows or emulators, install APKs, alter running devices, or stop shared/user IDE/Gradle/ADB processes. Preserve in-flight edits/evidence and assess ownership before any action on existing checks; never kill a shared process. The coordinator has already delivered this restriction directly to both implementation chats, so do not duplicate dispatch. Verification is deferred, not waived; UI resumption still requires explicit human instruction.
+
 Retain a reproducible debug APK at `.local/harness/H10C/delivery/firststep-software-demo.apk` in this worktree, plus SHA256, exact source commit, build command, target device and entry instructions in the handoff. This is the demo build, not a combined authenticated production release. Preserve the previous accepted APK/evidence. A new APK path is not evidence of a successful run; verify actual installed behavior before claiming it.
 
 ## Required acceptance evidence
