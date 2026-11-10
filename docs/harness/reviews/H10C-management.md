@@ -17,3 +17,7 @@ The owner reported that Esc stopped screen control. The retained 5580 installed 
 ## Actual dispatch
 
 After confirming the opening-only turn completed, management fast-forwarded the clean preserved campus-content worktree from0e2628e to8024f390606acbde7324d34f0e89570d93b1a821. One dispatch was sent to the same content chat01a1c08e-5337-78d2-a4c4-4bffda0e21ed; compact snapshot confirms active turn01a1c358-a311-7a11-932b-52a1c217fa1f. Initial authorization is code/non-UI checks only. No new production commit, completed runtime evidence, acceptance or main application integration is claimed. Remote campus-content remains the previously accepted0e2628e until a meaningful tested owner commit is published.
+
+## Explicit resumption after exercise
+
+User said “지금 다시 하자 firststep”. Owner's previous turn was completed with preserved uncommitted source/test work, static review and no Gradle/APK/runtime execution. Management inventoried the clean main and dirty owner worktree, then sent one continuation to the same owner: visibly prepare the retained accepted H10B demo first; resume H10C build/required checks on separate QA afterward. No reset, merge into the dirty worktree or candidate publication was performed. Preserve authenticated5564/5572, human demo5580 and unrelated exercise projects. UI authorization now exists for the scoped resumption; actual readiness and new test results still require observation.
