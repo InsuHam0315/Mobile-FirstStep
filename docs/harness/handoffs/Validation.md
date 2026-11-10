@@ -14,4 +14,8 @@ The `gpt-6.1-terra` specialist `/root/storage_contracts` prepared the SQLite tes
 
 No instrumentation execution was scheduled, so these tests have no runtime pass, fail or skip counts. The next step is to compile against the post-design integrated candidate, then run the named tests on the assigned isolated emulator. Real camera, location, motion, notification delivery, SQLite execution and actual cross-device readback remain pending.
 
+## Updated functional baseline
+
+Management authorized bringing `167923d80c57bbde7f8ccb9361da39d9ed3c2704` into the validation worktree after the test commit. The validation-only merge `b187665b5576ccec80be1e15a710ba47735483db` retained the direction sensor recovery and the Home owner's `FacilityMapBridgeTest`. The same Android test compile and assembly command passed on the merged candidate with 14 executed and 37 up-to-date tasks. Harness and whitespace checks passed. The Android test APK SHA256 was `3A4D13245FCC58E065BEF569F779813B2C2706FDCAD887B9B78C2FABDEA31AE8`. See `.local/harness/VALIDATION/v1/check-integrated.log` and `integrated-results.log`. Design integration and runtime execution remain pending.
+
 Journal update: pending management review.
