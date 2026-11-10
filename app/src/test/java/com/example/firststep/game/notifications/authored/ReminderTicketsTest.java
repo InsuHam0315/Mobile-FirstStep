@@ -43,6 +43,15 @@ public final class ReminderTicketsTest {
     now += ProgressService.WAIT_MILLIS;
     assertSame(scope, tickets.valid(token).scope);
   }
+  @Test public void coldProcessRejectsPreviouslyValidTicket() {
+    SyncScope scope = scope();
+    tickets.schedule(scope, progress(), owner, eligible, delivery);
+    now += ProgressService.WAIT_MILLIS;
+    assertSame(scope, tickets.valid(token).scope);
+    ReminderTickets coldProcess = new ReminderTickets(() -> now);
+    assertThrows(IllegalArgumentException.class, () -> coldProcess.valid(token));
+  }
+
   @Test public void deniedAndFailureAllowRetry() {
     SyncScope scope = scope(); permission = false;
     assertEquals(AuthoredReminder.Result.PERMISSION_DENIED, tickets.schedule(scope, progress(), owner, eligible, delivery));
