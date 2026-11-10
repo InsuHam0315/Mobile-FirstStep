@@ -13,3 +13,7 @@ Next: finish the accepted-demo opening-only handoff, fast-forward the clean idle
 ## Opening-only task concluded with user interruption
 
 The owner reported that Esc stopped screen control. The retained 5580 installed APK matched CFC6BE4F77331FF887CBD048D5CA26CF0BAB4FB03AE02ED701E988A080978C12, but the guide screen was not visually confirmed. Do not claim a ready demo or retry UI control through another tool. This ends the opening-only task, not the independent development authorization. H10C dispatch is limited initially to code/non-UI verification; actual device interaction and runtime acceptance require renewed human authorization. Preserve 5580 and both account devices.
+
+## Actual dispatch
+
+After confirming the opening-only turn completed, management fast-forwarded the clean preserved campus-content worktree from0e2628e to8024f390606acbde7324d34f0e89570d93b1a821. One dispatch was sent to the same content chat01a1c08e-5337-78d2-a4c4-4bffda0e21ed; compact snapshot confirms active turn01a1c358-a311-7a11-932b-52a1c217fa1f. Initial authorization is code/non-UI checks only. No new production commit, completed runtime evidence, acceptance or main application integration is claimed. Remote campus-content remains the previously accepted0e2628e until a meaningful tested owner commit is published.
