@@ -1,22 +1,25 @@
 {
   "schemaVersion": 1,
   "baselineSha": "a3b8f0f7589a501f8a086e1dc9cda11889ec452d",
-  "baselineNote": "Implementation-first: identity/campus navigation integrated02eadec; isolated sync core integrated934d9b0. Fresh36 focused tests/build/test compilation/lint passed. Account/gameplay delivery remains implementation work; service/device/whole-app checks pending. Latest design unmerged.",
+  "baselineNote": "Implementation-first: main c78211a contains account graph and campus navigation. Authored host b2795f1 review CHANGES_REQUIRED (away quiz, flush overlap); actual NORMAL GPS/discovery/readback implementation remains. Design deferred.",
   "coordinationScope": "docs/harness/IMPLEMENTATION_FIRST.md",
   "activeBranches": [
-    "progress-sync"
+    "campus-content",
+    "home-progress"
   ],
   "appEntryCheckpoint": {
     "branch": "app-entry",
-    "candidateSha": "1976402a4bae677f0e94606842bbce78cdb443ac",
+    "candidateSha": "43175ebba6a1545429a6fb43e7ff2b4c500b90e4",
     "integratedSha": "02eadec6744cd16f919a33918013f32ed5a2ce7c",
-    "status": "integrated_pending_combined_runtime",
+    "status": "graph_and_readback_facade_integrated_ui_runtime_pending",
     "combinedValidation": "36 selected JVM tests/APK/test compilation/lint PASS at934d9b0; runtime pending",
-    "installedDevice": "QA5572 remains user-held on v1 6fbb872"
+    "installedDevice": "QA5572 remains user-held on v1 6fbb872",
+    "graphIntegratedSha": "b240a0369869f9cae485068f360beb4dc2116696",
+    "readbackIntegratedSha": "a1bd986f2cf0a0a2bfad6d154b2c984ce52bfc37"
   },
-  "activeTask": "H07",
+  "activeTask": "H10",
   "parallelTasks": [
-    "H10"
+    "H07"
   ],
   "decisions": {
     "coreGame": "approved",
@@ -241,7 +244,7 @@
       "id": "H07",
       "branch": "firebase",
       "status": "in_progress",
-      "executionState": "identity_and_campus_home_integrated_sync_core_integrated_binding_next",
+      "executionState": "identity_observer_and_named_account_graph_integrated_live_and_combined_pending",
       "resumeScopePath": "docs/harness/H07_RESUME.md",
       "candidateSha": "ab117d3c9144a6e908f1d51bd0f5932ee24a02d6",
       "publishedSha": "a686a263b768082731afd98fe836df7375d64f9d",
@@ -332,15 +335,15 @@
       "branch": "campus-content",
       "status": "in_progress",
       "implementationThread": "01a1c08e-5337-78d2-a4c4-4bffda0e21ed",
-      "activeSlice": "software-demo-episode",
-      "continuationScopePath": "docs/harness/H10C_SCOPE.md",
+      "activeSlice": "authored-normal-flow",
+      "continuationScopePath": "docs/harness/AUTHORED_FLOW_CONTINUATION.md",
       "priorSliceStatus": "H10 guide/practice and H10B narration accepted/integrated a3b8f0f",
-      "candidateSha": "55ba443aa46a0e73adc39f08a608988457912902",
+      "candidateSha": "b2795f1d47ae769dabe1e947e30481ad95cac339",
       "publishedSha": "0e2628e15d771cbcc447dae0f73bb09b4d40ba81",
       "verifiedSha": null,
       "integratedSha": null,
-      "managementReview": "H10C_exact_checkpoint_pass_combined_validation_pending",
-      "reviewPath": "docs/harness/reviews/H10C-management.md",
+      "managementReview": "CHANGES_REQUIRED_two_P2_and_required_normal_flow_missing",
+      "reviewPath": "docs/harness/reviews/AUTHORED_HOST-management.md",
       "baseSha": "8024f390606acbde7324d34f0e89570d93b1a821",
       "coordinationPath": "docs/harness/reviews/H10-coordination.md",
       "dependsOn": [
@@ -377,7 +380,7 @@
         "Retry, idempotent stamp, restart and stale/cancel/mismatch handling verified; existing flows preserved",
         "Required checks, exact candidate independent review and isolated integration pass; field/cloud scope excluded"
       ],
-      "executionState": "H10C_integrated982a17c_campus_home_navigation_integrated02eadec",
+      "executionState": "repair_and_complete_gps_discovery_readback_before_design",
       "priorAcceptedSlice": {
         "name": "H10B",
         "candidateSha": "0e2628e15d771cbcc447dae0f73bb09b4d40ba81",
@@ -385,14 +388,32 @@
         "integratedSha": "a3b8f0f7589a501f8a086e1dc9cda11889ec452d",
         "reviewPath": "docs/harness/reviews/H10B-management.md"
       },
-      "navigationIntegratedSha": "02eadec6744cd16f919a33918013f32ed5a2ce7c"
+      "navigationIntegratedSha": "02eadec6744cd16f919a33918013f32ed5a2ce7c",
+      "activeScope": "docs/harness/AUTHORED_HOST_SCOPE.md",
+      "activeBaseSha": "dd4b45894bc4bc6a4f3c06bf9fd0e821fb2e544d"
     }
   ],
   "progressSyncCheckpoint": {
     "branch": "progress-sync",
-    "candidateSha": "68f7978aa12ebb7908fcf77f99271682cf2d0c06",
-    "integratedSha": "934d9b0a5b30b4e36b9bc2a21d167534dbe44f58",
-    "status": "core_integrated_binding_not_yet_implemented",
-    "productionRegistry": "empty; no live progress access enabled"
+    "candidateSha": "b996ac9e6ab2a09d708f103bea4e88d967412189",
+    "integratedSha": "5c180cab04f247195aef548e088aae6e8c7c160f",
+    "status": "core_guard_recovery_integrated_actual_normal_callers_under_repair",
+    "productionRegistry": "empty; no live progress access enabled",
+    "recoveryIntegratedSha": "5c180cab04f247195aef548e088aae6e8c7c160f"
+  },
+  "authoredHostCheckpoint": {
+    "candidateSha": "b2795f1d47ae769dabe1e947e30481ad95cac339",
+    "status": "changes_required",
+    "scopePath": "docs/harness/AUTHORED_FLOW_CONTINUATION.md",
+    "normalActivation": "not enabled; surveyed configuration absent",
+    "published": false,
+    "integrated": false
+  },
+  "homeProgressCheckpoint": {
+    "branch": "home-progress",
+    "status": "ready",
+    "scopePath": "docs/harness/HOME_PROGRESS_SCOPE.md",
+    "owner": "implementation_pm",
+    "required": "account Home progress/waiting quiz/favorites and best-effort authored reminder caller"
   }
 }

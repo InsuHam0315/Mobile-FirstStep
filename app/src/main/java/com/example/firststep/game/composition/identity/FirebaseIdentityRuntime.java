@@ -4,9 +4,17 @@ import android.app.Activity;
 import android.content.Context;
 import com.example.firststep.BuildConfig;
 import com.example.firststep.game.auth.*;
+import com.example.firststep.game.sync.DatasetRegistry;
+import com.example.firststep.game.sync.FirestoreSyncBackend;
+import com.example.firststep.game.sync.SQLiteSyncStore;
+import com.example.firststep.game.sync.SyncCoordinator;
 import com.google.firebase.*;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.*;
+import java.util.Optional;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 /** Process-shared named Firebase graph; no default-app auto initialization or legacy exchange. */
 public final class FirebaseIdentityRuntime implements IdentityRuntime {
@@ -15,7 +23,10 @@ public final class FirebaseIdentityRuntime implements IdentityRuntime {
   public static synchronized IdentityRuntime get(Context c) {
     if (instance == null) {
       try {
-        instance = new FirebaseIdentityRuntime(c);
+        instance =
+            BuildConfig.H07_CONFIGURED
+                ? new FirebaseIdentityRuntime(c.getApplicationContext())
+                : new UnconfiguredRuntime();
       } catch (RuntimeException invalidSetup) {
         instance = new UnconfiguredRuntime();
       }
@@ -26,45 +37,10 @@ public final class FirebaseIdentityRuntime implements IdentityRuntime {
   private final AuthPort auth;
   private final ProfilePort profiles;
   private final GoogleCredentialSource credentials;
+  private final AccountProgressSession progressSession;
+  private final AccountProgressAccess progress;
 
   private FirebaseIdentityRuntime(Context c) {
-    if (!BuildConfig.H07_CONFIGURED) {
-      credentials = null;
-      auth =
-          new AuthPort() {
-            public boolean isConfigured() {
-              return false;
-            }
-
-            public String currentUid() {
-              return null;
-            }
-
-            public Subscription observe(AuthObserver o) {
-              o.onChanged(null);
-              return () -> {};
-            }
-
-            public void signIn(boolean r, Completion cb) {
-              cb.onResult(Failure.UNAVAILABLE);
-            }
-
-            public void signOut(Completion cb) {
-              cb.onResult(null);
-            }
-          };
-      profiles =
-          new ProfilePort() {
-            public void load(String u, ProfileCallback cb) {
-              cb.onResult(null, Source.SERVER, Failure.UNAVAILABLE);
-            }
-
-            public void save(String u, Profile p, AuthPort.Completion cb) {
-              cb.onResult(Failure.UNAVAILABLE);
-            }
-          };
-      return;
-    }
     FirebaseOptions options =
         new FirebaseOptions.Builder()
             .setApplicationId(BuildConfig.H07_APP_ID)
@@ -86,6 +62,24 @@ public final class FirebaseIdentityRuntime implements IdentityRuntime {
     credentials = new GoogleCredentialSource(c, BuildConfig.H07_WEB_CLIENT_ID);
     auth = new FirebaseAuthPort(firebaseAuth, credentials);
     profiles = new FirestoreProfilePort(db, firebaseAuth);
+    progressSession =
+        new AccountProgressSession(
+            app.getOptions().getProjectId(),
+            auth,
+            () -> {
+              FirebaseUser user = firebaseAuth.getCurrentUser();
+              return user == null || user.isAnonymous() ? null : user.getUid();
+            });
+    DatasetRegistry registry = DatasetRegistry.production();
+    Executor worker = Executors.newSingleThreadExecutor();
+    SyncCoordinator sync =
+        new SyncCoordinator(
+            registry,
+            progressSession,
+            new SQLiteSyncStore(c, registry),
+            new FirestoreSyncBackend(db, registry, progressSession),
+            worker);
+    progress = new AccountProgressAccess(registry, progressSession, sync, worker);
   }
 
   public AuthPort auth() {
@@ -96,18 +90,27 @@ public final class FirebaseIdentityRuntime implements IdentityRuntime {
     return profiles;
   }
 
+  @Override
+  public ConfirmedOwnerObserver confirmedOwnerObserver() {
+    return progressSession::onConfirmedOwner;
+  }
+
+  @Override
+  public Optional<AccountProgressAccess> accountProgress() {
+    return Optional.of(progress);
+  }
+
   public Kind kind() {
-    return credentials == null ? Kind.UNCONFIGURED : Kind.LIVE;
+    return Kind.LIVE;
   }
 
   public void attach(Activity a) {
-    if (credentials != null) credentials.attach(a);
+    credentials.attach(a);
   }
 
   public void detach(Activity a) {
-    if (credentials != null) credentials.detach(a);
+    credentials.detach(a);
   }
 
-  public void
-      close() {} // Shared SDK graph persists; each controller cancels its own observer on pause.
+  public void close() {} // The process graph outlives its Activity clients.
 }

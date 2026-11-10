@@ -1,0 +1,22 @@
+# Authored NORMAL gameplay host — gated implementation
+
+2026-11-10. Required continuation under IMPLEMENTATION_FIRST.md and ACCOUNT_SYNC_BINDING_SCOPE.md. Management assigns the existing campus-content chat/worktree, same bare branch. This implements callers that are still missing; it does not activate a real dataset, deploy rules, infer coordinates or promote DEMO records.
+
+## Ownership
+
+Own new game/composition/authored host/ports and game/ui/authored activity/state/resources/tests, a narrow CampusHomeActivity entry and additive nonexported manifest declaration, own docs/modules/campus-content/README.md and handoff. Preserve existing AuthoredProgressRepository/Store files (sync PM), identity runtime/account access (identity owner), existing discovery/introquiz/demo contracts. A shared controller hook is allowed only if additive/backward-compatible and essential; prefer a repository decorator/host callback over altering legacy behavior. Report exact need before overlapping an active owner. You are not alone; no overwrite/revert of other edits.
+
+## Implement the whole bounded caller
+
+- Separate NORMAL entry from Campus Home, not the guide's debug DEMO route. Current production eligibility is empty: show a readable unavailable reason and return path, never a blank/dead screen or silent fallback to fixture/demo. Only the software/digital-information target is in scope; no inferred departments.
+- Consume the actual identity graph's optional account-progress contract once integrated. No Firebase initialization, UID extras, profile fields or copied credentials. Capture the confirmed owner; enforce registry/owner/generation at entry, mutation, reopen and async rendering. Supplied test runtime may inject a synthetic registration/owner; do not expose a public intent or release switch bypassing production eligibility.
+- Provide an injected arrival gate with explicit unavailable/not-arrived/admitted outcomes. The production gate remains unavailable until surveyed target configuration and trusted fresh arrival evidence exist. Do not accept existing DiscoveryResult.simulatedArrival, debug manual arrival or H05 display location as NORMAL admission. A fake fix in a test is synthetic evidence, not campus validation.
+- Build an authored composition using the sourced seven captions and three questions and current ProgressService/IntroQuizController where compatible. Bind the dedicated account-scoped AuthoredProgressRepository. Preserve normal15minute/2-of-3/retry/idempotent stamp rules. Existing H10C local DEMO, preview and practice continue unchanged.
+- After a successfully committed introduction/pass, reconcile the committed source into the outbox. Repeat on authored screen reopen so a crash between gameplay commit and enqueue is recoverable. The actual callsite must exist; standalone APIs/examples are insufficient. A failed reconcile/UnusableMilestone must not undo a committed local pass or turn it into a quiz submission error. Explicit retry is separate from re-answering the quiz.
+- Show local saved state separately from pending/server-confirmed/failed sync. Flush only as an explicit action with current owner checks. Production empty registration prevents cloud reads/writes. Remote completion remains a separate projection; never manufacture local quiz answers. Returning/resuming after account change must clear old rendered state and reject late callbacks.
+
+## Short evidence
+
+Use injected synthetic registry/arrival/account/backend/clock for focused host tests: production denied before store/network; missing auth; NORMAL wait boundary; retry/pass; postcommit/reopen delivery including crash-gap; same-account resume and account switch; failure/clock rollback keeps local completion; DEMO cannot be admitted/promoted. Compile APK and Android test sources, short lint as needed. No historical matrix or user-held device actions; combined runtime comes after implementation/design.
+
+Record exact public caller/callee signatures and files, executed checks, unrun Android SQLite/Firestore/device cases, and gated activation dependencies. Before committing, distinguish actual implemented host wiring from placeholders. Korean campus-content revisions continue above v11. No push/merge/Notion by owner. Management reviews and integrates; latest design still last. Stop at a coherent implemented checkpoint with explicit unimplemented/externally blocked items, not a false field-ready claim.

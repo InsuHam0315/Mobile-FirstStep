@@ -1,0 +1,21 @@
+# Authenticated Home progress and reminder callers
+
+2026-11-10. Required bounded continuation, bare module branch `home-progress`, isolated worktree `C:/Users/InsuHam/FirstStep-worktrees/home-progress`. Management delegates to existing implementation PM (Sol) with Terra/Luna specialists. Read current AGENTS, PRODUCT_DECISIONS home integration selection, CORE_GAME_SCOPE and actual account/authored APIs. Do not replay old tasks.
+
+## Responsibility and conflicts
+
+Own new `game/presentation/home/account/`, `game/composition/home/account/`, `game/notifications/authored/`, matching tests and `docs/modules/home-progress/README.md` plus handoff. Own CampusHomeActivity, its layout and additive strings for the actual Home consumer. Campus authored-flow owner owns AuthoredEpisodeHost/Activity and authored arrival/discovery paths; do not edit those. Reminder intro-commit hook must be supplied through an explicit port/API and coordinated with that owner, not left as undocumented missing wiring. Main Manifest receiver declaration is an additive change: management resolves overlap with campus owner. Do not edit identity/sync or old DEMO/legacy behavior. You are not alone; preserve others' edits. No push/main merge/Notion/device/cloud/rule deployment/design.
+
+## Approved current experience
+
+- PRODUCT_DECISIONS option1 requires Home progress, waiting quizzes and device-local favorite facilities. Implement an account-scoped read model for the single supported software target: unavailable configuration, unstarted, awaiting quiz, eligible quiz, complete and load failure. No fictitious multi-target count or inferred department mapping. Refresh on return; tick remaining time from persisted introduction time, not decrement-only state. Quiz re-entry after intro works away from campus. Closed registration must be shown honestly before opening account stores.
+- Consume current server-confirmed AccountProgressAccess and scoped AuthoredProgressRepository rather than fixture, anonymous or legacy records. Current owner/generation checks apply before publication and navigation. No implicit network/startup cloud access; server-only summary is a distinct projection, not invented local answers or rewards. Preserve production closed registry and unset surveyed destination.
+- Show local favorite facilities using FacilityRepository; retain persisted favorites and directory/detail/map context where supported. A facility without coordinates/mission cannot gain a fabricated pin or start action. Do not add new location facts.
+- CORE/H04 best-effort quiz reminder is required on NORMAL path. Implement a dedicated authored reminder port/Android adapter, scheduled from committed intro time with per-owner/dataset/building idempotence. Notification permission refusal or delivery failure must never block local intro save, wait, quiz eligibility or Home re-entry. No exact-alarm privilege or server notification. Use an opaque in-app ticket and nonexported receiver; on tap route through current identity and registered authored eligibility, never carry UID/profile secrets in intent or silently switch accounts. Suppress stale owner notifications/results. Document reboot/exact-delivery limits honestly.
+- Supply the active campus owner a concise actual reminder scheduling signature and invocation contract after implementation. They own the intro commit hook and explicit intro Skip. Management does not accept an adapter-only checkpoint as full caller completion.
+
+## Focused verification
+
+Synthetic registry/account/clock: zero/awaiting/eligible/completed state, countdown boundary, return refresh, late prior-owner callback, local favorites, remote-only projection distinction. Fake reminder scheduler: duplicate schedule, denial/failure, cancelled or wrong-owner tap, existing committed intro replay. Build APK and Android test sources with short affected tests. Android delivery, SQLite runtime and actual server behavior are pending combined validation; protected5564/5572/5580 untouched.
+
+Korean `[home-progress vN]` commits, English module API and handoff. Management independently reviews, publishes and integrates before latest design. If external caller dependency blocks compile, state exact contract and continue disjoint work; never claim missing consumer is merely unrun validation.

@@ -1,0 +1,7 @@
+# Account readback passthrough
+
+2026-11-10. Existing app-entry owner/worktree only, base be936439. Required continuation of account-progress sync, parallel with campus authored flow repairs. Management owns integration/publication; no device/cloud/Notion actions.
+
+Own AccountProgressAccess.java, narrowly necessary identity graph tests and own app-entry module/handoff docs. Add `public CompletableFuture<OutboxState> refresh(SyncScope scope)` delegating to the existing SyncCoordinator.refresh. Preserve current owner/registry/epoch/nonanonymous checks, named Firebase graph and lazy startup. No automatic refresh, registration activation, SDK user action, UI/gameplay work or sync-module rewrite. Campus owner will consume this through an explicit authored UI action; remote summaries stay separate from local answers/attempts/rewards.
+
+Verify meaningful focused cases using a fake backend: clean local instance can fetch current remote summary; stale owner responses rejected; unregistered/DEMO scopes do not cause network access; fetch does not create a local gameplay attempt/reward. Reuse existing coordinator coverage when exact behavior is already asserted, and report it as retained evidence. Short build/interface check; no broad historical suite. Korean app-entry revisions above v5, own documentation, stop at coherent checkpoint without push/merge. You are not alone; preserve all other owners' changes.

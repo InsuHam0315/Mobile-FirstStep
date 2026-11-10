@@ -29,6 +29,22 @@ For a UI or integration check, first reach account Home with a server-confirmed 
 
 Before changing the binding to another destination, check its module contract or current handoff for the Activity component, export status, intent extras, result semantics, and storage owner.
 
+## Confirmed owner event
+
+`public SessionController(AuthPort auth, ProfilePort profiles, ConfirmedOwnerObserver ownerObserver)` accepts a callback alongside the existing ports. `public SessionController(AuthPort auth, ProfilePort profiles)` remains available. The observer is a separate channel from `setListener(Listener)` and receives `void onConfirmedOwner(String uid)` on the controller's serialized calling thread. A non-null value is the UID of a profile that reached `COMPLETE` after a server read. A null value revokes confirmation. Treat repeated values as idempotent, and treat a later confirmation following revocation as a new session even when the UID matches.
+
+The controller emits revocation before sign-in, reselection and logout, when it observes a mismatching or lost session, or when a profile check produces a failed or incomplete result. An ordinary pause and the loading or cached part of a same-UID refresh preserve the last confirmed decision. The existing generation, request and UID checks reject stale profile callbacks.
+
+`IdentityViewModel` supplies `runtime.confirmedOwnerObserver()` to the three-argument constructor. The configured process graph subscribes to auth independently of the controller. Non-null confirmation requires the current port and the same named Firebase app's non-anonymous user to match. Worker operations recheck that SDK user under the owner guard, including before a queued auth callback arrives. Pausing the Activity or closing its view model leaves the graph subscription intact.
+
+### Account progress access
+
+`IdentityRuntime.accountProgress()` returns an optional `AccountProgressAccess`. The configured runtime supplies it. Unconfigured, fake and local runtimes default to an empty value. A future authored composition should capture its dataset and building through `capture(datasetId, buildingId)`, which requires a current confirmed owner and an eligible NORMAL registration. Use `registry()` and `owner()` to construct the bound authored repository. Pass that repository as the committed source to `reconciler(source)` for local recovery on save or reopen. `flush(scope)` is a separate explicit network step. The same registry and guard protect the coordinator, backend and reconciler.
+
+The production registry is empty, and no Activity or authored composition calls this access yet. The graph reuses the named Firestore instance from profile verification and creates no progress reads or writes during setup. See the [account binding scope](../../harness/ACCOUNT_SYNC_BINDING_SCOPE.md), [Firebase module](../firebase/README.md), and [progress sync module](../progress-sync/README.md).
+
+For an explicit fetch action, pass the scope from `capture(datasetId, buildingId)` to `public CompletableFuture<OutboxState> refresh(SyncScope scope)`. The coordinator reads the server and updates the local sync projection without uploading or changing authored gameplay. The caller should recheck the captured scope through `owner().whileCurrent(...)` before applying the result to the current account. The registry rejects ineligible scopes before scheduling work. A stale owner fails the future and cannot apply a delayed result. The campus authored composition owns the future UI action and must keep remote summaries separate from gameplay attempts and rewards. The [readback checkpoint](../../harness/handoffs/APP_ENTRY.md#explicit-account-progress-readback) records the fake backend and retained coordinator checks.
+
 ## Implementation and verification
 
 The v3 binding uses the campus route from the prepared `8158893` candidate. Its build and source checks are recorded in the [app-entry verification handoff](../../harness/handoffs/APP_ENTRY.md). The unified route still needs runtime validation.
