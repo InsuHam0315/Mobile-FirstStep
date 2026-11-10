@@ -21,3 +21,9 @@ The combined visual run exposed a selected-facility map with only about 13 pixel
 The smoke test checks that the in-canvas attribution is inside the visible viewport and at least 96dp of drawable map is available above it. That lower bound gives the content two 48dp touch-target heights for panning rather than counting a sliver as usable. The test also reveals each browse control, captures a second image and checks the map area again after scrolling.
 
 Debug APK and Android test compilation passed with 48 actionable tasks, 9 executed and 39 up-to-date. Static inspection confirmed that the two layout variants have identical IDs, visible copy and visibility/live-region attributes. The repaired source still needs the landscape device rerun.
+
+## Landscape DEMO discovery repair
+
+The enlarged landscape capture showed the 240dp camera-denied preview before both entry controls, leaving them below the first viewport. The landscape resource now places arrival simulation and the camera-free fallback immediately after the existing DEMO disclosure. A centered 280 × 160dp preview sits below the status and retains the same CameraX view and overlaid artwork. Portrait, authored preview and discovery state/callbacks are unchanged.
+
+The smoke test now captures the initial viewport before scrolling and checks that both entry controls are enabled and at least 90% visible in landscape. It still reveals both controls in each orientation. APK assembly and Android test compilation passed with 9 tasks executed and 39 up-to-date. Device confirmation of the revised layout is pending.
