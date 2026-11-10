@@ -1,5 +1,11 @@
 # Authored host exact candidate review
 
+## Integrated implementation checkpoint167923d
+
+Exact candidates campus5b961def6c040cdba5bac57530fd9069ea2c0854/code8e05a81 and homed56332af8ffd5dc60b9db69e36663b96bc338c73/code09c4aaa independently pass source review. Silent first-heading now times out after3s, exposes existing explicit fallback, recovers on reliable input and cancels on close. Historical away-quiz/flush findings remain closed. Home owner/generation, countdown, remote/local separation and reminder contracts pass. The facility bridge resolves catalog IDs, preserves cancellation/recreation, does not create pins or legacy missions.
+
+Isolated integration management-authored-home: relevant JVM43 tests0failures/errors/skips, APK and Android-test compilation PASS,52 tasks all executed. Retained `.local/harness/combined/pre-design.log` and XML. This is a short implementation checkpoint, not the final comprehensive gate. Equivalent reminder dependency merged once; add/add test conflict resolved by retaining the additional cold-process rejection test. Currentmain docs were merged with no app/build changes after the check. Main and both candidate branch tips pushed and remotely verified. Full runtime, SQLite/Android SDK interaction, physical sensors, survey and service activation remain distinct pending evidence. Latest design is next under RESKIN_SCOPE.md.
+
 ## Continuation review: 262af20 / 7cdd170
 
 2026-11-10. Exact independent management review closes both historical P2s below: post-introduction quiz no longer depends on proximity, and explicit send publication is independently owned. Required GPS policy/adapters, NORMAL direction/SHAKE, Skip, readback and reminder callers now exist. Retained42 focused JVM tests passed;52 tasks9 executed43 reused. Three authored Activity tests compile only.

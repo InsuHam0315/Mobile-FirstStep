@@ -1,11 +1,10 @@
 {
   "schemaVersion": 1,
   "baselineSha": "a3b8f0f7589a501f8a086e1dc9cda11889ec452d",
-  "baselineNote": "Main596f7f9 includes explicit readback and isolated rules candidate. Provisional e19c10e combines authored/Home; silent-heading repair and required facility bridge active. Validation test sources prepared in parallel; design last, comprehensive gate afterward.",
+  "baselineNote": "Functional implementation167923d integrated/pushed: authored NORMAL callers, accountHome/reminders, facilitiesmapbridge. Independent source review passed;43focusedJVM/fresh52tasks pass. Finaldesignreskin and validationtests active; fullruntimepending.",
   "coordinationScope": "docs/harness/IMPLEMENTATION_FIRST.md",
   "activeBranches": [
-    "campus-content",
-    "home-progress",
+    "reskin",
     "validation"
   ],
   "appEntryCheckpoint": {
@@ -18,10 +17,8 @@
     "graphIntegratedSha": "b240a0369869f9cae485068f360beb4dc2116696",
     "readbackIntegratedSha": "a1bd986f2cf0a0a2bfad6d154b2c984ce52bfc37"
   },
-  "activeTask": "H10",
-  "parallelTasks": [
-    "H07"
-  ],
+  "activeTask": "H09",
+  "parallelTasks": [],
   "decisions": {
     "coreGame": "approved",
     "firebaseAuth": "approved",
@@ -314,7 +311,7 @@
     {
       "id": "H09",
       "branch": "reskin",
-      "status": "queued",
+      "status": "in_progress",
       "dependsOn": [
         "H06"
       ],
@@ -329,7 +326,9 @@
         "No domain/device/storage logic changes are needed for visual-only requirements",
         "Behavior checks remain green",
         "Reference-based visual QA checks text, spacing, scrolling and accessibility"
-      ]
+      ],
+      "baseSha": "13f485b",
+      "scopePath": "docs/harness/RESKIN_SCOPE.md"
     },
     {
       "id": "H10",
@@ -339,11 +338,11 @@
       "activeSlice": "authored-normal-flow",
       "continuationScopePath": "docs/harness/AUTHORED_FLOW_CONTINUATION.md",
       "priorSliceStatus": "H10 guide/practice and H10B narration accepted/integrated a3b8f0f",
-      "candidateSha": "262af20ad7452c95c8f52b0f9e0064fd7b89cdb9",
-      "publishedSha": "0e2628e15d771cbcc447dae0f73bb09b4d40ba81",
+      "candidateSha": "5b961def6c040cdba5bac57530fd9069ea2c0854",
+      "publishedSha": "5b961def6c040cdba5bac57530fd9069ea2c0854",
       "verifiedSha": null,
-      "integratedSha": null,
-      "managementReview": "CHANGES_REQUIRED_silent_heading",
+      "integratedSha": "167923d80c57bbde7f8ccb9361da39d9ed3c2704",
+      "managementReview": "source_pass",
       "reviewPath": "docs/harness/reviews/AUTHORED_HOST-management.md",
       "baseSha": "8024f390606acbde7324d34f0e89570d93b1a821",
       "coordinationPath": "docs/harness/reviews/H10-coordination.md",
@@ -381,7 +380,7 @@
         "Retry, idempotent stamp, restart and stale/cancel/mismatch handling verified; existing flows preserved",
         "Required checks, exact candidate independent review and isolated integration pass; field/cloud scope excluded"
       ],
-      "executionState": "bounded_sensor_silence_repair",
+      "executionState": "integrated_pending_combined_validation",
       "priorAcceptedSlice": {
         "name": "H10B",
         "candidateSha": "0e2628e15d771cbcc447dae0f73bb09b4d40ba81",
@@ -403,23 +402,26 @@
     "recoveryIntegratedSha": "5c180cab04f247195aef548e088aae6e8c7c160f"
   },
   "authoredHostCheckpoint": {
-    "candidateSha": "262af20ad7452c95c8f52b0f9e0064fd7b89cdb9",
-    "status": "changes_required_silent_heading_only",
+    "candidateSha": "5b961def6c040cdba5bac57530fd9069ea2c0854",
+    "status": "integrated_pending_combined_validation",
     "scopePath": "docs/harness/AUTHORED_FLOW_CONTINUATION.md",
     "normalActivation": "not enabled; surveyed configuration absent",
-    "published": false,
-    "integrated": false,
-    "checks": "42 focused JVM PASS; actual Activity tests compiled only; old two P2s closed"
+    "published": true,
+    "integrated": true,
+    "checks": "independent source PASS; combined43focusedJVM and APK/test compilation PASS,52tasks executed",
+    "integratedSha": "167923d80c57bbde7f8ccb9361da39d9ed3c2704"
   },
   "homeProgressCheckpoint": {
     "branch": "home-progress",
-    "status": "home_checkpoint_ready_facility_bridge_in_progress",
+    "status": "integrated_pending_combined_validation",
     "scopePath": "docs/harness/HOME_PROGRESS_SCOPE.md",
     "owner": "implementation_pm",
     "required": "account Home progress/waiting quiz/favorites and best-effort authored reminder caller",
     "baseSha": "77fd17a2dbbe48fa4f7538f5adebd7e2081afcd4",
-    "candidateSha": "fab2016cdd0f1e0eeea5aa2f6293a7c96e210b1a",
-    "checks": "14 focused JVM PASS; APK and Android tests compile; runtime pending"
+    "candidateSha": "d56332af8ffd5dc60b9db69e36663b96bc338c73",
+    "checks": "14 focused JVM PASS; APK and Android tests compile; runtime pending",
+    "publishedSha": "d56332af8ffd5dc60b9db69e36663b96bc338c73",
+    "integratedSha": "167923d80c57bbde7f8ccb9361da39d9ed3c2704"
   },
   "progressRulesCheckpoint": {
     "branch": "progress-sync",
@@ -436,6 +438,7 @@
     "baseSha": "e19c10e",
     "status": "instrumentation_source_preparation",
     "ownerThread": "01a1b03e-8027-7ad3-b54e-53c538832975",
-    "runtime": "deferred until functional integration and final design; protected devices unchanged"
+    "runtime": "deferred until functional integration and final design; protected devices unchanged",
+    "scopePath": "docs/harness/FINAL_VALIDATION_PLAN.md"
   }
 }

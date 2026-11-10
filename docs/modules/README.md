@@ -14,9 +14,11 @@ This index is management-owned. Each implementation owner maintains its own `doc
 | [integration](integration/README.md) | Registered datasets, navigation and isolated compositions | Source-based contract recorded; implementation evidence/limits in linked page |
 | [firebase](firebase/README.md) | Google identity and server-confirmed first profile | Source-based contract recorded; implementation evidence/limits in linked page |
 | [app-entry](app-entry/README.md) | Confirmed account Home to Campus Home; process-scoped account access | Graph integratedb240a03; explicit readback43175eb integrateda1bd986, runtime pending |
-| [campus-content](campus-content/README.md) | Sourced guide/DEMO, map/facility navigation, separate authored host | Navigation integrated02eadec; hostb2795f1 CHANGES_REQUIRED; actual GPS/NORMAL discovery/away-quiz/readback continuation active |
-| [progress-sync](progress-sync/README.md) | Account guard, durable authored progress/outbox, backend and recovery | Core integrated5c180ca; isolated rule candidate now implementing, deployed rules unchanged |
-| home-progress (contract page pending owner checkpoint) | Actual account Home progress/waiting quizzes/favorites and authored reminders | Prepared77fd17a and implementing under HOME_PROGRESS_SCOPE; no completion/runtime claim |
+| [campus-content](campus-content/README.md) | Sourced guide/DEMO, map/facility navigation, separate authored host | Authored5b961de + navigation integrated167923d; source PASS, combined runtime pending |
+| [progress-sync](progress-sync/README.md) | Account guard, durable authored progress/outbox, backend and recovery | Core integrated5c180ca; rule candidateeabed51 integratedeca7938,14localrulescasesPASS; deployedrulesunchanged |
+| [home-progress](home-progress/README.md) | Account Home, reminders and facility/map bridge | Candidated56332a integrated167923d; source PASS, actualruntimepending |
+| reskin (contract pending owner) | Latest teammate visuals on current actual consumers | Active13f485b under RESKIN_SCOPE; no runtimeclaim |
+| validation (contract pending owner) | Combined actualActivity/storage test preparation | Activee19c10e; finalgate afterdesign |
 
 Page paths follow `docs/modules/<module>/README.md`; entries marked being added are not existing documentation or completed implementation claims. Historical detailed evidence remains in `docs/harness/handoffs/` and `docs/harness/reviews/`; link to it rather than duplicating entire histories.
 
@@ -26,7 +28,11 @@ Describe current responsibility and exclusions, actual public signatures and sou
 
 Current shared constraints: Java/XML; no silent DEMO/fixture/anonymous-to-account migration; no fabricated campus coordinates; camera overlay is not tracked AR. Identity-profile success does not imply cloud progress success. Current implementation-first/design-last/combined-validation order is in `../harness/IMPLEMENTATION_FIRST.md`.
 
-## Immediate integrated behavior
+## Functional checkpoint167923d
+
+Authored NORMAL GPS/discovery/intro/awayquiz, explicit sync/readback/reminders, account Home progress and facility/map selection are implemented. All three management sourcefindings are closed. Isolatedcombined43focusedJVM/APK/Androidtestcompilation PASS with52executedtasks. Source-definedversionedapprovedcontent exists; productionregistry and surveyed target provider remainempty. Finaldesignandcombinedruntime under RESKIN_SCOPE and FINAL_VALIDATION_PLAN. Nothing here claims fieldarrival, livecloudor protecteddeviceinstallation.
+
+## Historical checkpoint behavior (preserved evidence)
 
 `IdentityActivity` checks current `SessionState.Stage.COMPLETE` and opens `CampusHomeRoute.intent(this)` without account/storage extras. Campus Home offers the map, facility directory and department guide. The guide exposes its registered debug-only local DEMO separately. Earlier v1 direct-guide navigation and Back were verified on QA5572; that user-held installation remains unchanged. New v3 Campus Home navigation is built and source-reviewed, with runtime pending.
 
