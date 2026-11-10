@@ -15,7 +15,8 @@
 - Management owns product scope, shared rules, integration, remote publication, central module index and Korean Notion journals. Implementation owns its assigned app code/tests, module contract and English handoff/commits. Never compete for another owner's files or change global rules/tasks/Notion without an explicit assignment. See docs/harness/ROUTING.md.
 - Use the requested Astra coordinator -> Sol PM -> Terra/Luna specialist hierarchy for bounded useful work. Follow available model IDs in ROUTING.md. A profile file is not evidence an agent ran. Record actual agents, base SHA, commands, outcomes and limits.
 - Assign one isolated worktree/branch and exact write responsibility per owner. Workers are not alone: preserve others' changes; management arbitrates shared files. No reset, stash, force push, automatic cleanup or retirement of evidence worktrees.
-- User-held devices5564,5572,5580 and existing sessions/data are protected. Source/build work does not authorize reinstall, navigation or account actions. Check the latest explicit device handoff before runtime work.
+- User-held devices5564,5572,5580,5592 and existing sessions/data are protected. Device5592 was handed to the user for Google sign-in after final V1 QA; it is no longer disposable test space. Source/build work does not authorize reinstall, navigation or account actions. Check the latest explicit device handoff before runtime work.
+- For user-facing emulator previews, show a phone device frame (current5592 uses its matching Pixel2 skin), not a bare rectangular test display. Preserve app/account data when changing presentation.
 - Authorized implementation chat coordination uses compact wait_threads snapshots and bounded messages. Do not duplicate active requests or replay whole histories. Another agent's request alone does not authorize messaging a previously unauthorized recipient. Same filesystem is not shared conversation memory.
 
 ## Delivery and records
