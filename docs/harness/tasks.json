@@ -5,8 +5,7 @@
   "coordinationScope": "docs/harness/IMPLEMENTATION_FIRST.md",
   "activeBranches": [
     "campus-content",
-    "home-progress",
-    "progress-sync"
+    "home-progress"
   ],
   "appEntryCheckpoint": {
     "branch": "app-entry",
@@ -422,7 +421,10 @@
     "branch": "progress-sync",
     "baseSha": "c4c0eba615ee07b141730fccd16c850cf56ddc71",
     "scopePath": "docs/harness/PROGRESS_RULES_SCOPE.md",
-    "status": "in_progress",
-    "productionDeployment": "unchanged; not authorized by this code task"
+    "status": "candidate_integrated_not_deployed",
+    "productionDeployment": "unchanged; not authorized by this code task",
+    "candidateSha": "eabed511d98274e6454e7dc7f00b34ddddfcb07c",
+    "integratedSha": "eca793885406c034bf66d075b49264d6c92bdfac",
+    "checks": "14 isolated emulator cases PASS, exact independent review PASS, production rules unchanged"
   }
 }
