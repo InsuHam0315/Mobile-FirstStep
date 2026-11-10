@@ -6,6 +6,8 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.SystemClock;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.Surface;
 import android.view.WindowManager;
 import com.example.firststep.game.device.SensorRegistration;
@@ -17,11 +19,20 @@ public final class NormalDiscoverySensors implements SensorEventListener, AutoCl
   private final Sensor rotation, acceleration;
   private final NormalDiscoverySession session;
   private final SensorRegistration registration;
-  private boolean closed, headingRegistered;
+  private final Handler handler = new Handler(Looper.getMainLooper());
+  private HeadingReadinessTimeout headingTimeout;
+  private final Runnable checkHeading;
+  private boolean closed, started, headingRegistered;
   private int accuracy = SensorManager.SENSOR_STATUS_UNRELIABLE;
 
   public NormalDiscoverySensors(Context context, NormalDiscoverySession session) {
     this.session = session;
+    checkHeading = () -> {
+      if (closed || headingTimeout == null) return;
+      HeadingReadinessTimeout.Outcome outcome = headingTimeout.poll(SystemClock.elapsedRealtime());
+      if (outcome == HeadingReadinessTimeout.Outcome.UNAVAILABLE) session.headingUnavailable(false);
+      else if (outcome == HeadingReadinessTimeout.Outcome.UNRELIABLE) session.headingUnavailable(true);
+    };
     manager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
     window = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
     rotation = manager == null ? null : manager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
@@ -43,21 +54,31 @@ public final class NormalDiscoverySensors implements SensorEventListener, AutoCl
   }
 
   public void start() {
-    if (closed) return;
+    if (closed || started) return;
+    started = true;
     SensorRegistration.Availability available = registration.start();
     headingRegistered = available.heading;
+    if (headingRegistered) {
+      headingTimeout = new HeadingReadinessTimeout(SystemClock.elapsedRealtime());
+      handler.postDelayed(checkHeading, HeadingReadinessTimeout.FIRST_FIX_TIMEOUT_MS);
+    }
     session.availability(available.heading, available.motion);
   }
 
   @Override public void close() {
     closed = true;
+    handler.removeCallbacks(checkHeading);
+    if (headingTimeout != null) headingTimeout.close();
     registration.close();
   }
 
   @Override public void onAccuracyChanged(Sensor sensor, int value) {
     if (!closed && sensor == rotation) {
       accuracy = value;
-      if (value == SensorManager.SENSOR_STATUS_UNRELIABLE) session.headingUnavailable(true);
+      if (value == SensorManager.SENSOR_STATUS_UNRELIABLE) {
+        if (headingTimeout != null) headingTimeout.invalidHeading();
+        session.headingUnavailable(true);
+      }
     }
   }
 
@@ -67,6 +88,7 @@ public final class NormalDiscoverySensors implements SensorEventListener, AutoCl
         || now - event.timestamp > 1_000_000_000L) return;
     if (event.sensor == rotation) {
       if (!headingRegistered || window == null || window.getDefaultDisplay() == null) {
+        if (headingTimeout != null) headingTimeout.invalidHeading();
         session.headingUnavailable(false);
         return;
       }
@@ -79,14 +101,28 @@ public final class NormalDiscoverySensors implements SensorEventListener, AutoCl
         else if (r == Surface.ROTATION_180) { x = SensorManager.AXIS_MINUS_X; y = SensorManager.AXIS_MINUS_Y; }
         else if (r == Surface.ROTATION_270) { x = SensorManager.AXIS_MINUS_Y; y = SensorManager.AXIS_X; }
         if (!SensorManager.remapCoordinateSystem(matrix, x, y, remapped)) {
+          if (headingTimeout != null) headingTimeout.invalidHeading();
           session.headingUnavailable(true);
           return;
         }
         SensorManager.getOrientation(remapped, orientation);
-        session.heading((float) Math.toDegrees(orientation[0]),
-            accuracy != SensorManager.SENSOR_STATUS_UNRELIABLE
-                && event.accuracy != SensorManager.SENSOR_STATUS_UNRELIABLE);
-      } catch (RuntimeException invalid) { session.headingUnavailable(true); }
+        float degrees = (float) Math.toDegrees(orientation[0]);
+        boolean reliable = Float.isFinite(degrees)
+            && accuracy != SensorManager.SENSOR_STATUS_UNRELIABLE
+            && event.accuracy != SensorManager.SENSOR_STATUS_UNRELIABLE;
+        if (headingTimeout != null) {
+          if (reliable) {
+            headingTimeout.validHeading();
+            handler.removeCallbacks(checkHeading);
+          } else {
+            headingTimeout.invalidHeading();
+          }
+        }
+        session.heading(degrees, reliable);
+      } catch (RuntimeException invalid) {
+        if (headingTimeout != null) headingTimeout.invalidHeading();
+        session.headingUnavailable(true);
+      }
     } else if (event.sensor == acceleration && event.values.length >= 3) {
       float[] v = event.values;
       session.acceleration((float) Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]));
