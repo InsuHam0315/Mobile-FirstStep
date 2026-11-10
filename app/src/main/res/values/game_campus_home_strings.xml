@@ -4,6 +4,24 @@
     <string name="game_campus_home_map">캠퍼스 지도</string>
     <string name="game_campus_home_facilities">시설 찾기</string>
     <string name="game_campus_home_favorites_note">시설 즐겨찾기는 계정과 별개로 이 기기에 저장됩니다.</string>
+    <string name="game_campus_home_favorites_title">즐겨찾기 시설</string>
+    <string name="game_campus_home_favorites_unavailable">지금은 즐겨찾기를 표시할 수 없어요.</string>
+    <string name="game_campus_home_favorites_empty">아직 즐겨찾기한 시설이 없어요.</string>
     <string name="game_campus_home_guide">소프트웨어학과 안내·연습</string>
     <string name="game_campus_home_back">돌아가기</string>
+    <string name="game_campus_progress_loading">탐방 기록을 불러오고 있어요.</string>
+    <string name="game_campus_progress_unavailable">소프트웨어학과 정식 탐방은 아직 열리지 않았어요. 학과 안내와 연습은 이용할 수 있어요.</string>
+    <string name="game_campus_progress_no_account">현재 계정의 탐방 기록을 확인할 수 없어요. 로그인 상태를 확인해 주세요.</string>
+    <string name="game_campus_progress_unstarted">소프트웨어학과 탐방을 아직 시작하지 않았어요.</string>
+    <string name="game_campus_progress_waiting">퀴즈까지 %1$d분 %2$d초 남았어요.</string>
+    <string name="game_campus_progress_ready">지금 퀴즈를 이어서 풀 수 있어요.</string>
+    <string name="game_campus_progress_complete">소프트웨어학과 탐방을 완료했어요.</string>
+    <string name="game_campus_progress_failed">탐방 기록을 불러오지 못했어요.</string>
+    <string name="game_campus_progress_remote_intro">서버 기록에 소개 완료가 저장되어 있어요.</string>
+    <string name="game_campus_progress_remote_complete">서버 기록에 탐방 완료가 저장되어 있어요.</string>
+    <string name="game_campus_progress_waiting_open">대기 중인 퀴즈 보기</string>
+    <string name="game_campus_progress_quiz_open">퀴즈 이어서 풀기</string>
+    <string name="game_campus_progress_result_open">탐방 결과 보기</string>
+    <string name="game_campus_progress_retry">기록 다시 불러오기</string>
+    <string name="game_campus_progress_reminder_note">앱이 종료되면 알림이 전달되지 않을 수 있어요. 홈에서 퀴즈 시간을 확인할 수 있어요.</string>
 </resources>
