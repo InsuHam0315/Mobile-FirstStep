@@ -10,8 +10,28 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="@dimen/game_space_medium">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/game_reskin_campus_hero_height"
+            android:layout_marginBottom="@dimen/game_space_medium"
+            android:background="@drawable/game_reskin_card"
+            android:clipToOutline="true">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/game_reskin_artwork"
+                android:contentDescription="@null"
+                android:importantForAccessibility="no" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/game_reskin_hero_scrim"
+                android:importantForAccessibility="no" />
+        </FrameLayout>
         <TextView
             android:id="@+id/game_campus_home_title"
+            android:textStyle="bold"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/game_campus_home_title"
@@ -25,81 +45,95 @@
             android:textSize="@dimen/game_text_body" />
         <Button
             android:id="@+id/game_campus_home_map"
-            style="@style/GameActionButton"
+            style="@style/GameSecondaryButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/game_campus_home_map" />
         <Button
             android:id="@+id/game_campus_home_facilities"
-            style="@style/GameActionButton"
+            style="@style/GameSecondaryButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/game_campus_home_facilities" />
-        <TextView
-            android:id="@+id/game_campus_home_favorites_title"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/game_space_medium"
-            android:text="@string/game_campus_home_favorites_title"
-            android:textColor="@color/game_color_text"
-            android:textStyle="bold" />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/game_campus_home_favorites_note"
-            android:textColor="@color/game_color_text"
-            android:textSize="@dimen/game_text_body" />
-        <TextView
-            android:id="@+id/game_campus_home_favorites"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/game_color_text"
-            android:textSize="@dimen/game_text_body" />
+            android:layout_marginVertical="@dimen/game_reskin_control_space"
+            android:orientation="vertical"
+            android:padding="@dimen/game_space_medium"
+            android:background="@drawable/game_reskin_card">
+            <TextView
+                android:id="@+id/game_campus_home_favorites_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/game_campus_home_favorites_title"
+                android:textColor="@color/game_color_text"
+                android:textStyle="bold" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/game_campus_home_favorites_note"
+                android:textColor="@color/game_color_text"
+                android:textSize="@dimen/game_text_body" />
+            <TextView
+                android:id="@+id/game_campus_home_favorites"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/game_color_text"
+                android:textSize="@dimen/game_text_body" />
+        </LinearLayout>
         <Button
             android:id="@+id/game_campus_home_guide"
             style="@style/GameActionButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/game_campus_home_guide" />
-        <TextView
-            android:id="@+id/game_campus_progress_state"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/game_space_medium"
-            android:text="@string/game_campus_progress_loading"
-            android:textColor="@color/game_color_text"
-            android:textSize="@dimen/game_text_body" />
-        <TextView
-            android:id="@+id/game_campus_progress_reminder_note"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/game_campus_progress_reminder_note"
-            android:textColor="@color/game_color_text"
-            android:textSize="@dimen/game_text_body"
-            android:visibility="gone" />
-        <TextView
-            android:id="@+id/game_campus_progress_remote"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/game_color_text"
-            android:textSize="@dimen/game_text_body"
-            android:visibility="gone" />
-        <Button
-            android:id="@+id/game_campus_progress_retry"
-            style="@style/GameActionButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/game_campus_progress_retry"
-            android:visibility="gone" />
-        <Button
-            android:id="@+id/game_campus_home_authored"
-            style="@style/GameActionButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/game_authored_entry" />
+            android:layout_marginVertical="@dimen/game_reskin_control_space"
+            android:orientation="vertical"
+            android:padding="@dimen/game_space_medium"
+            android:background="@drawable/game_reskin_tinted_card">
+            <TextView
+                android:id="@+id/game_campus_progress_state"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/game_campus_progress_loading"
+                android:textColor="@color/game_color_text"
+                android:textSize="@dimen/game_text_body" />
+            <TextView
+                android:id="@+id/game_campus_progress_reminder_note"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/game_campus_progress_reminder_note"
+                android:textColor="@color/game_color_text"
+                android:textSize="@dimen/game_text_body"
+                android:visibility="gone" />
+            <TextView
+                android:id="@+id/game_campus_progress_remote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/game_color_text"
+                android:textSize="@dimen/game_text_body"
+                android:visibility="gone" />
+            <Button
+                android:id="@+id/game_campus_progress_retry"
+                style="@style/GameSecondaryButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/game_campus_progress_retry"
+                android:visibility="gone" />
+            <Button
+                android:id="@+id/game_campus_home_authored"
+                style="@style/GameActionButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/game_authored_entry" />
+        </LinearLayout>
         <Button
             android:id="@+id/game_campus_home_back"
-            style="@style/GameActionButton"
+            style="@style/GameSecondaryButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/game_campus_home_back" />

@@ -34,6 +34,8 @@
             android:textSize="@dimen/game_text_body" />
         <LinearLayout
             android:id="@+id/game_authored_body"
+            android:background="@drawable/game_reskin_tinted_card"
+            android:padding="@dimen/game_space_medium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" />
@@ -52,21 +54,21 @@
             android:textSize="@dimen/game_text_body" />
         <Button
             android:id="@+id/game_authored_sync_read"
-            style="@style/GameActionButton"
+            style="@style/GameSecondaryButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/game_authored_sync_read"
             android:visibility="gone" />
         <Button
             android:id="@+id/game_authored_sync_retry"
-            style="@style/GameActionButton"
+            style="@style/GameSecondaryButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/game_authored_sync_retry"
             android:visibility="gone" />
         <Button
             android:id="@+id/game_authored_back"
-            style="@style/GameActionButton"
+            style="@style/GameSecondaryButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/game_campus_home_back" />

@@ -1,0 +1,4 @@
+<resources>
+    <dimen name="game_reskin_identity_hero_height">96dp</dimen>
+    <dimen name="game_reskin_campus_hero_height">72dp</dimen>
+</resources>

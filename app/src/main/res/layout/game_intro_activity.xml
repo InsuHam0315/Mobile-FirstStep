@@ -7,19 +7,19 @@
         <TextView android:id="@+id/game_intro_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="@dimen/game_text_body" android:textColor="@color/game_color_text" />
         <ImageView android:id="@+id/game_software_demo_intro_art" android:visibility="gone" android:layout_width="96dp" android:layout_height="96dp" android:layout_gravity="center" android:src="@drawable/game_discovery_placeholder" android:contentDescription="@string/game_narration_art" />
         <TextView android:id="@+id/game_software_demo_caption_position" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="@dimen/game_text_body" android:textColor="@color/game_color_text" />
-        <TextView android:id="@+id/game_intro_caption" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="@dimen/game_text_body" android:textColor="@color/game_color_text" />
+        <TextView android:id="@+id/game_intro_caption" android:background="@drawable/game_reskin_tinted_card" android:padding="@dimen/game_space_medium" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="@dimen/game_text_body" android:textColor="@color/game_color_text" />
         <TextView android:id="@+id/game_software_demo_caption_origin" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="@dimen/game_text_body" android:textColor="@color/game_color_text" />
-        <Button android:id="@+id/game_intro_replay" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_intro_replay" />
-        <Button android:id="@+id/game_intro_next" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_intro_next" />
+        <Button android:id="@+id/game_intro_replay" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_intro_replay" />
+        <Button android:id="@+id/game_intro_next" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_intro_next" />
         <Button android:id="@+id/game_intro_finish" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_intro_finish" />
-        <Button android:id="@+id/game_intro_skip" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_intro_skip" />
-        <Button android:id="@+id/game_intro_reminder" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_intro_reminder" />
+        <Button android:id="@+id/game_intro_skip" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_intro_skip" />
+        <Button android:id="@+id/game_intro_reminder" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_intro_reminder" />
         <Button android:id="@+id/game_quiz_start" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_intro_start" />
-        <Button android:id="@+id/game_intro_show_again" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_intro_show_again" />
-        <LinearLayout android:id="@+id/game_quiz_questions" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" />
+        <Button android:id="@+id/game_intro_show_again" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_intro_show_again" />
+        <LinearLayout android:id="@+id/game_quiz_questions" android:background="@drawable/game_reskin_tinted_card" android:padding="@dimen/game_space_medium" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" />
         <Button android:id="@+id/game_quiz_submit" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_intro_submit" />
-        <Button android:id="@+id/game_quiz_retry" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_intro_retry" />
+        <Button android:id="@+id/game_quiz_retry" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_intro_retry" />
         <TextView android:id="@+id/game_quiz_result" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="@dimen/game_text_body" android:textColor="@color/game_color_text" />
-        <Button android:id="@+id/game_intro_back" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_intro_back" />
+        <Button android:id="@+id/game_intro_back" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_intro_back" />
     </LinearLayout>
 </ScrollView>

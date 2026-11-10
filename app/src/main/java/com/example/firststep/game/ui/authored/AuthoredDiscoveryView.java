@@ -17,6 +17,7 @@ import com.example.firststep.game.device.DiscoveryCamera;
 import com.example.firststep.game.device.authored.NormalDiscoverySensors;
 import com.example.firststep.game.device.authored.NormalDiscoverySession;
 import com.example.firststep.game.presentation.discovery.DiscoveryState;
+import com.example.firststep.game.ui.GameVisuals;
 
 /** Foreground presentation and device lifetime for a single admitted discovery. */
 final class AuthoredDiscoveryView {
@@ -171,8 +172,8 @@ final class AuthoredDiscoveryView {
 
   private Button button(LinearLayout body, int label, Runnable action) {
     Button view = new Button(activity);
+    GameVisuals.action(view, false);
     view.setText(label);
-    view.setMinHeight(activity.getResources().getDimensionPixelSize(R.dimen.game_touch_min));
     view.setOnClickListener(v -> action.run());
     body.addView(view, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
         LinearLayout.LayoutParams.WRAP_CONTENT));

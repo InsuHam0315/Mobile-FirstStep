@@ -3,6 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:padding="@dimen/game_space_medium"
+    android:background="@drawable/game_reskin_card"
     android:visibility="gone">
 
     <TextView
@@ -42,7 +44,7 @@
 
     <Button
         android:id="@+id/game_identity_open_profile"
-        style="@style/GameActionButton"
+        style="@style/GameSecondaryButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/game_space_medium"

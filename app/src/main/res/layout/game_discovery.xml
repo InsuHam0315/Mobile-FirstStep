@@ -9,16 +9,16 @@
    <ImageView android:id="@+id/game_discovery_art" android:layout_width="@dimen/game_discovery_art_size" android:layout_height="@dimen/game_discovery_art_size" android:layout_gravity="center" android:src="@drawable/game_discovery_placeholder" android:contentDescription="@string/game_discovery_art" />
   </FrameLayout>
   <TextView android:id="@+id/game_discovery_disclosure" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_discovery_disclosure" android:textColor="@color/game_color_text" android:textSize="@dimen/game_text_body" />
-  <TextView android:id="@+id/game_discovery_heading" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/game_color_text" android:textSize="@dimen/game_text_body" />
+  <TextView android:id="@+id/game_discovery_heading" android:textStyle="bold" android:accessibilityHeading="true" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/game_color_text" android:textSize="@dimen/game_text_body" />
   <Button android:id="@+id/game_discovery_arrival" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_discovery_arrival" />
-  <Button android:id="@+id/game_discovery_align_fallback" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_discovery_align_fallback" />
-  <Button android:id="@+id/game_discovery_method_shake" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_discovery_shake" />
-  <Button android:id="@+id/game_discovery_method_light" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_discovery_light" />
-  <Button android:id="@+id/game_discovery_hold" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_discovery_hold" />
-  <Button android:id="@+id/game_discovery_retry" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_discovery_retry" />
-  <Button android:id="@+id/game_discovery_camera_fallback" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_discovery_camera_fallback" />
+  <Button android:id="@+id/game_discovery_align_fallback" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_discovery_align_fallback" />
+  <Button android:id="@+id/game_discovery_method_shake" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_discovery_shake" />
+  <Button android:id="@+id/game_discovery_method_light" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_discovery_light" />
+  <Button android:id="@+id/game_discovery_hold" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_discovery_hold" />
+  <Button android:id="@+id/game_discovery_retry" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_discovery_retry" />
+  <Button android:id="@+id/game_discovery_camera_fallback" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_discovery_camera_fallback" />
   <TextView android:id="@+id/game_discovery_result" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/game_color_text" android:textSize="@dimen/game_text_body" />
-  <Button android:id="@+id/game_integration_discovery_continue" android:visibility="gone" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_integration_continue" />
-  <Button android:id="@+id/game_discovery_exit" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_discovery_exit" />
+  <Button android:id="@+id/game_integration_discovery_continue" android:visibility="gone" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_integration_continue" />
+  <Button android:id="@+id/game_discovery_exit" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_discovery_exit" />
  </LinearLayout>
 </ScrollView>
