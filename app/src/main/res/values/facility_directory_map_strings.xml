@@ -1,0 +1,6 @@
+<resources>
+    <string name="facility_map_open">지도에서 시설 보기</string>
+    <string name="facility_map_select">이 시설을 지도에서 보기</string>
+    <string name="facility_detail_favorite">즐겨찾기 추가</string>
+    <string name="facility_detail_unfavorite">즐겨찾기 해제</string>
+</resources>

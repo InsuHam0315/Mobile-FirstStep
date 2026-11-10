@@ -8,28 +8,59 @@ import android.graphics.Path;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.TextView;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.firststep.data.Mission;
 import com.example.firststep.data.MissionRepository;
+import com.example.firststep.facility.Facility;
+import com.example.firststep.facility.FacilityRepository;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public final class RouteMapActivity extends AppCompatActivity {
     private static final String EXTRA_BROWSE_ONLY = "firststep.campus_map.browse_only";
+    private static final String EXTRA_FACILITY_ID = "firststep.campus_map.facility_id";
 
     /** Opens campus map browsing without a legacy route or mission repository. */
     public static Intent browseIntent(Context context) {
         return new Intent(context, RouteMapActivity.class).putExtra(EXTRA_BROWSE_ONLY, true);
     }
 
+    /** Opens the real campus map with catalog context. Facility identity never sets a pin. */
+    public static Intent facilityBrowseIntent(Context context, String facilityId) {
+        return browseIntent(context).putExtra(EXTRA_FACILITY_ID, facilityId);
+    }
+
+    private boolean following, followCenter, locationWanted, browseOnly;
+    private String facilityId;
+    private int facilityRead;
+    private final ExecutorService facilityWorker = Executors.newSingleThreadExecutor();
+    private final ActivityResultLauncher<Intent> lookupFacility = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (!browseOnly) return;
+                findViewById(R.id.map_facility_lookup).setEnabled(true);
+                if (result.getResultCode() != RESULT_OK) return;
+                String selection = FacilityDirectoryActivity.selectedFacilityId(result.getData());
+                if (selection == null) return;
+                facilityId = selection;
+                showFacilityContext();
+            });
+
     private com.example.firststep.map.CampusMapView map;
     private com.example.firststep.location.LocationController location;
     private android.widget.TextView status;
     private final android.os.Handler handler=new android.os.Handler(android.os.Looper.getMainLooper());
-    private boolean following, followCenter, locationWanted, browseOnly;
     @Override protected void onCreate(Bundle state) {
         super.onCreate(state);
         browseOnly = getIntent().getBooleanExtra(EXTRA_BROWSE_ONLY, false);
+        if (browseOnly) {
+            facilityId = state == null ? getIntent().getStringExtra(EXTRA_FACILITY_ID)
+                    : state.getString(EXTRA_FACILITY_ID);
+        }
         geographic();
     }
     private void geographic() {
@@ -48,10 +79,57 @@ public final class RouteMapActivity extends AppCompatActivity {
         findViewById(R.id.map_attribution).setOnClickListener(v->startActivity(new android.content.Intent(android.content.Intent.ACTION_VIEW,android.net.Uri.parse("https://www.openstreetmap.org/copyright"))));
         findViewById(R.id.map_location).setOnClickListener(v->locate());
         View routeButton = findViewById(R.id.map_route);
-        if (browseOnly) routeButton.setVisibility(View.GONE);
+        if (browseOnly) {
+            routeButton.setVisibility(View.GONE);
+            View facilityLookup = findViewById(R.id.map_facility_lookup);
+            facilityLookup.setVisibility(View.VISIBLE);
+            facilityLookup.setOnClickListener(v -> {
+                v.setEnabled(false);
+                lookupFacility.launch(FacilityDirectoryActivity.mapLookupIntent(this));
+            });
+            showFacilityContext();
+        }
         else routeButton.setOnClickListener(v->{locationWanted=false;stopLocation();map.close();map=null;route();});
         findViewById(R.id.map_back).setOnClickListener(v->finish());
     }
+    private void showFacilityContext() {
+        TextView context = findViewById(R.id.map_facility_context);
+        if (context == null) return;
+        final int request = ++facilityRead;
+        final String selected = facilityId;
+        if (selected == null) {
+            context.setVisibility(View.GONE);
+            return;
+        }
+        context.setText(R.string.map_facility_context_loading);
+        context.setVisibility(View.VISIBLE);
+        Context app = getApplicationContext();
+        facilityWorker.execute(() -> {
+            String name = null;
+            try {
+                for (Facility facility : new FacilityRepository(app).load()) {
+                    if (selected.equals(facility.id)) {
+                        name = facility.name;
+                        break;
+                    }
+                }
+            } catch (Exception unavailable) {
+                // Keep the map usable when the local catalog cannot be read.
+            }
+            String displayName = name;
+            runOnUiThread(() -> {
+                if (isFinishing() || isDestroyed() || request != facilityRead) return;
+                if (displayName == null) context.setText(R.string.map_facility_context_unavailable);
+                else context.setText(getString(R.string.map_facility_context_unverified, displayName));
+            });
+        });
+    }
+
+    @Override protected void onSaveInstanceState(Bundle state) {
+        super.onSaveInstanceState(state);
+        if (browseOnly) state.putString(EXTRA_FACILITY_ID, facilityId);
+    }
+
     private void locate() {
         if(!com.example.firststep.location.LocationController.hasPermission(this)) {
             requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION,android.Manifest.permission.ACCESS_COARSE_LOCATION},730);return;
@@ -73,7 +151,12 @@ public final class RouteMapActivity extends AppCompatActivity {
     @Override public void onRequestPermissionsResult(int request,String[] permissions,int[] results){super.onRequestPermissionsResult(request,permissions,results);if(request==730&&com.example.firststep.location.LocationController.hasPermission(this))locate();else if(request==730)status.setText("위치 권한 없이도 지도를 둘러볼 수 있어요.");}
     @Override protected void onPause(){stopLocation();if(map!=null){map.current(null);map.active(false);}super.onPause();}
     @Override protected void onResume(){super.onResume();if(map!=null){map.active(true);if(locationWanted){boolean keepFollowing=followCenter;locate();followCenter=keepFollowing;}}}
-    @Override protected void onDestroy(){if(map!=null)map.close();super.onDestroy();}
+    @Override protected void onDestroy() {
+        facilityRead++;
+        facilityWorker.shutdownNow();
+        if (map != null) map.close();
+        super.onDestroy();
+    }
     private void route(){setContentView(R.layout.activity_route_map);
         Ui.applyInsets(findViewById(R.id.route_root));
         ((android.widget.Button)findViewById(R.id.route_back)).setText("캠퍼스 지도로 돌아가기");
