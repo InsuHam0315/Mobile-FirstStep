@@ -12,4 +12,14 @@ Evidence lives under `.local/harness/APP_ENTRY/v1/` in the feature worktree. The
 
 Actual navigation on that APK reached Home → Software Department guide → **DEMO · 이 기기에만 저장** → Back to guide → Back to confirmed Home. The QA window was activated on Home. Root visually checked `qa-account-home.png`, `qa-guide-demo-entry.png`, and `qa-demo-home.png`. `route.log` and `window.log` retain allowlisted outcomes. The check entered the existing local demo but did not start discovery or award a stamp. It did not sign in, save a profile, log out, or target any other device. Whole-app acceptance, gameplay completion and remaining live H07 checks stay pending.
 
+## Campus Home consumer binding
+
+Prepared base `8158893` combines current main `24d0e72` and campus-content `7a8a3ce`. The primary account Home action is now **캠퍼스 둘러보기**. Its click rechecks the current `COMPLETE` state and launches `CampusHomeRoute.intent(this)` once per resume. The campus module's explicit, no-extras intent leads to the non-exported `CampusHomeActivity`. Back follows the existing activity stack, and the resumed account Home rechecks the profile. The button explains map browsing, facilities and the Software Department guide. The debug note points to the guide's separately stored local DEMO. The source changes are confined to `IdentityActivity` and its Home layout and strings. See the [app-entry contract](../../modules/app-entry/README.md) and [campus content contract](../../modules/campus-content/README.md).
+
+The independent `/root/h07_exact_review_pm` (`gpt-6.1-sol` high) reviewed the three source files against the published route contract and reported PASS. Source-only full-index binary diff SHA256 `189CA792B2ED7A8EC819A6CAA9FACE0892F711B808043E206EB409BB99C80E0D`. Root implemented the binding and executed the checks.
+
+With Studio JBR and `ANDROID_HOME`, the focused Gradle invocation ran `testDebugUnitTest` for `SessionControllerTest` and `SoftwareEpisodeContractTest`, `assembleDebug`, `compileDebugAndroidTestJavaWithJavac`, and `lintDebug`. All four tasks executed. The run reported 36 executed and 25 up-to-date tasks. All 24 selected JVM tests passed with zero failures/errors/skips. Lint had zero errors, 95 warnings, and zero findings in the three touched app paths. `CampusHomeRouteTest.class` was produced by Android test compilation. Harness and whitespace checks passed. `check.log`, `results.log`, and `route-test-compile.log` are under `.local/harness/APP_ENTRY/v3/`.
+
+The configured v3 APK is retained there as `app-entry-v3-configured.apk`, SHA256 `422C4E89317625B161B01B3A9C0584BA7154A58FCC2B64CACA1AD7EF84B73788`. The v1 APK hash was rechecked against the previous record. QA `5572` remains available to the user with v1. The unified account Home → Campus Home → map, facilities or guide → Back route is implemented and compiled. Runtime execution, the combined matrix, and release behavior remain pending.
+
 Journal update: pending management review.

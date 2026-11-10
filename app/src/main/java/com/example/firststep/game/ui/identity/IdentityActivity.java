@@ -1,6 +1,5 @@
 package com.example.firststep.game.ui.identity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.*;
 import android.view.View;
@@ -14,8 +13,8 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.firststep.BuildConfig;
 import com.example.firststep.R;
 import com.example.firststep.game.auth.*;
+import com.example.firststep.game.composition.home.CampusHomeRoute;
 import com.example.firststep.game.composition.identity.*;
-import com.example.firststep.game.ui.guide.GuideActivity;
 import java.util.Objects;
 
 /** Replaceable account-only shell. Never reads or presents legacy/fixture exploration progress. */
@@ -23,7 +22,7 @@ public final class IdentityActivity extends AppCompatActivity {
   private IdentityViewModel model;
   private EditText name, student, department;
   private boolean binding, viewingProfile;
-  private boolean openingGuide;
+  private boolean openingCampusHome;
   private String displayedUid;
   private final OnBackPressedCallback profileBack =
       new OnBackPressedCallback(false) {
@@ -89,8 +88,8 @@ public final class IdentityActivity extends AppCompatActivity {
     findViewById(R.id.game_identity_logout).setOnClickListener(v -> model.controller.logout());
     findViewById(R.id.game_identity_save).setOnClickListener(v -> model.controller.save());
     findViewById(R.id.game_identity_retry).setOnClickListener(v -> model.controller.retry());
-    findViewById(R.id.game_identity_open_guide).setOnClickListener(v -> openGuide());
-    visible(R.id.game_identity_guide_demo_note, BuildConfig.DEBUG);
+    findViewById(R.id.game_identity_open_campus).setOnClickListener(v -> openCampusHome());
+    visible(R.id.game_identity_campus_demo_note, BuildConfig.DEBUG);
     findViewById(R.id.game_identity_open_profile)
         .setOnClickListener(v -> {
           viewingProfile = true;
@@ -107,7 +106,7 @@ public final class IdentityActivity extends AppCompatActivity {
   @Override
   protected void onResume() {
     super.onResume();
-    openingGuide = false;
+    openingCampusHome = false;
     model.runtime.attach(this);
     model.controller.resume();
     model.controller.setListener(this::render);
@@ -138,10 +137,10 @@ public final class IdentityActivity extends AppCompatActivity {
     render(model.controller.state());
   }
 
-  private void openGuide() {
-    if (openingGuide || model.controller.state().getStage() != SessionState.Stage.COMPLETE) return;
-    openingGuide = true;
-    startActivity(new Intent(this, GuideActivity.class));
+  private void openCampusHome() {
+    if (openingCampusHome || model.controller.state().getStage() != SessionState.Stage.COMPLETE) return;
+    openingCampusHome = true;
+    startActivity(CampusHomeRoute.intent(this));
   }
 
   private void render(SessionState s) {
