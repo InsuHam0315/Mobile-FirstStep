@@ -77,6 +77,7 @@ public final class DiscoveryController {
       lastPulse = -10000;
   private boolean active,
       arrived,
+      arrivalSimulated = true,
       cameraFallback,
       headingFallback,
       aligned,
@@ -107,6 +108,7 @@ public final class DiscoveryController {
     generation = NEXT_SESSION.incrementAndGet();
     active = true;
     arrived = false;
+    arrivalSimulated = true;
     cameraFallback = false;
     headingFallback = false;
     aligned = false;
@@ -187,9 +189,18 @@ public final class DiscoveryController {
     listener.onState(snapshot());
   }
 
-  public void arrival() {
+  public void arrival() { markArrival(true); }
+
+  /** For a host that has independently admitted a fresh location. No simulation can use it. */
+  public void trustedArrival() {
+    if (simulated) throw new IllegalStateException("Simulated input cannot use trusted arrival");
+    markArrival(false);
+  }
+
+  private void markArrival(boolean simulatedArrival) {
     if (!active || result != null) return;
     arrived = true;
+    arrivalSimulated = simulatedArrival;
     publish();
   }
 
@@ -414,7 +425,8 @@ public final class DiscoveryController {
                     ? DiscoveryResult.Source.SIMULATED
                     : DiscoveryResult.Source.REAL_SENSOR),
             cameraFallback,
-            headingFallback);
+            headingFallback,
+            arrivalSimulated);
     listener.onCompletion(result);
   }
 }

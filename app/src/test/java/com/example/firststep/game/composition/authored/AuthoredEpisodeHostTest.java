@@ -2,7 +2,12 @@ package com.example.firststep.game.composition.authored;
 
 import static org.junit.Assert.*;
 
+import com.example.firststep.game.device.authored.ArrivalPolicy;
+import com.example.firststep.game.device.authored.AuthoredTargetConfig;
+import com.example.firststep.game.device.authored.NormalDiscoverySession;
 import com.example.firststep.game.domain.GameContent;
+import com.example.firststep.game.presentation.discovery.DiscoveryState;
+import com.example.firststep.game.notifications.authored.AuthoredReminder;
 import com.example.firststep.game.domain.Progress;
 import com.example.firststep.game.domain.ProgressService;
 import com.example.firststep.game.sync.AuthoredHostTestRegistry;
@@ -22,9 +27,11 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.UnaryOperator;
 import org.junit.Test;
 
@@ -52,7 +59,7 @@ public final class AuthoredEpisodeHostTest {
 
   private AuthoredEpisodeHost.OpenResult open() {
     return AuthoredEpisodeHost.open(access, scope -> arrival, () -> store,
-        () -> new AuthoredEpisodeHost.Content(null, null, game()), () -> now, ids);
+        () -> new AuthoredEpisodeHost.Content(null, null, game()), () -> now, ids, 90);
   }
 
   private AuthoredEpisodeHost active() {
@@ -61,6 +68,36 @@ public final class AuthoredEpisodeHostTest {
     AuthoredEpisodeHost.OpenResult result = open();
     assertNull(result.reason);
     return result.host;
+  }
+
+  private NormalDiscoverySession.Receipt discover(AuthoredEpisodeHost host) {
+    long[] elapsed = {0};
+    AtomicReference<NormalDiscoverySession.Receipt> receipt = new AtomicReference<>();
+    NormalDiscoverySession session = host.beginDiscovery(() -> elapsed[0],
+        new NormalDiscoverySession.Listener() {
+          @Override public void onState(DiscoveryState state) { }
+          @Override public void onCompleted(NormalDiscoverySession.Receipt result) {
+            receipt.set(result);
+          }
+        });
+    session.start();
+    session.camera(DiscoveryState.CameraStatus.READY);
+    session.heading(90, true);
+    for (int pulse = 0; pulse < 5; pulse++) {
+      elapsed[0] += 200;
+      session.heading(90, true);
+      session.acceleration(23);
+      session.acceleration(9.8f);
+    }
+    assertNotNull(receipt.get());
+    return receipt.get();
+  }
+
+  private Progress introduce(AuthoredEpisodeHost host) {
+    NormalDiscoverySession.Receipt receipt = discover(host);
+    assertTrue(host.acceptDiscovery(receipt));
+    assertFalse(host.acceptDiscovery(receipt));
+    return host.finishIntroduction();
   }
 
   private static Map<String, String> answers(Progress p, boolean pass) {
@@ -89,25 +126,76 @@ public final class AuthoredEpisodeHostTest {
     assertEquals(0, store.reads + store.writes + access.reconciles + access.flushes);
     assertEquals(AuthoredEpisodeHost.Block.NO_ACCOUNT,
         AuthoredEpisodeHost.open(null, scope -> arrival, () -> store,
-            () -> new AuthoredEpisodeHost.Content(null, null, game()), () -> now, ids).reason);
+            () -> new AuthoredEpisodeHost.Content(null, null, game()), () -> now, ids, 90).reason);
   }
 
-  @Test public void admissionUnavailableAndDemoScopeFailClosed() {
-    owner.onAuthChanged("alice"); owner.confirm("alice");
+  @Test public void arrivalAndDiscoveryGateFirstIntroductionAndDemoScopeFailsClosed() {
+    AuthoredEpisodeHost host = active();
     arrival = AuthoredEpisodeHost.Arrival.UNAVAILABLE;
-    assertEquals(AuthoredEpisodeHost.Block.ARRIVAL_UNAVAILABLE, open().reason);
+    try { discover(host); fail("No discovery without arrival"); }
+    catch (IllegalStateException expected) { }
+    arrival = AuthoredEpisodeHost.Arrival.ADMITTED;
+    try { host.finishIntroduction(); fail("No introduction without discovery"); }
+    catch (IllegalStateException expected) { }
+    NormalDiscoverySession.Receipt receipt = discover(host);
     arrival = AuthoredEpisodeHost.Arrival.NOT_ARRIVED;
-    assertEquals(AuthoredEpisodeHost.Block.NOT_ARRIVED, open().reason);
+    try { host.acceptDiscovery(receipt); fail("No completion after departure"); }
+    catch (IllegalStateException expected) { }
+    arrival = AuthoredEpisodeHost.Arrival.ADMITTED;
+    assertFalse(host.acceptDiscovery(receipt));
+    assertTrue(host.acceptDiscovery(discover(host)));
+    arrival = AuthoredEpisodeHost.Arrival.NOT_ARRIVED;
+    try { host.finishIntroduction(); fail("Initial intro still requires arrival"); }
+    catch (IllegalStateException expected) { }
     access.forceDemo = true;
     assertEquals(AuthoredEpisodeHost.Block.UNREGISTERED, open().reason);
-    assertEquals(0, store.reads + store.writes + access.reconciles + access.flushes);
+    assertEquals(0, store.writes + access.reconciles + access.flushes);
+  }
+
+  @Test public void syntheticSurveyAndGpsPolicyFeedFirstIntroduction() {
+    AuthoredTargetConfig config = new AuthoredTargetConfig(B, "synthetic", 10, 20, 50, 90,
+        15, 5_000_000_000L);
+    AuthoredTargetConfig mismatch = new AuthoredTargetConfig("other", "synthetic", 10, 20, 50,
+        90, 15, 5_000_000_000L);
+    assertFalse(AuthoredEpisodeHost.targetConfiguration(id -> Optional.of(mismatch)).isPresent());
+    AuthoredTargetConfig accepted = AuthoredEpisodeHost
+        .targetConfiguration(id -> Optional.of(config)).get();
+    long elapsed = 2_000_000_000L;
+    owner.onAuthChanged("alice");
+    owner.confirm("alice");
+    AuthoredEpisodeHost host = AuthoredEpisodeHost.open(access, scope -> {
+      ArrivalPolicy.Fix fix = new ArrivalPolicy.Fix(10, 20, 8, 1_000_000_000L, false);
+      return ArrivalPolicy.evaluate(accepted, fix, elapsed) == ArrivalPolicy.Verdict.ADMITTED
+          ? AuthoredEpisodeHost.Arrival.ADMITTED : AuthoredEpisodeHost.Arrival.UNAVAILABLE;
+    }, () -> store, () -> new AuthoredEpisodeHost.Content(null, null, game()), () -> now, ids,
+        accepted.headingDegrees).host;
+    assertNotNull(introduce(host).introDoneAt);
+    host.close();
+  }
+
+  @Test public void cancelOrOwnerSwitchRejectsAnIssuedDiscoveryReceipt() {
+    AuthoredEpisodeHost host = active();
+    NormalDiscoverySession.Receipt cancelled = discover(host);
+    host.cancelDiscovery();
+    assertFalse(host.acceptDiscovery(cancelled));
+    NormalDiscoverySession.Receipt stale = discover(host);
+    owner.onAuthChanged("bob");
+    owner.confirm("bob");
+    try { host.acceptDiscovery(stale); fail("Old owner cannot consume"); }
+    catch (SessionOwner.StaleSession expected) { }
+    assertFalse(open().host.acceptDiscovery(stale));
+    assertEquals(0, store.writes);
   }
 
   @Test public void normalWaitRetryAndDuplicatePassAreDurable() {
     AuthoredEpisodeHost host = active();
-    assertEquals(1, access.reconciles); // Reopen recovery before any local result.
-    Progress introduced = host.finishIntroduction();
+    assertEquals(0, access.reconciles); // A clean account does not enqueue an introduction.
+    Progress introduced = introduce(host);
     assertEquals(Long.valueOf(now), introduced.introDoneAt);
+    host.close();
+    arrival = AuthoredEpisodeHost.Arrival.NOT_ARRIVED;
+    host = open().host;
+    assertNotNull(host);
     assertFalse(host.eligible(introduced));
     now += ProgressService.WAIT_MILLIS - 1;
     assertFalse(host.eligible(host.read()));
@@ -131,7 +219,7 @@ public final class AuthoredEpisodeHostTest {
   @Test public void reconcileFailureDoesNotUndoCommitAndReopenRecoversGap() {
     AuthoredEpisodeHost host = active();
     access.throwOnReconcile = true;
-    host.finishIntroduction();
+    introduce(host);
     try { host.reconciliation().join(); fail(); } catch (CompletionException expected) { }
     assertNotNull(host.read().introDoneAt);
     now += ProgressService.WAIT_MILLIS;
@@ -151,7 +239,7 @@ public final class AuthoredEpisodeHostTest {
 
   @Test public void ownerSwitchRejectsOldRenderingAndMutations() {
     AuthoredEpisodeHost host = active();
-    host.finishIntroduction();
+    introduce(host);
     assertTrue(host.renderIfCurrent(() -> {}));
     owner.onAuthChanged("bob"); owner.confirm("bob");
     assertFalse(host.isCurrent());
@@ -164,7 +252,7 @@ public final class AuthoredEpisodeHostTest {
 
   @Test public void rollbackRejectsSyncButKeepsLocallyCommittedPass() {
     AuthoredEpisodeHost host = active();
-    host.finishIntroduction();
+    introduce(host);
     now += ProgressService.WAIT_MILLIS;
     Progress quiz = host.startQuiz();
     now -= ProgressService.WAIT_MILLIS + 1;
@@ -222,10 +310,13 @@ public final class AuthoredEpisodeHostTest {
       @Override public CompletableFuture<OutboxState> flush(SyncScope scope) {
         return coordinator.flush(scope);
       }
+      @Override public CompletableFuture<OutboxState> refresh(SyncScope scope) {
+        return coordinator.refresh(scope);
+      }
     };
     AuthoredEpisodeHost host = AuthoredEpisodeHost.open(actual, scope -> arrival, () -> store,
-        () -> new AuthoredEpisodeHost.Content(null, null, game()), () -> now, ids).host;
-    host.finishIntroduction();
+        () -> new AuthoredEpisodeHost.Content(null, null, game()), () -> now, ids, 90).host;
+    introduce(host);
     now += ProgressService.WAIT_MILLIS;
     Progress quiz = host.startQuiz();
     assertTrue(host.submit(quiz.active.id, quiz.active.contentVersion, answers(quiz, true)).passed);
@@ -233,7 +324,7 @@ public final class AuthoredEpisodeHostTest {
     assertEquals(0, network.get());
     host.close();
     AuthoredEpisodeHost reopened = AuthoredEpisodeHost.open(actual, scope -> arrival, () -> store,
-        () -> new AuthoredEpisodeHost.Content(null, null, game()), () -> now, ids).host;
+        () -> new AuthoredEpisodeHost.Content(null, null, game()), () -> now, ids, 90).host;
     assertTrue(reopened.read().stamp);
     assertEquals(OutboxState.Status.PENDING, reopened.reconciliation().join().status);
     Milestone original = outbox[0].pending;
@@ -248,6 +339,66 @@ public final class AuthoredEpisodeHostTest {
     assertEquals(OutboxState.Status.PENDING, outbox[0].status);
     assertFalse(reopened.renderIfCurrent(() -> fail("old owner rendered")));
     reopened.close();
+  }
+
+  @Test public void explicitCleanInstanceReadbackDoesNotCreateLocalAttemptOrStamp() {
+    AuthoredEpisodeHost host = active();
+    arrival = AuthoredEpisodeHost.Arrival.UNAVAILABLE;
+    assertEquals(0, access.refreshes);
+    access.remote = new Milestone(now, new Milestone.Completion("remote-attempt", D, 2,
+        now + ProgressService.WAIT_MILLIS));
+    OutboxState projection = host.refresh().join();
+    assertEquals(access.remote, projection.confirmed);
+    assertEquals(1, access.refreshes);
+    Progress local = host.read();
+    assertNull(local.introDoneAt);
+    assertNull(local.active);
+    assertFalse(local.stamp);
+    assertEquals(0, store.writes);
+  }
+
+  @Test public void reminderEntryRejectsChangedAccountBeforeStoreOrContent() {
+    owner.onAuthChanged("alice");
+    owner.confirm("alice");
+    SyncScope expected = access.capture();
+    owner.onAuthChanged("bob");
+    owner.confirm("bob");
+    AuthoredEpisodeHost.OpenResult result = AuthoredEpisodeHost.openReminder(access,
+        scope -> arrival, () -> { throw new AssertionError("Unexpected store open"); },
+        () -> { throw new AssertionError("Unexpected content load"); }, () -> now, ids, 90, expected);
+    assertEquals(AuthoredEpisodeHost.Block.NO_ACCOUNT, result.reason);
+  }
+
+  @Test public void committedIntroAndStampReachBestEffortReminderWithoutChangingGameplay() {
+    owner.onAuthChanged("alice");
+    owner.confirm("alice");
+    AtomicInteger schedules = new AtomicInteger();
+    AtomicReference<Progress> last = new AtomicReference<>();
+    AuthoredEpisodeHost host = AuthoredEpisodeHost.open(access, scope -> arrival, () -> store,
+        () -> new AuthoredEpisodeHost.Content(null, null, game()), () -> now, ids, 90,
+        (scope, committed) -> {
+          schedules.incrementAndGet();
+          assertEquals(store.read(scope).progress.introDoneAt, committed.introDoneAt);
+          last.set(committed);
+          throw new IllegalStateException("Notification adapter unavailable");
+        }).host;
+    Progress introduced = introduce(host);
+    assertNotNull(introduced.introDoneAt);
+    assertEquals(1, schedules.get());
+    assertFalse(last.get().stamp);
+    assertEquals(AuthoredReminder.Result.UNAVAILABLE, host.retryReminder(host));
+    assertEquals(2, schedules.get());
+    now += ProgressService.WAIT_MILLIS;
+    Progress quiz = host.startQuiz();
+    assertTrue(host.submit(quiz.active.id, quiz.active.contentVersion, answers(quiz, true)).passed);
+    assertEquals(3, schedules.get());
+    assertTrue(last.get().stamp);
+    assertTrue(host.read().stamp);
+    owner.onAuthChanged("bob");
+    owner.confirm("bob");
+    AuthoredEpisodeHost other = open().host;
+    assertEquals(AuthoredReminder.Result.INELIGIBLE, other.retryReminder(host));
+    assertEquals(3, schedules.get());
   }
 
   private final class MemoryStore implements AuthoredProgressStore, AutoCloseable {
@@ -265,7 +416,8 @@ public final class AuthoredEpisodeHostTest {
     DatasetRegistry registry = AuthoredHostTestRegistry.create(D, B);
     boolean forceDemo, throwOnReconcile;
     int reconciles, flushes;
-    Milestone pending;
+    Milestone pending, remote;
+    int refreshes;
     CompletableFuture<OutboxState> delayedReconcile;
     @Override public SyncScope capture() {
       return owner.capture(D, forceDemo ? Progress.Mode.DEMO : Progress.Mode.NORMAL, B);
@@ -284,6 +436,10 @@ public final class AuthoredEpisodeHostTest {
     @Override public CompletableFuture<OutboxState> flush(SyncScope scope) {
       flushes++;
       return CompletableFuture.completedFuture(new OutboxState(1, pending, null, OutboxState.Status.CONFIRMED));
+    }
+    @Override public CompletableFuture<OutboxState> refresh(SyncScope scope) {
+      refreshes++;
+      return CompletableFuture.completedFuture(new OutboxState(0, remote, null, OutboxState.Status.CONFIRMED));
     }
   }
 }

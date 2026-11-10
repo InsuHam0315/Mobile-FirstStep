@@ -18,6 +18,14 @@
             android:textColor="@color/game_color_text"
             android:textSize="@dimen/game_text_title" />
         <TextView
+            android:id="@+id/game_authored_synthetic_runtime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/game_authored_synthetic_runtime"
+            android:textColor="@color/game_color_text"
+            android:textSize="@dimen/game_text_body"
+            android:visibility="gone" />
+        <TextView
             android:id="@+id/game_authored_state"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -36,6 +44,19 @@
             android:accessibilityLiveRegion="polite"
             android:textColor="@color/game_color_text"
             android:textSize="@dimen/game_text_body" />
+        <TextView
+            android:id="@+id/game_authored_remote"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/game_color_text"
+            android:textSize="@dimen/game_text_body" />
+        <Button
+            android:id="@+id/game_authored_sync_read"
+            style="@style/GameActionButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/game_authored_sync_read"
+            android:visibility="gone" />
         <Button
             android:id="@+id/game_authored_sync_retry"
             style="@style/GameActionButton"
