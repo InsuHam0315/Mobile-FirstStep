@@ -32,6 +32,10 @@ Never attach anonymous legacy data or H06 fixture progress to a signed-in accoun
 
 ## Clarification practice
 
+### Independent sourced demo episode continuation (2026-11-10)
+
+The user's standing continuous V1 implementation authorization permits H10C on the existing campus-content branch while live H07 QA remains human-controlled. Source and architecture reconciliation found one eligible bounded slice: explicit simulated arrival, already-approved direction/SHAKE discovery, approved seven-sentence software narration and three sourced questions, followed by isolated local DEMO progress. This does not select a new game policy: reuse existing DEMO eligibility, 2/3 pass, retry and idempotent reward. The distinct registered software_episode_demo_v1 dataset must not import or promote fixture/legacy/account records. H10 practice and H10B preview retain their no-reward behavior. H10C_SCOPE.md defines the additive seams and evidence gate. No H07 acceptance or H07B cloud synchronization is implied, and real arrival coordinates/field verification, later departments and optional services remain gated.
+
 ### Source reconciliation and independent narration continuation (2026-11-09)
 
 Management re-read the original eight-page game PDF through a bounded read-only source audit. Pages 1-2 already approve shy building fairies, a guide provisionally called 첫발이, free-order episodes and short warm polite narration. Pages 3-4 specify direction alignment followed by SHAKE for digital-information; COVER applies to the libraries. The overall fairy framework and digital-information summon action are not missing product choices. Earlier blanket statements that the story/character/sensor treatment was entirely unresolved were too broad and must not trigger repeated approval questions.

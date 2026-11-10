@@ -7,6 +7,8 @@
 
 ## Staged game rebuild harness
 
+- Current continuation 2026-11-10: H10C is the bounded next campus-content slice under H10C_SCOPE.md, connecting one sourced software-department DEMO episode with a separate registered local storage namespace. Existing H10/H10B no-reward paths stay unchanged. H07 remains independent human-controlled QA; the user-supplied latest QA screenshot reports an existing profile, not new onboarding or verified logout. Preserve 5564/5572 and do not automate account choices. H07B still waits for accepted/integrated H07. This entry supersedes the older no-active-H10 checkpoint only for H10C; no optional backlog release.
+
 - Current checkpoint 2026-11-09: H10B narration is accepted/integrated at a3b8f0f; its independent slice is complete. H07 remains open for human-selected separate QA account checks. No active H10 implementation or H07B dispatch. Preserve existing signed-in emulator-5564; QA entry is emulator-5572. Earlier parallel-continuation paragraphs record bounded authorization, not a new dispatch.
 
 - 2026-11-09 parallel continuation: the user authorized useful independent V1 work and additional chats in the existing 모바일프로젝트 sidebar project. H07 keeps sole identity/QA ownership and preserves the human session on emulator-5564. H10B may independently implement the source-reconciled fairy narration preview under H10B_SCOPE.md in the existing campus-content worktree, with no Firebase/progress writes. Management is the single integrator. This bounded exception supersedes single-active wording only for these independent slices; H07B still requires accepted H07. Never share emulator ownership or branch files across the two chats.

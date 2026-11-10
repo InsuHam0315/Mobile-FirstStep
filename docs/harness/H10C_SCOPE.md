@@ -1,0 +1,46 @@
+# H10C — isolated software-department demo episode
+
+Management continuation, 2026-11-10. Continue the existing campus-content branch and preserved h10-campus-content worktree, in implementation chat 01a1c08e-5337-78d2-a4c4-4bffda0e21ed. H10 guide/practice and H10B preview remain accepted. This new slice depends on accepted H06/H10/H10B, not on unfinished H07. User standing authorization permits useful independent required V1 development; this is one bounded continuation, not optional backlog release. H07B still requires accepted/integrated H07.
+
+## Visible outcome
+
+Add a clearly labeled debug-only 소프트웨어학과 탐방 시연 entry reachable from the existing guide in the actual APK. Connect explicit simulated arrival -> existing direction alignment and digital-information SHAKE discovery (or labeled existing long-press fallback) -> explicit introduction continuation -> the seven approved H10B captions/TTS -> the same three sourced H10 questions -> one locally persisted demo stamp and a readable completion/resume surface. The user can relaunch and see this demo's own progress. It is one target, not the five-target ending or a real campus visit. Do not require camera/voice/sensor availability to escape a blocked screen; retain truthful existing alternatives.
+
+Use existing DEMO instant quiz eligibility after explicit introduction completion; do not change NORMAL's 15-minute policy. Preserve 2-of-3 passing, answer identity across shuffle, immediate retry and idempotent reward. Do not make a new auto-completion rule from TTS callbacks. Persist only this slice's explicitly isolated local demo progress. Existing H10 practice and H10B preview remain transient/no-reward paths; neither is silently converted into this episode.
+
+## Source constraints
+
+Reuse SOFTWARE_CONTENT_SOURCES.md and H10B_SCOPE.md as the approved content packet, including checked date 2026-11-08, claim/source links, existing stable question/answer IDs and seven narration sentences. Fictional fairy framing stays separate from factual claims. Do not add campus facts, exact rooms, final artwork/personality, guessed coordinates or arrive-radius values. Preserve replaceable placeholder artwork and Java/XML presentation boundaries. The simulated arrival button must identify simulation before any discovery input; camera overlay is not tracked AR. Actual sensor inputs on an emulator are not physical/campus verification.
+
+## Registered composition and storage isolation
+
+Add one closed registered dataset `software_episode_demo_v1`, target `digital_information_software`, DEMO mode only. Resolve GuideBundle/GameContent and NarrationAsset through that registration; no arbitrary intent asset path or fallback to H06 fixture content. Missing/invalid content must fail recoverably before progress mutation.
+
+Enforce debug-only availability at entry, registry/route and storage resolution boundaries, not only by hiding a button. A release build must reject this dataset even when supplied matching extras. Test the guard without introducing release Firebase configuration.
+
+Use a distinct stable run preference key, nonce/navigation namespace and Room filename, e.g. `software-episode-demo-<canonical UUID>.db`. Registry selection must discriminate dataset as well as run/mode. Preserve H06's `h04_fixture_v1`, existing keys and `h04-debug-<UUID>.db` contract. Reject unknown or mismatched dataset/mode/target/clock context before storage opens; no default/legacy/account DB fallback. All home/intro/quiz/result opens for this episode must resolve the same registered composition and storage. Keep nonce-bound continuation, origin/simulated-arrival evidence, cancellation, stale callback and duplicate-result defenses. NavigationStore's current run+mode-only keying must not collide between datasets.
+
+Never import H06 fixture stamps/timestamps, H10 practice answers, legacy progress or account records into this dataset; never export demo progress into authored/field/cloud records. Do not copy Google configuration, use Firebase APIs, change rules, or edit H07's identity work. The new demo is not an anonymous-to-account migration or H07B implementation. No cloud sync, notifications, mode switch, five-target ending or other-department expansion in this slice.
+
+## Bounded write ownership
+
+Implementation owns additive game/content episode composition, minimal dataset routing in game/composition/integration, shared registered opens in HomeHost/IntroQuizHost and route-specific UI bindings, the existing guide's debug entry, narrowly needed game UI resources/debug manifest and focused tests/evidence. Reuse DiscoveryActivity's integrated path and existing domain services. Additive narrow edits to those shared seams are authorized; do not broadly rewrite accepted controllers or historical fixtures. Existing source assets may be referenced, not rewritten to invent facts. Any additional shared production-file change needs a concrete reason reported to management.
+
+Management owns this scope, AGENTS/tasks/product decisions, branch publication, acceptance/main integration and the same Korean Notion journal. Implementation lead owns module commits and English H10C handoff. Use actual coordinator -> Sol PM -> bounded Terra/Luna specialists and independent review under ROUTING; record actual roles, not just configured profiles. Specialists are not alone in the codebase and must preserve others' edits. Continue Korean campus-content revision numbering above v5, checking history first. Never force push, rewrite published commits, clean evidence worktrees, publish local raw-evidence refs or change Firebase.
+
+## Runtime ownership and meeting artifact
+
+Inventory before touching a device. FirstStep_H10B_QA, historically 5580, is being handed to the human for the accepted H10B demo. Once handed off, do not install, navigate, rotate, test or reset it until the human releases it. H10C must inventory and use a different owned QA device if that handoff remains active. Never manipulate H07's user or QA devices (5564/5572), choose Google accounts, log out, inspect personal data, or install the main demo over an authenticated user app. Serialize automated and manual actions on the owned test device; a concurrent UI action invalidates a test run.
+
+The opening-only H10B demo task must finish before dispatching this same implementation chat for H10C. Do not interrupt the handoff or start competing work in that worktree.
+
+Retain a reproducible debug APK at `.local/harness/H10C/delivery/firststep-software-demo.apk` in this worktree, plus SHA256, exact source commit, build command, target device and entry instructions in the handoff. This is the demo build, not a combined authenticated production release. Preserve the previous accepted APK/evidence. A new APK path is not evidence of a successful run; verify actual installed behavior before claiming it.
+
+## Required acceptance evidence
+
+1. Unit/contract tests for registration, release rejection of demo dataset/extras, strict typed context rejection, same-composition opens, navigation dataset separation, late/paused callbacks and duplicate rewards. Use the SAME UUID for old H06 and new demo datasets to prove physical DB and logical namespace isolation. Use synthetic isolated fixture/legacy/account sentinels only to prove non-mutation; do not read, hash, copy or inspect human account records or devices.
+2. Actual owned-device APK: guide -> explicit demo arrival -> direction/SHAKE or clearly identified fallback -> sourced seven-caption introduction -> 3-question quiz -> wrong-answer retry -> pass -> one stamp -> home/result readback. Relaunch/process restart must preserve only this demo's progress and stable identity; repeat submission/entry must not duplicate rewards. Record which input was real sensor/virtual input/fallback.
+3. Cancellation/back, malformed/mismatched/duplicate continuation, recreation mid-flow and unavailable speech/sensors remain recoverable. Old H06 loop and H10 guide/practice/H10B preview retain their contracts. Source facts/fictional labels/DEMO status stay readable in small portrait and large-font landscape.
+4. Run scripts/verify.ps1 (unit, debug APK, lint), record fresh versus reused tasks and actual counts/warnings. Independent review on the exact candidate must have no unresolved actionable finding before management acceptance. Keep original failed runs with corrected reruns; sanitize committed evidence, preserve raw originals ignored locally. No invented audible TTS, real GPS, physical-device or campus evidence.
+
+Stop at a coherent tested candidate/handoff for management review. Do not start H07B or any other slice. A demo episode is a useful V1 increment; it does not close live onboarding/logout, real arrival/content rollout or complete V1 deployment.

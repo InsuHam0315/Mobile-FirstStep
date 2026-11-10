@@ -6,6 +6,8 @@ The user now says: “실행 시켜봐 내가 신규 가입이랑 사용자 프�
 
 Owner inventory found neither 5564 nor 5572 running, then restarted only retained FirstStep_H07_QA_Clear_API37:5572 without reset or reinstall. Installed configured v8 APK matched the recorded 6C9B9314… hash. The owner activated the window `Android Emulator - FirstStep_H07_QA_Clear_API37:5572`; management independently viewed the newly captured `.local/harness/H07/live-2026-11-09/android-clear-qa/resume-2026-11-10/qa-login.png` in the firebase worktree and confirmed the logged-out Google entry. Human authentication/profile/save/logout are not yet observed in this resumed session. The original 5564 data/session was untouched.
 
+Subsequent human-supplied screenshot reported through authorized coordination shows QA5572 at 내 프로필 with an existing server-confirmed profile, then the user selected 홈으로 and saw the account-management Home. This supersedes logged-out readiness; it does not prove new registration, incomplete-onboarding recovery or repaired authenticated logout. Keep current account control with the human, without profile re-entry, account selection, logout or private-data exposure. The actual department content demonstration is prepared on a separate owned emulator; never replace the H07 installation with that main demo.
+
 Management and independent verification PM reconciled H07_SCOPE/H07_RESUME against user reports and the actual v6/v8 evidence. This matrix prevents unnecessary repeated human login while retaining required live checks. Exact installed app code ab117d3; installed existing user session on emulator-5564 must be preserved.
 
 | Requirement | Evidence and remaining action |
