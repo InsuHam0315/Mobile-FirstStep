@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/map_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/game_color_surface"
+    android:orientation="horizontal">
+
+    <com.example.firststep.map.CampusMapView
+        android:id="@+id/campus_map"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="3" />
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/game_reskin_control_space">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/game_reskin_control_space"
+                android:text="국립군산대 캠퍼스 지도"
+                android:textColor="@color/game_color_text"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/map_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="지도 불러오는 중 · 미션 지점은 현장 확인 후 표시합니다."
+                android:textColor="@color/game_reskin_muted"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/map_facility_context"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:accessibilityLiveRegion="polite"
+                android:layout_marginTop="@dimen/game_reskin_control_space"
+                android:textColor="@color/game_color_text"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/map_attribution"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:minHeight="@dimen/game_touch_min"
+                android:paddingVertical="@dimen/game_reskin_control_space"
+                android:text="© OpenStreetMap contributors · 지도 출처/이용 조건"
+                android:textColor="@color/game_reskin_link"
+                android:textSize="12sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/map_zoom_in"
+                    style="@style/GameMapButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="확대" />
+
+                <Button
+                    android:id="@+id/map_zoom_out"
+                    style="@style/GameMapButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="축소" />
+
+                <Button
+                    android:id="@+id/map_campus"
+                    style="@style/GameMapButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="학교" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/map_location"
+                    style="@style/GameActionButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="내 위치" />
+
+                <Button
+                    android:id="@+id/map_retry"
+                    style="@style/GameMapButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="다시 불러오기" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/map_route"
+                    style="@style/GameMapButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="탐방 순서도" />
+
+                <Button
+                    android:id="@+id/map_facility_lookup"
+                    style="@style/GameMapButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/map_facility_lookup"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/map_back"
+                    style="@style/GameMapButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="돌아가기" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
