@@ -35,7 +35,13 @@ Before changing the binding to another destination, check its module contract or
 
 The controller emits revocation before sign-in, reselection and logout, when it observes a mismatching or lost session, or when a profile check produces a failed or incomplete result. An ordinary pause and the loading or cached part of a same-UID refresh preserve the last confirmed decision. The existing generation, request and UID checks reject stale profile callbacks.
 
-The new observer is available to a caller that supplies it at construction. The current identity view model still uses the two-argument constructor. The next composition step needs the named Firebase graph to observe auth changes independently of Activity lifecycle and supply the sync owner. Until that wiring exists, paused controllers only detect an auth change when they resume. See the [account binding scope](../../harness/ACCOUNT_SYNC_BINDING_SCOPE.md), [Firebase module](../firebase/README.md), and [progress sync module](../progress-sync/README.md).
+`IdentityViewModel` supplies `runtime.confirmedOwnerObserver()` to the three-argument constructor. The configured process graph subscribes to auth independently of the controller. Non-null confirmation requires the current port and the same named Firebase app's non-anonymous user to match. Worker operations recheck that SDK user under the owner guard, including before a queued auth callback arrives. Pausing the Activity or closing its view model leaves the graph subscription intact.
+
+### Account progress access
+
+`IdentityRuntime.accountProgress()` returns an optional `AccountProgressAccess`. The configured runtime supplies it. Unconfigured, fake and local runtimes default to an empty value. A future authored composition should capture its dataset and building through `capture(datasetId, buildingId)`, which requires a current confirmed owner and an eligible NORMAL registration. Use `registry()` and `owner()` to construct the bound authored repository. Pass that repository as the committed source to `reconciler(source)` for local recovery on save or reopen. `flush(scope)` is a separate explicit network step. The same registry and guard protect the coordinator, backend and reconciler.
+
+The production registry is empty, and no Activity or authored composition calls this access yet. The graph reuses the named Firestore instance from profile verification and creates no progress reads or writes during setup. See the [account binding scope](../../harness/ACCOUNT_SYNC_BINDING_SCOPE.md), [Firebase module](../firebase/README.md), and [progress sync module](../progress-sync/README.md).
 
 ## Implementation and verification
 
