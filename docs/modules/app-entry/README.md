@@ -29,6 +29,14 @@ For a UI or integration check, first reach account Home with a server-confirmed 
 
 Before changing the binding to another destination, check its module contract or current handoff for the Activity component, export status, intent extras, result semantics, and storage owner.
 
+## Confirmed owner event
+
+`public SessionController(AuthPort auth, ProfilePort profiles, ConfirmedOwnerObserver ownerObserver)` accepts a callback alongside the existing ports. `public SessionController(AuthPort auth, ProfilePort profiles)` remains available. The observer is a separate channel from `setListener(Listener)` and receives `void onConfirmedOwner(String uid)` on the controller's serialized calling thread. A non-null value is the UID of a profile that reached `COMPLETE` after a server read. A null value revokes confirmation. Treat repeated values as idempotent, and treat a later confirmation following revocation as a new session even when the UID matches.
+
+The controller emits revocation before sign-in, reselection and logout, when it observes a mismatching or lost session, or when a profile check produces a failed or incomplete result. An ordinary pause and the loading or cached part of a same-UID refresh preserve the last confirmed decision. The existing generation, request and UID checks reject stale profile callbacks.
+
+The new observer is available to a caller that supplies it at construction. The current identity view model still uses the two-argument constructor. The next composition step needs the named Firebase graph to observe auth changes independently of Activity lifecycle and supply the sync owner. Until that wiring exists, paused controllers only detect an auth change when they resume. See the [account binding scope](../../harness/ACCOUNT_SYNC_BINDING_SCOPE.md), [Firebase module](../firebase/README.md), and [progress sync module](../progress-sync/README.md).
+
 ## Implementation and verification
 
 The v3 binding uses the campus route from the prepared `8158893` candidate. Its build and source checks are recorded in the [app-entry verification handoff](../../harness/handoffs/APP_ENTRY.md). The unified route still needs runtime validation.

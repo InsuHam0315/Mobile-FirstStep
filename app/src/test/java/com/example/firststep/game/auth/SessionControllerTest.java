@@ -538,4 +538,95 @@ public class SessionControllerTest {
     assertNull(c.state().getDraft());
     assertNull(c.state().getFailure());
   }
+
+  @Test
+  public void ownerRequiresServerConfirmationAfterFirstSave() {
+    Auth a = new Auth();
+    a.uid = "A";
+    Store p = new Store();
+    List<String> owners = new ArrayList<>();
+    SessionController c = new SessionController(a, p, owners::add);
+    c.resume();
+    p.loads.get(0).onResult(profile("cached"), ProfilePort.Source.CACHE, null);
+    assertTrue(owners.isEmpty());
+    p.server(0, null);
+    c.edit("name", "001", "dept");
+    c.save();
+    p.saves.get(0).onResult(null);
+    p.loads.get(1).onResult(profile("cached"), ProfilePort.Source.CACHE, null);
+    assertFalse(owners.contains("A"));
+    p.server(1, profile("server"));
+    assertEquals("A", owners.get(owners.size() - 1));
+    assertEquals(SessionState.Stage.COMPLETE, c.state().getStage());
+  }
+
+  @Test
+  public void navigationRetainsOwnerUntilServerConfirmationFails() {
+    Auth a = new Auth();
+    a.uid = "A";
+    Store p = new Store();
+    List<String> owners = new ArrayList<>();
+    SessionController c = new SessionController(a, p, owners::add);
+    c.resume();
+    p.server(0, profile("A"));
+    c.pause();
+    c.resume();
+    p.loads.get(1).onResult(profile("cached"), ProfilePort.Source.CACHE, null);
+    assertEquals(List.of("A"), owners);
+    p.loads.get(1).onResult(null, ProfilePort.Source.SERVER, Failure.UNAVAILABLE);
+    assertNull(owners.get(1));
+    c.retry();
+    p.server(2, profile("A"));
+    assertEquals("A", owners.get(2));
+    c.pause();
+    a.uid = null;
+    c.resume();
+    assertNull(owners.get(3));
+  }
+
+  @Test
+  public void reselectionAndLogoutRevokeBeforeSameUidCanBeConfirmedAgain() {
+    Auth a = new Auth();
+    a.uid = "A";
+    Store p = new Store();
+    List<String> owners = new ArrayList<>();
+    SessionController c = new SessionController(a, p, owners::add);
+    c.resume();
+    p.server(0, profile("A"));
+    c.signIn(true);
+    assertNull(owners.get(1));
+    assertNotNull(a.login);
+    a.login.onResult(null);
+    assertEquals(2, owners.size());
+    p.server(1, profile("A"));
+    assertEquals("A", owners.get(2));
+    c.logout();
+    assertNull(owners.get(3));
+    assertNotNull(a.logout);
+  }
+
+  @Test
+  public void mismatchingUidRevokesBeforeReplacementAndStaleLoadCannotConfirm() {
+    Auth a = new Auth();
+    a.uid = "A";
+    Store p = new Store();
+    List<String> owners = new ArrayList<>();
+    SessionController c = new SessionController(a, p, owners::add);
+    c.resume();
+    p.server(0, profile("A"));
+    c.pause();
+    c.resume();
+    a.uid = "B";
+    p.server(1, profile("A before auth observation"));
+    assertNull(owners.get(1));
+    assertEquals(SessionState.Stage.PROFILE_LOADING, c.state().getStage());
+    a.change("B");
+    int events = owners.size();
+    p.server(1, profile("late A"));
+    assertEquals(events, owners.size());
+    p.server(2, profile("B"));
+    assertEquals("B", owners.get(events));
+    p.server(1, profile("A after B confirmation"));
+    assertEquals(events + 1, owners.size());
+  }
 }

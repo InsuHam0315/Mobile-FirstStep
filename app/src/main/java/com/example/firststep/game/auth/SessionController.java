@@ -21,6 +21,7 @@ public final class SessionController {
 
   private final AuthPort auth;
   private final ProfilePort profiles;
+  private final ConfirmedOwnerObserver ownerObserver;
   private Listener listener;
   private AuthPort.Subscription subscription;
   private SessionState state;
@@ -33,8 +34,13 @@ public final class SessionController {
   private AuthAttempt authAttempt;
 
   public SessionController(AuthPort auth, ProfilePort profiles) {
+    this(auth, profiles, ignored -> {});
+  }
+
+  public SessionController(AuthPort auth, ProfilePort profiles, ConfirmedOwnerObserver ownerObserver) {
     this.auth = auth;
     this.profiles = profiles;
+    this.ownerObserver = Objects.requireNonNull(ownerObserver);
     state =
         new SessionState(
             auth.isConfigured() ? SessionState.Stage.LOGGED_OUT : SessionState.Stage.UNCONFIGURED,
@@ -54,6 +60,7 @@ public final class SessionController {
             || (state.getStage() == SessionState.Stage.LOGGED_OUT
                 && state.getFailure() != null))
         && !Objects.equals(uid, auth.currentUid())) {
+      ownerObserver.onConfirmedOwner(null);
       return new SessionState(SessionState.Stage.PROFILE_LOADING, null, null, null, false);
     }
     return state;
@@ -124,6 +131,7 @@ public final class SessionController {
         || !auth.isConfigured()
         || state.getStage() == SessionState.Stage.AUTH_BUSY
         || signingOut) return;
+    ownerObserver.onConfirmedOwner(null);
     uid = null;
     draft = null;
     dirty = false;
@@ -151,6 +159,7 @@ public final class SessionController {
 
   public void logout() {
     if (!active || !auth.isConfigured()) return;
+    ownerObserver.onConfirmedOwner(null);
     authAttempt = null;
     uid = null;
     draft = null;
@@ -225,6 +234,7 @@ public final class SessionController {
     authAttempt = null;
     ++nonce;
     if (!Objects.equals(uid, next)) {
+      if (uid != null && next != null) ownerObserver.onConfirmedOwner(null);
       uid = next;
       draft = null;
       dirty = false;
@@ -311,11 +321,10 @@ public final class SessionController {
   }
 
   private boolean valid(long g, long n, String requestedUid) {
-    return active
-        && generation == g
-        && nonce == n
-        && Objects.equals(uid, requestedUid)
-        && Objects.equals(auth.currentUid(), requestedUid);
+    if (!active || generation != g || nonce != n || !Objects.equals(uid, requestedUid)) return false;
+    if (Objects.equals(auth.currentUid(), requestedUid)) return true;
+    ownerObserver.onConfirmedOwner(null);
+    return false;
   }
 
   private void publish(SessionState.Stage stage, Failure failure, boolean cached) {
@@ -333,6 +342,20 @@ public final class SessionController {
             cached || cachedDraft,
             editable,
             editable && draft != null && draft.isComplete());
+    switch (stage) {
+      case COMPLETE:
+        ownerObserver.onConfirmedOwner(uid);
+        break;
+      case UNCONFIGURED:
+      case LOGGED_OUT:
+      case FORM:
+      case PENDING_FAILURE:
+        ownerObserver.onConfirmedOwner(null);
+        break;
+      default:
+        // Loading and cached refreshes leave the last server decision in place.
+        break;
+    }
     if (active && listener != null) listener.onState(state);
   }
 }
