@@ -1,0 +1,62 @@
+# Campus content module
+
+This page describes the implementation in `campus-content` through app commit `938674eecaf5053db5bacbd637f7a825f5d1e455`. It covers the software-department guide and practice, narration preview, isolated DEMO episode, and the identity-independent campus home route. The published source packet is [SOFTWARE_CONTENT_SOURCES.md](../../harness/SOFTWARE_CONTENT_SOURCES.md). Its official pages were checked on 2026-11-08. The checked date is not a freshness guarantee or a campus survey.
+
+## Responsibilities and entry points
+
+- `GuideActivity` presents the registered `software_guide_v1` guide, four claims with official sources and checked dates, and three source-backed practice questions. Practice is in memory and restores its transient screen state across normal recreation.
+- `NarrationActivity`, reachable from the guide, presents the registered `software_narration_v1` seven-sentence fictional/editorial/claim sequence. Previous, next and replay controls are available after the assets load. Skip is available throughout the preview, and Finish appears at the last caption. Either action returns `RESULT_OK` to the guide, which opens practice. Captions and manual navigation work without speech, and speech callbacks never advance narration or complete progress.
+- The guide exposes a debug-only 소프트웨어학과 탐방 시연 entry. `software_episode_demo_v1` composes simulated arrival, discovery with fallback, the seven captions, the same three sourced questions, and a locally persisted DEMO result. The existing quiz policy passes at two of three correct answers, supports immediate retry after failure, and grants at most one local stamp for the target. It is a single target and has no verified campus-arrival coordinates.
+- `CampusHomeRoute.intent(Context)` returns an explicit, no-extras `Intent` to the non-exported `CampusHomeActivity`. The home opens the campus map, facility directory and `GuideActivity`. Facility favorites are device-local. `RouteMapActivity.browseIntent(Context)` opens the existing map without initializing the legacy mission repository and hides the legacy route schematic.
+
+Identity verification, profile completion, account progress, cloud sync, real arrival, other departments and the five-target ending are owned outside this module. `CampusHomeRoute` does not validate a session, choose a back-stack policy, read an account or trigger automatic navigation. Its caller must establish its own access policy and handle the back stack.
+
+```java
+// In the caller, after its own profile/access policy has succeeded.
+import com.example.firststep.game.composition.home.CampusHomeRoute;
+
+startActivity(CampusHomeRoute.intent(this));
+```
+
+In this example, `this` is an Android `Activity` context. The returned intent has no extras. A caller outside an Activity must choose appropriate Android task flags. A profile COMPLETE-to-home binding is an integration responsibility and was not implemented in the CampusHome checkpoint. See [CampusHome handoff](../../harness/handoffs/CampusHome.md).
+
+## Content and composition APIs
+
+All classes below are in `com.example.firststep.game` under the named package. Asset loading and composition are blocking and belong on a worker thread.
+
+| API | Input and output | Failure or constraint |
+| --- | --- | --- |
+| `content.GuidePorts.BundleLoader.load()` | Returns `GuideBundle` and declares `throws Exception`. | The asset implementation reads only `campus_content/software_guide_v1.json`. |
+| `new content.AssetGuideRepository(Context).load()` | Takes an Android `Context` and returns a validated `GuideBundle` from the fixed asset. Declares `throws IOException`. | Invalid, oversized, malformed or unregistered content fails instead of selecting another dataset. |
+| `AssetGuideRepository.decodeJson(String registeredId, String json)` | Takes the registered ID `software_guide_v1` and JSON, returns a validated `GuideBundle`, and declares `throws IOException`. | Arbitrary IDs and paths are not accepted. |
+| `content.GuideAdapters.openOfficialSource(Context, GuideBundle.Source)` | Opens an allowlisted official source on explicit user action and returns `boolean`. | Returns `false` for an unsupported source or unavailable/blocked handler. The call is a UI action. |
+| `new content.PracticeSession(GuideBundle)` | In-memory practice session with `select(questionId, optionId)`, `submit()`, `retry()` and `getScore()`. | Unknown IDs, incomplete submission and invalid submitted state throw. No progress or reward is written. |
+| `content.NarrationAsset.load(Context)` | Reads the fixed narration asset, returns `NarrationContent`, and declares `throws IOException`. | The JSON parser also exposes `decodeJson(String id, String json)` and accepts only `software_narration_v1`. |
+| `content.NarrationContent.sentences()` | Returns the validated immutable sentence list. Each sentence has stable `id`, `text`, `claimId` and `provenance` (`FICTIONAL`, `EDITORIAL`, `CLAIM`). | Claim IDs are checked against the guide when the DEMO composition opens. |
+| `new content.NarrationState(int size, int position)` | Transient `position()`, `previous()` and `next()` for a nonempty sequence. An out-of-range initial position resets to zero. | No storage or speech side effect. |
+| `composition.integration.IntegrationContext.create(String datasetId, String runId, String targetId, Progress.Mode mode, Clock clock, Long fakeNow)` | Creates a typed context or throws `IllegalArgumentException`. The software dataset is `IntegrationContext.SOFTWARE_DATASET`, target is `IntegrationContext.TARGET`, mode is `DEMO`, and run ID is a canonical UUID. `REAL` clock requires null `fakeNow`. `DEBUG_FAKE` requires a value. | Structural validation is followed by build-specific registry and route guards. |
+| `composition.integration.IntegrationComposition.open(Context, IntegrationContext)` | Opens the registered composition and returns an `AutoCloseable` with bound `context`, `content`, `guide`, `narration` and `repository`. Declares `throws Exception`. | Opens off the UI thread. Validates content and matching target/claims before opening the registered Room repository. Release rejects the software DEMO dataset. Close the composition when finished. |
+| `new composition.integration.StableRunStore(Context).resolve(String datasetId, String explicitRun)` | Returns an existing or new canonical UUID, or `null`. A valid explicit run is returned without changing the stored entry run. | Blocking SharedPreferences access. Unregistered dataset, invalid UUID or storage failure returns `null`. |
+| `composition.integration.IntegrationIntentCodec.writeContext(Intent, IntegrationContext)` / `readContext(Intent)` | Encodes or decodes the typed route context. `readContext` returns `null` for invalid input. | Software DEMO context is rejected by the production decoder in a release build. Callers should use the existing guide entry instead of constructing route extras. |
+
+## Data ownership and isolation
+
+The guide and narration preview use their fixed local assets and transient UI state. They do not create exploration progress, rewards, or account records. H10C is distinct from both. Its `software_episode_demo_v1` context is DEMO-only, and `IntegrationComposition`, route access and storage use build-specific registration guards. Navigation keys include the software dataset, run UUID and mode. Its Room filename is `software-episode-demo-<canonical UUID>.db`; the H06 fixture uses `h04-debug-<canonical UUID>.db` even for the same UUID. Stable entry runs have separate keys in `game_integration_entry`. Neither guide practice answers nor H06, legacy or account progress is imported into the DEMO. No DEMO stamp is promoted to an account or field completion.
+
+The source packet identifies the target as `digital_information_software`. It does not establish a room, an arrival radius or a location pin. Source links require a suitable handler and connectivity. Bundled captions and practice can be read offline. The preview fairy is explicitly fictional and its art is a replaceable placeholder.
+
+## Dependencies and integration contracts
+
+`CampusHomeActivity` calls the existing `FacilityDirectoryActivity`, `RouteMapActivity.browseIntent(Context)` and `GuideActivity`. The DEMO uses the existing discovery, speech, progress service and Room adapters through its registered composition. The caller must preserve non-exported Activity declarations and the existing TTS query when merging manifests. The identity owner decides the COMPLETE-profile transition and account back stack. The sync owner defines a separate account progress contract. The currently available identity scope is [H07_SCOPE.md](../../harness/H07_SCOPE.md).
+
+Before connecting identity, read the [app-entry contract](../app-entry/README.md) on main for its current COMPLETE gate, launch guard and back-stack behavior. The campus-content branch predates that sibling page. `CampusHomeRoute.intent(Context)` is the local entry signature for a caller that chooses the wider campus home. This module exposes no account progress or sync input signature. See the [CampusHome handoff](../../harness/handoffs/CampusHome.md) and [UI boundaries](../../harness/UI_BOUNDARIES.md).
+
+Source entry points are [CampusHomeRoute](../../../app/src/main/java/com/example/firststep/game/composition/home/CampusHomeRoute.java), [RouteMapActivity](../../../app/src/main/java/com/example/firststep/RouteMapActivity.java), [GuideActivity](../../../app/src/main/java/com/example/firststep/game/ui/guide/GuideActivity.java), [NarrationActivity](../../../app/src/main/java/com/example/firststep/game/ui/guide/NarrationActivity.java) and [IntegrationComposition](../../../app/src/main/java/com/example/firststep/game/composition/integration/IntegrationComposition.java).
+
+## Verification and integration status
+
+- H10 guide/practice and H10B narration were accepted in earlier integrations. See the [H10 handoff](../../harness/handoffs/H10.md) and [H10B handoff](../../harness/handoffs/H10B.md).
+- H10C app candidate `4cba7281bd6fbfaaa4fffb9cbd92e16737e020eb` passed the recorded required Gradle checks, 131 unit tests, isolated emulator contracts and a manual DEMO flow using camera/manual-heading/long-press fallback. Physical SHAKE, audible TTS, actual campus arrival, real-device behavior and account integration remain unverified. See [H10C handoff](../../harness/handoffs/H10C.md).
+- CampusHome app commit `938674eecaf5053db5bacbd637f7a825f5d1e455` passed the recorded debug build, Android test compilation and three existing JVM contract tests. The new `CampusHomeRouteTest` has not run on device. Profile COMPLETE binding, combined end-to-end verification and the final design integration remain pending. See [CampusHome handoff](../../harness/handoffs/CampusHome.md).
+- At the 2026-11-10 main snapshot `fce8ba81c728f1aa27a4faa0c142e88f9dbeaaaa`, H10C is integrated through `982a17c`. The integrated `IdentityActivity` opens `GuideActivity` directly after COMPLETE. The `938674e` campus home commit is on the campus-content branch at this checkpoint, with identity-to-campus-home wiring still pending. See the [app-entry contract](../app-entry/README.md).
+- The recorded candidate statuses are checkpoint facts. Consult management's current integration record before treating them as a release or as the current main-branch state.
