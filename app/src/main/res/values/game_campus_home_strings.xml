@@ -1,0 +1,9 @@
+<resources>
+    <string name="game_campus_home_title">캠퍼스 둘러보기</string>
+    <string name="game_campus_home_description">캠퍼스 지도와 시설, 학과 안내를 살펴보세요.</string>
+    <string name="game_campus_home_map">캠퍼스 지도</string>
+    <string name="game_campus_home_facilities">시설 찾기</string>
+    <string name="game_campus_home_favorites_note">시설 즐겨찾기는 계정과 별개로 이 기기에 저장됩니다.</string>
+    <string name="game_campus_home_guide">소프트웨어학과 안내·연습</string>
+    <string name="game_campus_home_back">돌아가기</string>
+</resources>
