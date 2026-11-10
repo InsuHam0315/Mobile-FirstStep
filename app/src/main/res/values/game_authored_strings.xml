@@ -1,0 +1,27 @@
+<resources>
+    <string name="game_authored_entry">소프트웨어학과 정식 탐방</string>
+    <string name="game_authored_opening">정식 탐방 가능 여부를 확인하고 있어요.</string>
+    <string name="game_authored_no_account">프로필 확인을 마친 계정으로 돌아가서 다시 열어 주세요.</string>
+    <string name="game_authored_unregistered">아직 정식 탐방이 열리지 않았어요. 현장 도착 기준과 탐방 자료가 등록되면 이용할 수 있어요.</string>
+    <string name="game_authored_arrival_unavailable">현재 현장 도착을 확인할 수 없어요.</string>
+    <string name="game_authored_not_arrived">아직 현장 도착이 확인되지 않았어요.</string>
+    <string name="game_authored_content_unavailable">정식 탐방 자료를 불러오지 못했어요.</string>
+    <string name="game_authored_operation_failed">탐방 기록을 확인하지 못했어요. 다시 확인해 주세요.</string>
+    <string name="game_authored_check_again">다시 확인</string>
+    <string name="game_authored_intro">요정의 소개를 읽고 마지막 문장에서 소개를 완료해 주세요.</string>
+    <string name="game_authored_finish_intro">소개 완료</string>
+    <string name="game_authored_wait">이 기기에 소개 완료를 저장했어요. 소개 완료 후 15분이 지나면 퀴즈를 풀 수 있어요.</string>
+    <string name="game_authored_quiz_ready">퀴즈를 풀 수 있어요. 세 문제 중 두 문제 이상 맞히면 탐방 도장을 받아요.</string>
+    <string name="game_authored_start_quiz">퀴즈 시작</string>
+    <string name="game_authored_quiz">각 문제의 답을 하나씩 골라 주세요.</string>
+    <string name="game_authored_submit">답 제출</string>
+    <string name="game_authored_failed">정답 %1$d/3. 바로 다시 풀 수 있어요.</string>
+    <string name="game_authored_retry_quiz">다시 풀기</string>
+    <string name="game_authored_saved">정답 %1$d/3. 이 기기에 탐방 도장 1개를 저장했어요.</string>
+    <string name="game_authored_sync_checking">계정 기록 전송 상태를 확인하고 있어요.</string>
+    <string name="game_authored_sync_pending">계정에 전송할 기록이 대기 중이에요.</string>
+    <string name="game_authored_sync_intro_confirmed">서버에서 소개 완료를 확인했어요.</string>
+    <string name="game_authored_sync_pass_confirmed">서버에서 퀴즈 통과 기록을 확인했어요.</string>
+    <string name="game_authored_sync_failed">계정 기록을 전송하거나 준비하지 못했어요. 이 기기에 저장된 탐방 결과는 유지돼요.</string>
+    <string name="game_authored_sync_retry">계정에 기록 전송</string>
+</resources>

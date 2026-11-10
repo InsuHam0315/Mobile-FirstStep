@@ -2,6 +2,7 @@ package com.example.firststep.game.home;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static org.junit.Assert.*;
 
@@ -17,6 +18,7 @@ import com.example.firststep.FacilityDirectoryActivity;
 import com.example.firststep.R;
 import com.example.firststep.RouteMapActivity;
 import com.example.firststep.game.composition.home.CampusHomeRoute;
+import com.example.firststep.game.ui.authored.AuthoredEpisodeActivity;
 import com.example.firststep.game.ui.guide.GuideActivity;
 import com.example.firststep.game.ui.home.CampusHomeActivity;
 import org.junit.Test;
@@ -35,6 +37,19 @@ public final class CampusHomeRouteTest {
   }
 
   @Test
+  public void authoredEntryUsesInternalComponentWithoutExtras() throws Exception {
+    Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+    Intent intent = AuthoredEpisodeActivity.intent(context);
+    assertEquals(AuthoredEpisodeActivity.class.getName(), intent.getComponent().getClassName());
+    assertNull(intent.getExtras());
+    assertFalse(context.getPackageManager().getActivityInfo(intent.getComponent(), 0).exported);
+    try (ActivityScenario<CampusHomeActivity> scenario =
+        ActivityScenario.launch(CampusHomeRoute.intent(context))) {
+      verifyDestination(R.id.game_campus_home_authored, AuthoredEpisodeActivity.class);
+    }
+  }
+
+  @Test
   public void homeButtonsReachExistingCampusSurfaces() {
     Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
     try (ActivityScenario<CampusHomeActivity> scenario =
@@ -50,7 +65,7 @@ public final class CampusHomeRouteTest {
     Instrumentation.ActivityMonitor monitor =
         instrumentation.addMonitor(destination.getName(), null, false);
     try {
-      onView(withId(buttonId)).perform(click());
+      onView(withId(buttonId)).perform(scrollTo(), click());
       Activity opened = instrumentation.waitForMonitorWithTimeout(monitor, 5000);
       assertNotNull("Campus destination did not open", opened);
       instrumentation.runOnMainSync(opened::finish);
