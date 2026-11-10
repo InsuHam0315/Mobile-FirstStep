@@ -9,3 +9,7 @@ Implementation PM performed a bounded read-only seam audit: accepted H06 navigat
 Independent verification PM identified three scope improvements: user ownership of 5580 after handoff, debug/release rejection beyond hiding the UI, and synthetic rather than real-account isolation evidence. Management incorporated all three and the PM re-read the current scope with PASS. This accepts the scope for dispatch, not code or app behavior. H07 live gates and H07B dependency remain unchanged.
 
 Next: finish the accepted-demo opening-only handoff, fast-forward the clean idle campus-content worktree to the management scope commit, dispatch H10C exactly once, and record actual start. Do not test on the handed-off demo device while the user views it.
+
+## Opening-only task concluded with user interruption
+
+The owner reported that Esc stopped screen control. The retained 5580 installed APK matched CFC6BE4F77331FF887CBD048D5CA26CF0BAB4FB03AE02ED701E988A080978C12, but the guide screen was not visually confirmed. Do not claim a ready demo or retry UI control through another tool. This ends the opening-only task, not the independent development authorization. H10C dispatch is limited initially to code/non-UI verification; actual device interaction and runtime acceptance require renewed human authorization. Preserve 5580 and both account devices.
