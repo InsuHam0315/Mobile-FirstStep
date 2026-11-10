@@ -49,8 +49,10 @@ public final class FirebaseAuthPort implements AuthPort, AutoCloseable {
   }
 
   public Subscription observe(AuthObserver observer) {
+    String uid = currentUid();
+    if (observers.isEmpty()) exposedUid = uid;
     observers.add(observer);
-    observer.onChanged(currentUid());
+    observer.onChanged(uid);
     return () -> observers.remove(observer);
   }
 
