@@ -1,10 +1,11 @@
 {
   "schemaVersion": 1,
   "baselineSha": "a3b8f0f7589a501f8a086e1dc9cda11889ec452d",
-  "baselineNote": "Implementation-first: campus navigation02eadec; sync/recovery5c180ca; named account graphb240a03 integrated. Actual gated NORMAL gameplay host now implementing in campus-content. No production registration/rules activation; design last and combined runtime pending.",
+  "baselineNote": "Implementation-first: main c78211a contains account graph and campus navigation. Authored host b2795f1 review CHANGES_REQUIRED (away quiz, flush overlap); actual NORMAL GPS/discovery/readback implementation remains. Design deferred.",
   "coordinationScope": "docs/harness/IMPLEMENTATION_FIRST.md",
   "activeBranches": [
-    "campus-content"
+    "campus-content",
+    "app-entry"
   ],
   "appEntryCheckpoint": {
     "branch": "app-entry",
@@ -15,9 +16,9 @@
     "installedDevice": "QA5572 remains user-held on v1 6fbb872",
     "graphIntegratedSha": "b240a0369869f9cae485068f360beb4dc2116696"
   },
-  "activeTask": "H07",
+  "activeTask": "H10",
   "parallelTasks": [
-    "H10"
+    "H07"
   ],
   "decisions": {
     "coreGame": "approved",
@@ -333,15 +334,15 @@
       "branch": "campus-content",
       "status": "in_progress",
       "implementationThread": "01a1c08e-5337-78d2-a4c4-4bffda0e21ed",
-      "activeSlice": "software-demo-episode",
-      "continuationScopePath": "docs/harness/H10C_SCOPE.md",
+      "activeSlice": "authored-normal-flow",
+      "continuationScopePath": "docs/harness/AUTHORED_FLOW_CONTINUATION.md",
       "priorSliceStatus": "H10 guide/practice and H10B narration accepted/integrated a3b8f0f",
-      "candidateSha": "55ba443aa46a0e73adc39f08a608988457912902",
+      "candidateSha": "b2795f1d47ae769dabe1e947e30481ad95cac339",
       "publishedSha": "0e2628e15d771cbcc447dae0f73bb09b4d40ba81",
       "verifiedSha": null,
       "integratedSha": null,
-      "managementReview": "H10C_exact_checkpoint_pass_combined_validation_pending",
-      "reviewPath": "docs/harness/reviews/H10C-management.md",
+      "managementReview": "CHANGES_REQUIRED_two_P2_and_required_normal_flow_missing",
+      "reviewPath": "docs/harness/reviews/AUTHORED_HOST-management.md",
       "baseSha": "8024f390606acbde7324d34f0e89570d93b1a821",
       "coordinationPath": "docs/harness/reviews/H10-coordination.md",
       "dependsOn": [
@@ -378,7 +379,7 @@
         "Retry, idempotent stamp, restart and stale/cancel/mismatch handling verified; existing flows preserved",
         "Required checks, exact candidate independent review and isolated integration pass; field/cloud scope excluded"
       ],
-      "executionState": "gated_authored_NORMAL_host_implementing",
+      "executionState": "repair_and_complete_gps_discovery_readback_before_design",
       "priorAcceptedSlice": {
         "name": "H10B",
         "candidateSha": "0e2628e15d771cbcc447dae0f73bb09b4d40ba81",
@@ -398,5 +399,13 @@
     "status": "guard_source_reconciler_and_identity_graph_integrated_gameplay_host_active",
     "productionRegistry": "empty; no live progress access enabled",
     "recoveryIntegratedSha": "5c180cab04f247195aef548e088aae6e8c7c160f"
+  },
+  "authoredHostCheckpoint": {
+    "candidateSha": "b2795f1d47ae769dabe1e947e30481ad95cac339",
+    "status": "changes_required",
+    "scopePath": "docs/harness/AUTHORED_FLOW_CONTINUATION.md",
+    "normalActivation": "not enabled; surveyed configuration absent",
+    "published": false,
+    "integrated": false
   }
 }
