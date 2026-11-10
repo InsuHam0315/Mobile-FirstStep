@@ -39,3 +39,31 @@ With Android Studio JBR on Windows, `.\gradlew.bat :app:compileDebugAndroidTestJ
 Host checks found two Node applications and reproduced the original process-start failure without launching Firebase. The selected executable ran `node --version` as v24.18.0 in a cleared child environment. A simulated process-start exception returned 1 after a preceding exit code 0. The actual launcher refused a protected serial before ADB and returned 1 both through `pwsh -File` and when invoked from an existing PowerShell process. PowerShell syntax, harness and whitespace checks passed. Evidence is under `.local/harness/VALIDATION/v4/`. Management still needs to rerun the complete SDK scenario on its isolated AVD. This repair run invoked neither ADB nor an emulator.
 
 Journal update: pending management review.
+
+## Authored reminder Android coverage
+
+Validation v5 adds opt-in instrumentation for the production reminder adapter and receiver. Base `b0546fc`. Production code and existing tests are unchanged.
+
+- `deniedPermissionRefusesScheduling` asserts the real Android notification permission is denied and calls the production adapter with a valid synthetic NORMAL introduction. The result must be `PERMISSION_DENIED`.
+- `dueReceiverPostsImmutableEntryAndRejectsRevokedTicket` requires granted and enabled notifications. The test supplies an already-due synthetic introduction to the production ticket store and captures the generated token through a test scheduling callback. It directly invokes the real receiver on the main thread and checks the OS notification, its channel, title, body and immutable pending action for the exact authored entry. It verifies that revocation and same-UID reauthentication reject the old ticket and that the receiver cannot recreate the notification action. Cleanup cancels only the test notification and pending action and retires the synthetic ticket.
+
+The verification PM implemented and compiled the test. Terra specialist `/root/verification_pm/ar_emulator_terra` independently reviewed source isolation, assertions, cleanup and evidence limits and reported scoped PASS.
+
+Compilation and test APK assembly passed using Android Studio JBR and the Android SDK with 4 executed and 47 up-to-date tasks.
+
+```powershell
+.\gradlew.bat :app:compileDebugAndroidTestJavaWithJavac :app:assembleDebugAndroidTest --console=plain
+```
+
+Run the two methods separately on the assigned disposable debug AVD with Android API 33 or higher, user 0 and both matching APKs installed. Set the app's notification permission to the corresponding denied or granted state before invocation. The tests verify that precondition and do not change permissions. Pass the exact disposable AVD name as the opt-in. With no opt-in, the tests skip. Verify one executed pass in each invocation. Protected devices remain outside the run.
+
+```powershell
+$testClass = 'com.example.firststep.game.notifications.authored.AuthoredReminderAndroidRuntimeTest'
+$runner = 'com.example.firststep.test/androidx.test.runner.AndroidJUnitRunner'
+# With POST_NOTIFICATIONS denied
+adb -s $serial shell am instrument -w -r --user 0 -e class "${testClass}#deniedPermissionRefusesScheduling" -e firststepAuthoredReminderAvd $avdName $runner
+# With POST_NOTIFICATIONS granted
+adb -s $serial shell am instrument -w -r --user 0 -e class "${testClass}#dueReceiverPostsImmutableEntryAndRejectsRevokedTicket" -e firststepAuthoredReminderAvd $avdName $runner
+```
+
+No instrumentation ran in this checkpoint. The receiver test directly delivers an already-due ticket, so a passing run would establish OS posting and ticket/entry checks. Alarm registration, elapsed alarm delivery, tapping the notification, reboot, and process-death behavior remain unverified.
