@@ -8,12 +8,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
 import androidx.lifecycle.*;
 import com.example.firststep.R;
+import com.example.firststep.BuildConfig;
+import com.example.firststep.game.composition.integration.*;
+import com.example.firststep.game.domain.Progress;
+import com.example.firststep.game.ui.home.GameHomeActivity;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import com.example.firststep.game.content.*;
 import java.util.*;
 
 /** Replaceable Java/XML binder. External intent extras never select content or storage. */
 public final class GuideActivity extends AppCompatActivity {
   private GuideViewModel model;
+  private final ExecutorService demoWorker = Executors.newSingleThreadExecutor();
+  private boolean demoResumed, demoBusy;
+  private long demoGeneration;
   private LinearLayout content;
   private ScrollView scroll;
   private Button primary, readAgain;
@@ -84,6 +93,55 @@ public final class GuideActivity extends AppCompatActivity {
         });
     readAgain.setOnClickListener(v -> model.showGuide());
     findViewById(R.id.game_guide_close).setOnClickListener(v -> finish());
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    demoResumed = true;
+  }
+
+  @Override
+  protected void onPause() {
+    demoResumed = false;
+    demoBusy = false;
+    demoGeneration++;
+    super.onPause();
+  }
+
+  @Override
+  protected void onDestroy() {
+    demoWorker.shutdown();
+    super.onDestroy();
+  }
+
+  private void openSoftwareDemo() {
+    if (!BuildConfig.DEBUG || !demoResumed || demoBusy) return;
+    demoBusy = true;
+    final long token = ++demoGeneration;
+    demoWorker.execute(() -> {
+      try {
+        String run = new StableRunStore(getApplicationContext())
+            .resolve(IntegrationContext.SOFTWARE_DATASET, null);
+        IntegrationContext requested = IntegrationContext.create(
+            IntegrationContext.SOFTWARE_DATASET, run, IntegrationContext.TARGET,
+            Progress.Mode.DEMO, IntegrationContext.Clock.REAL, null);
+        IntegrationContext bound = IntegrationRouteAccess.bound(getApplicationContext(), requested).context;
+        runOnUiThread(() -> {
+          if (!demoResumed || token != demoGeneration || isFinishing() || isDestroyed()) return;
+          demoBusy = false;
+          Intent intent = new Intent(this, GameHomeActivity.class);
+          IntegrationIntentCodec.writeContext(intent, bound);
+          startActivity(intent);
+        });
+      } catch (Exception failure) {
+        runOnUiThread(() -> {
+          if (!demoResumed || token != demoGeneration || isFinishing() || isDestroyed()) return;
+          demoBusy = false;
+          Toast.makeText(this, R.string.game_guide_demo_unavailable, Toast.LENGTH_LONG).show();
+        });
+      }
+    });
   }
 
   @Override
@@ -218,6 +276,13 @@ public final class GuideActivity extends AppCompatActivity {
     preview.setText(R.string.game_narration_title);
     preview.setOnClickListener(v -> startActivityForResult(new Intent(this, NarrationActivity.class), 101));
     content.addView(preview, new LinearLayout.LayoutParams(-1, -2));
+    if (BuildConfig.DEBUG) {
+      Button demo = (Button) getLayoutInflater().inflate(R.layout.game_guide_source_button, content, false);
+      demo.setId(R.id.game_guide_demo_entry);
+      demo.setText(R.string.game_guide_demo_entry);
+      demo.setOnClickListener(v -> openSoftwareDemo());
+      content.addView(demo, new LinearLayout.LayoutParams(-1, -2));
+    }
     text(getString(R.string.game_guide_sequence), true);
     for (GuideBundle.Claim claim : model.guide.getClaims()) {
       text(claim.getText(), false);

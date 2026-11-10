@@ -48,7 +48,9 @@ public final class IntegrationEntryActivity extends AppCompatActivity {
         .setText(R.string.game_integration_loading);
     boolean explicit = IntegrationIntentCodec.hasIntegrationContext(getIntent());
     supplied = explicit ? IntegrationIntentCodec.readContext(getIntent()) : null;
-    invalid = !BuildConfig.DEBUG || (explicit && supplied == null);
+    invalid =
+        !BuildConfig.DEBUG
+            || (explicit && (supplied == null || !IntegrationContext.DATASET.equals(supplied.datasetId)));
   }
 
   @Override

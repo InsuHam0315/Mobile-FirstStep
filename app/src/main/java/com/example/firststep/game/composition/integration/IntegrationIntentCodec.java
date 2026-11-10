@@ -2,6 +2,7 @@ package com.example.firststep.game.composition.integration;
 
 import android.content.Intent;
 import android.os.Bundle;
+import com.example.firststep.BuildConfig;
 import com.example.firststep.game.domain.Progress;
 import com.example.firststep.game.domain.discovery.DiscoveryResult;
 import com.example.firststep.game.presentation.integration.NavigationPolicy;
@@ -66,6 +67,10 @@ public final class IntegrationIntentCodec {
   }
 
   public static IntegrationContext readContext(Intent i) {
+    return readContext(i, BuildConfig.DEBUG);
+  }
+
+  static IntegrationContext readContext(Intent i, boolean debugBuild) {
     try {
       Bundle b = i.getExtras();
       if (!Boolean.TRUE.equals(value(b, MARKER, Boolean.class))) return null;
@@ -83,7 +88,9 @@ public final class IntegrationIntentCodec {
               .equals(value(b, "game_intro_instant_demo", Boolean.class))) return null;
       IntegrationContext.Clock clock = IntegrationContext.Clock.valueOf(c);
       Long n = b.containsKey(FAKE_NOW) ? (Long) value(b, FAKE_NOW, Long.class) : null;
-      return IntegrationContext.create(d, r, t, Progress.Mode.valueOf(m), clock, n);
+      IntegrationContext context =
+          IntegrationContext.create(d, r, t, Progress.Mode.valueOf(m), clock, n);
+      return IntegrationComposition.allowedContext(context, debugBuild) ? context : null;
     } catch (RuntimeException e) {
       return null;
     }

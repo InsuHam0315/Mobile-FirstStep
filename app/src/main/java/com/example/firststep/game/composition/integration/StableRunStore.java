@@ -7,7 +7,7 @@ import java.util.UUID;
 /** Blocking: call off the UI thread. Explicit test runs never change the entry run. */
 public final class StableRunStore {
   private static final Object LOCK = new Object();
-  private static boolean poisoned;
+  private static final java.util.Set<String> POISONED = new java.util.HashSet<>();
   private final SharedPreferences prefs;
 
   public StableRunStore(Context c) {
@@ -17,14 +17,20 @@ public final class StableRunStore {
   }
 
   public String resolve(String explicitRun) {
+    return resolve(IntegrationContext.DATASET, explicitRun);
+  }
+
+  public String resolve(String datasetId, String explicitRun) {
+    if (!IntegrationComposition.allowedDataset(datasetId, com.example.firststep.BuildConfig.DEBUG)) return null;
+    String key = IntegrationContext.DATASET.equals(datasetId) ? "run" : "run_" + datasetId;
     if (explicitRun != null)
       return IntegrationContext.canonicalUuid(explicitRun) ? explicitRun : null;
     synchronized (LOCK) {
-      if (poisoned) return null;
-      if (prefs.contains("run")) {
+      if (POISONED.contains(key)) return null;
+      if (prefs.contains(key)) {
         String v;
         try {
-          v = prefs.getString("run", null);
+          v = prefs.getString(key, null);
         } catch (RuntimeException e) {
           return null;
         }
@@ -32,12 +38,12 @@ public final class StableRunStore {
       }
       String v = UUID.randomUUID().toString();
       try {
-        if (!prefs.edit().putString("run", v).commit()) {
-          poisoned = true;
+        if (!prefs.edit().putString(key, v).commit()) {
+          POISONED.add(key);
           return null;
         }
       } catch (RuntimeException e) {
-        poisoned = true;
+        POISONED.add(key);
         return null;
       }
       return v;

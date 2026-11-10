@@ -7,6 +7,8 @@ import java.util.UUID;
 public final class IntegrationContext {
   public static final String DATASET = "h04_fixture_v1", TARGET = "digital_information_software";
 
+  public static final String SOFTWARE_DATASET = "software_episode_demo_v1";
+
   public enum Clock {
     REAL,
     DEBUG_FAKE
@@ -36,7 +38,8 @@ public final class IntegrationContext {
 
   public static IntegrationContext create(
       String d, String r, String t, Progress.Mode m, Clock c, Long n) {
-    if (!DATASET.equals(d)
+    if (!(DATASET.equals(d) || SOFTWARE_DATASET.equals(d))
+        || (SOFTWARE_DATASET.equals(d) && m != Progress.Mode.DEMO)
         || !canonicalUuid(r)
         || !TARGET.equals(t)
         || m == null

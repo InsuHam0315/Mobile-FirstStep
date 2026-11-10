@@ -5,6 +5,8 @@ import android.os.Handler;
 import android.os.Looper;
 import androidx.room.Room;
 import com.example.firststep.facility.*;
+import com.example.firststep.game.composition.integration.IntegrationComposition;
+import com.example.firststep.game.composition.integration.IntegrationContext;
 import com.example.firststep.game.data.local.*;
 import com.example.firststep.game.domain.*;
 import com.example.firststep.game.presentation.home.HomeController;
@@ -18,6 +20,8 @@ public final class HomeHost implements HomeController.Port, AutoCloseable {
   public static final String TARGET = "digital_information_software";
   private final Context context;
   private final String run;
+  private final IntegrationContext integration;
+  private final boolean softwareDemo;
   private final boolean fake;
   private volatile long fakeNow;
   private volatile boolean closed;
@@ -49,13 +53,17 @@ public final class HomeHost implements HomeController.Port, AutoCloseable {
   private final FavoriteCoordinator favoriteCoordinator;
   private HomeController controller;
 
-  public HomeHost(Context context, String run, boolean fake, long now) {
+  public HomeHost(
+      Context context, String run, boolean fake, long now, IntegrationContext integration) {
     this.context = context.getApplicationContext();
     this.run = run;
     this.fake = fake;
     fakeNow = now;
-    facilities = new FacilityRepository(context);
-    favoriteCoordinator = favorites(facilities);
+    this.integration = integration;
+    softwareDemo =
+        integration != null && IntegrationContext.SOFTWARE_DATASET.equals(integration.datasetId);
+    facilities = softwareDemo ? null : new FacilityRepository(context);
+    favoriteCoordinator = softwareDemo ? null : favorites(facilities);
   }
 
   public void attach(HomeController c) {
@@ -72,21 +80,28 @@ public final class HomeHost implements HomeController.Port, AutoCloseable {
 
   private void initialize() throws Exception {
     if (service != null) return;
-    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-    try (InputStream in = context.getAssets().open("game_intro/catalog.json")) {
-      byte[] b = new byte[4096];
-      int n;
-      while ((n = in.read(b)) != -1) bytes.write(b, 0, n);
+    GameContent content;
+    if (integration != null) {
+      IntegrationComposition composition = IntegrationComposition.open(context, integration);
+      content = composition.content;
+      repo = composition.repository;
+    } else {
+      ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+      try (InputStream in = context.getAssets().open("game_intro/catalog.json")) {
+        byte[] b = new byte[4096];
+        int n;
+        while ((n = in.read(b)) != -1) bytes.write(b, 0, n);
+      }
+      content = GameJson.catalog(bytes.toString(StandardCharsets.UTF_8.name()));
+      if (!content.buildings.containsKey(TARGET)) throw new IllegalStateException("missing target");
+      repo =
+          run == null
+              ? RoomProgressRepository.open(context)
+              : new RoomProgressRepository(
+                  Room.databaseBuilder(
+                          context, GameProgressDatabase.class, "h04-debug-" + run + ".db")
+                      .build());
     }
-    GameContent content = GameJson.catalog(bytes.toString(StandardCharsets.UTF_8.name()));
-    if (!content.buildings.containsKey(TARGET)) throw new IllegalStateException("missing target");
-    repo =
-        run == null
-            ? RoomProgressRepository.open(context)
-            : new RoomProgressRepository(
-                Room.databaseBuilder(
-                        context, GameProgressDatabase.class, "h04-debug-" + run + ".db")
-                    .build());
     service =
         new ProgressService(
             content,
@@ -106,6 +121,10 @@ public final class HomeHost implements HomeController.Port, AutoCloseable {
   @Override
   public void load(
       long generation, Progress.Mode mode, String query, String category, boolean only) {
+    if (softwareDemo) {
+      loadSoftwareDemo(generation, mode);
+      return;
+    }
     favoriteCoordinator.read(
         favoriteSnapshot -> {
           if (closed) return;
@@ -156,9 +175,43 @@ public final class HomeHost implements HomeController.Port, AutoCloseable {
         });
   }
 
+  private void loadSoftwareDemo(long generation, Progress.Mode mode) {
+    worker.execute(
+        () -> {
+          try {
+            if (mode != integration.mode) throw new IllegalArgumentException("demo mode");
+            initialize();
+            Progress progress = service.read(mode, integration.targetId);
+            HomeController.Data data =
+                new HomeController.Data(
+                    Collections.emptyList(),
+                    Collections.emptyList(),
+                    Collections.emptySet(),
+                    progress,
+                    service.eligible(progress),
+                    false,
+                    now(),
+                    Collections.emptyMap());
+            main.post(
+                () -> {
+                  if (!closed) controller.loaded(generation, data);
+                });
+          } catch (Exception failure) {
+            main.post(
+                () -> {
+                  if (!closed) controller.failed(generation);
+                });
+          }
+        });
+  }
+
   @Override
   public void setFavorite(
       String id, boolean desired, java.util.function.Consumer<Boolean> complete) {
+    if (softwareDemo) {
+      complete.accept(false);
+      return;
+    }
     favoriteCoordinator.set(
         id,
         desired,

@@ -1,0 +1,39 @@
+
+com.example.firststep.game.integration.IntegrationBoundaryTest:......
+com.example.firststep.game.integration.IntegrationLoopTest:....
+com.example.firststep.game.integration.IntegrationModeLifecycleTest:..
+com.example.firststep.game.integration.IntegrationRestartTest:
+Error in resumeAfterRestart(com.example.firststep.game.integration.IntegrationRestartTest):
+java.lang.AssertionError: Explicit canonical restart run required
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.assertTrue(Assert.java:42)
+	at com.example.firststep.game.integration.IntegrationRestartTest.requested(IntegrationRestartTest.java:32)
+	at com.example.firststep.game.integration.IntegrationRestartTest.resumeAfterRestart(IntegrationRestartTest.java:88)
+
+Error in prepareRestart(com.example.firststep.game.integration.IntegrationRestartTest):
+java.lang.AssertionError: Explicit canonical restart run required
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.assertTrue(Assert.java:42)
+	at com.example.firststep.game.integration.IntegrationRestartTest.requested(IntegrationRestartTest.java:32)
+	at com.example.firststep.game.integration.IntegrationRestartTest.prepareRestart(IntegrationRestartTest.java:48)
+
+com.example.firststep.game.guide.GuideSmokeTest:.....
+com.example.firststep.game.guide.NarrationLifecycleTest:..
+
+Time: 74.709
+There were 2 failures:
+1) resumeAfterRestart(com.example.firststep.game.integration.IntegrationRestartTest)
+java.lang.AssertionError: Explicit canonical restart run required
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.assertTrue(Assert.java:42)
+	at com.example.firststep.game.integration.IntegrationRestartTest.requested(IntegrationRestartTest.java:32)
+	at com.example.firststep.game.integration.IntegrationRestartTest.resumeAfterRestart(IntegrationRestartTest.java:88)
+2) prepareRestart(com.example.firststep.game.integration.IntegrationRestartTest)
+java.lang.AssertionError: Explicit canonical restart run required
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.assertTrue(Assert.java:42)
+	at com.example.firststep.game.integration.IntegrationRestartTest.requested(IntegrationRestartTest.java:32)
+	at com.example.firststep.game.integration.IntegrationRestartTest.prepareRestart(IntegrationRestartTest.java:48)
+
+FAILURES!!!
+Tests run: 21,  Failures: 2

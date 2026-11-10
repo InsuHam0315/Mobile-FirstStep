@@ -10,6 +10,7 @@ import com.example.firststep.BuildConfig;
 import com.example.firststep.R;
 import com.example.firststep.game.composition.integration.*;
 import com.example.firststep.game.composition.introquiz.IntroQuizHost;
+import com.example.firststep.game.content.*;
 import com.example.firststep.game.data.local.*;
 import com.example.firststep.game.domain.*;
 import com.example.firststep.game.presentation.introquiz.IntroQuizController;
@@ -30,6 +31,8 @@ public final class IntroQuizActivity extends AppCompatActivity {
   private Bundle restored;
   private boolean resumed;
   private String[] sentences;
+  private NarrationContent softwareNarration;
+  private GuideBundle softwareGuide;
   private final ExecutorService integrationWorker = Executors.newSingleThreadExecutor();
   private IntegrationContext integrationContext;
   private boolean integrationRoute, routeReady;
@@ -148,6 +151,13 @@ public final class IntroQuizActivity extends AppCompatActivity {
       requestedIntegration =
           BuildConfig.DEBUG ? IntegrationIntentCodec.readContext(getIntent()) : null;
       if (requestedIntegration == null) error(getString(R.string.game_integration_error));
+      else if (softwareDemo(requestedIntegration)) {
+        ((TextView) findViewById(R.id.game_intro_title))
+            .setText(R.string.game_software_demo_intro_title);
+        ((TextView) findViewById(R.id.game_intro_disclosure))
+            .setText(R.string.game_software_demo_disclosure);
+        visible(R.id.game_intro_caption, false);
+      }
       return;
     }
     findViewById(R.id.game_intro_demo)
@@ -198,9 +208,16 @@ public final class IntroQuizActivity extends AppCompatActivity {
     initializeHost(instant, run);
   }
 
+  private static boolean softwareDemo(IntegrationContext context) {
+    return context != null && IntegrationContext.SOFTWARE_DATASET.equals(context.datasetId);
+  }
+
   private void initializeHost(boolean instant, String run) {
     TextView target = findViewById(R.id.game_intro_target);
-    if (integrationRoute && integrationContext != null) {
+    if (softwareDemo(integrationContext)) {
+      target.setText(R.string.game_software_demo_target);
+      ((TextView) findViewById(R.id.game_intro_back)).setText(R.string.game_software_demo_back);
+    } else if (integrationRoute && integrationContext != null) {
       target.setText(
           android.text.TextUtils.concat(
               getString(R.string.game_intro_target),
@@ -234,12 +251,19 @@ public final class IntroQuizActivity extends AppCompatActivity {
         }) visible(id, false);
     ((TextView) findViewById(R.id.game_intro_status)).setText(R.string.game_intro_ui_10);
     host =
-        new IntroQuizHost(this, modeName, instant, BuildConfig.DEBUG ? run : null, fake, fakeNow);
+        new IntroQuizHost(
+            this, modeName, instant, BuildConfig.DEBUG ? run : null, fake, fakeNow,
+            integrationContext);
     findViewById(R.id.game_intro_show_again).setOnClickListener(v -> controller.showIntro());
     findViewById(R.id.game_intro_replay).setOnClickListener(v -> controller.replay());
     findViewById(R.id.game_intro_next).setOnClickListener(v -> controller.next());
-    findViewById(R.id.game_intro_finish).setOnClickListener(v -> controller.finish());
-    findViewById(R.id.game_intro_skip).setOnClickListener(v -> controller.finish());
+    findViewById(R.id.game_intro_finish).setOnClickListener(v -> {
+      if (!softwareDemo(integrationContext) || controller.snapshot().sentence + 1 == sentences.length)
+        controller.finish();
+    });
+    findViewById(R.id.game_intro_skip).setOnClickListener(v -> {
+      if (!softwareDemo(integrationContext)) controller.finish();
+    });
     findViewById(R.id.game_quiz_start).setOnClickListener(v -> controller.start());
     findViewById(R.id.game_quiz_submit).setOnClickListener(v -> controller.submit());
     findViewById(R.id.game_quiz_retry).setOnClickListener(v -> controller.retry());
@@ -259,6 +283,14 @@ public final class IntroQuizActivity extends AppCompatActivity {
         },
         this::render,
         c -> {
+          if (softwareDemo(integrationContext)) {
+            IntegrationComposition composition = host.composition();
+            softwareNarration = composition.narration;
+            softwareGuide = composition.guide;
+            sentences =
+                softwareNarration.sentences().stream().map(sentence -> sentence.text)
+                    .toArray(String[]::new);
+          }
           controller = c;
           if (restored != null) {
             controller.restore(
@@ -277,7 +309,8 @@ public final class IntroQuizActivity extends AppCompatActivity {
             host.startTicks(controller);
           }
         },
-        () -> error(getString(R.string.game_intro_ui_4)));
+        () -> error(getString(softwareDemo(integrationContext)
+            ? R.string.game_integration_error : R.string.game_intro_ui_4)));
   }
 
   private Map<String, String> map(Bundle b, String key) {
@@ -429,6 +462,7 @@ public final class IntroQuizActivity extends AppCompatActivity {
 
   private void render(IntroQuizController.Snapshot s) {
     if (integrationRoute && !routeReady) return;
+    boolean software = softwareDemo(integrationContext);
     boolean intro = s.stage == IntroQuizController.Stage.INTRO,
         wait = s.stage == IntroQuizController.Stage.WAITING,
         quiz = s.stage == IntroQuizController.Stage.QUIZ,
@@ -437,6 +471,12 @@ public final class IntroQuizActivity extends AppCompatActivity {
         new int[] {
           R.id.game_intro_replay, R.id.game_intro_next, R.id.game_intro_finish, R.id.game_intro_skip
         }) visible(id, intro);
+    if (software) {
+      visible(R.id.game_intro_next, intro && s.sentence + 1 < sentences.length);
+      visible(R.id.game_intro_finish, intro && s.sentence + 1 == sentences.length);
+      visible(R.id.game_intro_skip, false);
+      renderSoftwareCaption(intro, s.sentence);
+    }
     visible(R.id.game_intro_show_again, wait || result);
     visible(R.id.game_intro_caption, intro);
     visible(
@@ -453,14 +493,16 @@ public final class IntroQuizActivity extends AppCompatActivity {
             || s.stage == IntroQuizController.Stage.ERROR);
     visible(R.id.game_quiz_result, result);
     String label =
-        "DEMO".equals(modeName)
+        software ? getString(R.string.game_software_demo_mode)
+        : "DEMO".equals(modeName)
             ? ((integrationRoute && integrationContext != null
                     ? integrationContext.mode == Progress.Mode.DEMO
                     : getIntent().getBooleanExtra("game_intro_instant_demo", false))
                 ? getString(R.string.game_intro_ui_5)
                 : getString(R.string.game_intro_ui_6))
             : getString(R.string.game_intro_ui_7);
-    if (integrationRoute || (BuildConfig.DEBUG && getIntent().hasExtra("game_intro_debug_run")))
+    if (!software
+        && (integrationRoute || (BuildConfig.DEBUG && getIntent().hasExtra("game_intro_debug_run"))))
       label += getString(R.string.game_intro_ui_8);
     if (fake) label += getString(R.string.game_intro_ui_9);
     if (BuildConfig.DEBUG
@@ -480,8 +522,9 @@ public final class IntroQuizActivity extends AppCompatActivity {
                   R.string.game_intro_remaining,
                   (s.remainingMillis / 1000 + (s.remainingMillis % 1000 == 0 ? 0 : 1)) / 60,
                   (s.remainingMillis / 1000 + (s.remainingMillis % 1000 == 0 ? 0 : 1)) % 60);
-      label += getString(R.string.game_intro_ui_14);
+      if (!software) label += getString(R.string.game_intro_ui_14);
     }
+    if (software && quiz) label += "\n" + getString(R.string.game_software_demo_quiz_policy);
     if (s.stage == IntroQuizController.Stage.ERROR)
       label += "\n" + getString(R.string.game_intro_storage_error);
     ((TextView) findViewById(R.id.game_intro_status)).setText(label);
@@ -501,6 +544,17 @@ public final class IntroQuizActivity extends AppCompatActivity {
             getResources().getDimension(R.dimen.game_text_body));
         title.setTag(q.id);
         list.addView(title);
+        if (software) {
+          GuideBundle.Question approved = approvedQuestion(q.id);
+          if (approved != null) {
+            TextView source = new TextView(this);
+            source.setTextColor(getColor(R.color.game_color_text));
+            source.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX,
+                getResources().getDimension(R.dimen.game_text_body));
+            bindSource(source, approved.getClaimId());
+            list.addView(source);
+          }
+        }
         RadioGroup group = new RadioGroup(this);
         group.setTag(q.id);
         for (GameContent.Option o : q.options) {
@@ -521,12 +575,63 @@ public final class IntroQuizActivity extends AppCompatActivity {
         .setText(
             result && s.result != null
                 ? (s.result.passed
-                        ? getString(R.string.game_intro_ui_15)
+                        ? getString(software ? R.string.game_software_demo_stamp
+                            : R.string.game_intro_ui_15)
                         : getString(R.string.game_intro_ui_16))
                     + " ("
                     + s.result.correct
                     + "/3)"
                 : "");
+  }
+
+  private void renderSoftwareCaption(boolean intro, int index) {
+    visible(R.id.game_software_demo_intro_art, intro);
+    visible(R.id.game_software_demo_caption_position, intro);
+    visible(R.id.game_software_demo_caption_origin, intro);
+    if (!intro) return;
+    ((TextView) findViewById(R.id.game_software_demo_caption_position))
+        .setText(getString(R.string.game_narration_position, index + 1, sentences.length));
+    TextView origin = findViewById(R.id.game_software_demo_caption_origin);
+    origin.setOnClickListener(null);
+    origin.setClickable(false);
+    NarrationContent.Sentence sentence = softwareNarration.sentences().get(index);
+    if (sentence.provenance == NarrationContent.Provenance.CLAIM) {
+      bindSource(origin, sentence.claimId);
+    } else {
+      origin.setText(sentence.provenance == NarrationContent.Provenance.FICTIONAL
+          ? R.string.game_narration_fictional : R.string.game_narration_editorial);
+    }
+  }
+
+  private GuideBundle.Question approvedQuestion(String questionId) {
+    for (GuideBundle.Question question : softwareGuide.getQuestions())
+      if (questionId.equals(question.getId())) return question;
+    return null;
+  }
+
+  private void bindSource(TextView text, String claimId) {
+    GuideBundle.Source source = null;
+    for (GuideBundle.Claim claim : softwareGuide.getClaims()) {
+      if (!claimId.equals(claim.getId())) continue;
+      for (GuideBundle.Source item : softwareGuide.getSources()) {
+        if (claim.getSourceId().equals(item.getId())) {
+          source = item;
+          break;
+        }
+      }
+      break;
+    }
+    if (source == null) {
+      text.setText(R.string.game_narration_source_unavailable);
+      return;
+    }
+    GuideBundle.Source official = source;
+    text.setText(getString(R.string.game_narration_source, official.getLabel(),
+        official.getCheckedDate(), official.getUrl()));
+    text.setOnClickListener(v -> {
+      if (!GuideAdapters.openOfficialSource(this, official))
+        Toast.makeText(this, R.string.game_guide_source_failed, Toast.LENGTH_LONG).show();
+    });
   }
 
   private void reminder() {
