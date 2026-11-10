@@ -13,9 +13,9 @@ This index is management-owned. Each implementation owner maintains its own `doc
 | [map-home](map-home/README.md) | Map, facility lookup and Home presentation | Source-based contract recorded; implementation evidence/limits in linked page |
 | [integration](integration/README.md) | Registered datasets, navigation and isolated compositions | Source-based contract recorded; implementation evidence/limits in linked page |
 | [firebase](firebase/README.md) | Google identity and server-confirmed first profile | Source-based contract recorded; implementation evidence/limits in linked page |
-| [app-entry](app-entry/README.md) | Confirmed account Home to department guide | Identity owner; implemented guide binding6fbb872, campus-home consumer update active |
-| campus-content | Sourced department guide, DEMO episode, independent campus navigation | Campus-content owner; navigation7a8a3ce complete, assembled in app-entry8158893 for consumer checks |
-| progress-sync | Account-scoped local outbox and backend sync adapters | Implementation PM / Terra owner; independent implementation in progress |
+| [app-entry](app-entry/README.md) | Confirmed account Home to Campus Home | Identity owner;1976402 integrated02eadec, combined route runtime pending |
+| [campus-content](campus-content/README.md) | Sourced department guide, DEMO episode, map/facility navigation | Campus-content owner;7a8a3ce integrated02eadec, no invented mission pins |
+| [progress-sync](progress-sync/README.md) | Account-scoped local outbox and backend sync adapters | PM/Terra;68f7978 integrated934d9b0, session/gameplay binding and service validation pending |
 
 Page paths follow `docs/modules/<module>/README.md`; entries marked being added are not existing documentation or completed implementation claims. Historical detailed evidence remains in `docs/harness/handoffs/` and `docs/harness/reviews/`; link to it rather than duplicating entire histories.
 
@@ -27,4 +27,6 @@ Current shared constraints: Java/XML; no silent DEMO/fixture/anonymous-to-accoun
 
 ## Immediate integrated behavior
 
-`IdentityActivity` now checks current `SessionState.Stage.COMPLETE` and opens `GuideActivity` by an explicit Intent without account/storage extras. The guide exposes its registered debug-only local DEMO episode separately. This specific installed route and Back return were verified on QA5572. New registration recovery, authenticated logout, live progress sync, field arrival and complete post-design validation are separate pending evidence.
+`IdentityActivity` checks current `SessionState.Stage.COMPLETE` and opens `CampusHomeRoute.intent(this)` without account/storage extras. Campus Home offers the map, facility directory and department guide. The guide exposes its registered debug-only local DEMO separately. Earlier v1 direct-guide navigation and Back were verified on QA5572; that user-held installation remains unchanged. New v3 Campus Home navigation is built and source-reviewed, with runtime pending.
+
+Combined checkpoint934d9b0 passed36 focused JVM tests, APK assembly, Android test compilation and lint (0 errors/95 warnings), all61 Gradle tasks executed. Sync is additive infrastructure, not live account/gameplay synchronization: its production registry remains closed and actual delivery/session binding is the next implementation slice. New-profile recovery, authenticated logout, service synchronization, field arrival and post-design validation remain distinct pending evidence. See [combined checkpoint record](../harness/reviews/ENTRY_SYNC-integration.md).

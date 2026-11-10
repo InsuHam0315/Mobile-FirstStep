@@ -1,12 +1,23 @@
 {
   "schemaVersion": 1,
   "baselineSha": "a3b8f0f7589a501f8a086e1dc9cda11889ec452d",
-  "baselineNote": "IMPLEMENTATION_FIRST.md supersedes sequential certification. H10C55ba443 checkpoint inspected; H07 account Home works but exploration link absent. app-entry repairs navigation, campus-content independently extends app navigation, progress-sync implements isolated contracts. Full combined validation and live checks pending.",
+  "baselineNote": "Implementation-first: identity/campus navigation integrated02eadec; isolated sync core integrated934d9b0. Fresh36 focused tests/build/test compilation/lint passed. Account/gameplay delivery remains implementation work; service/device/whole-app checks pending. Latest design unmerged.",
   "coordinationScope": "docs/harness/IMPLEMENTATION_FIRST.md",
-  "activeBranches": ["campus-content", "progress-sync"],
-  "appEntryCheckpoint": {"branch":"app-entry","candidateSha":"6fbb872883b6623bb6e6adb6d53d3c3f2f4ff7e0","integratedSha":"982a17cc3274ec6726ff7ee4e7beb1a581874c05","status":"implemented_targeted_navigation_verified","combinedValidation":"pending","installedDevice":"QA5572"},
+  "activeBranches": [
+    "progress-sync"
+  ],
+  "appEntryCheckpoint": {
+    "branch": "app-entry",
+    "candidateSha": "1976402a4bae677f0e94606842bbce78cdb443ac",
+    "integratedSha": "02eadec6744cd16f919a33918013f32ed5a2ce7c",
+    "status": "integrated_pending_combined_runtime",
+    "combinedValidation": "36 selected JVM tests/APK/test compilation/lint PASS at934d9b0; runtime pending",
+    "installedDevice": "QA5572 remains user-held on v1 6fbb872"
+  },
   "activeTask": "H07",
-  "parallelTasks": ["H10"],
+  "parallelTasks": [
+    "H10"
+  ],
   "decisions": {
     "coreGame": "approved",
     "firebaseAuth": "approved",
@@ -16,16 +27,372 @@
     "legacyFeatures": "approved"
   },
   "tasks": [
-    {"id":"H00","branch":"codex/game-harness","status":"verified","integratedSha":"6dc8af1f67a8487c4a4c9e2f64b38367583ea701","dependsOn":[],"decisionKeys":[],"owner":"coordinator","writeScope":["AGENTS.md",".codex/agents/","docs/harness/","scripts/harness.py",".gitignore"],"goal":"Install English agent instructions, staged task/worktree tooling, and replaceable UI boundaries.","acceptance":["Manifest and role profiles validate","Worktree checks reject missing baseline, dirty checkout, and inactive tasks","No app source or runtime settings changed"]},
-    {"id":"H01","branch":"codex/game-foundation","status":"verified","verifiedSha":"e21c2a645e5f5fea77a7029b74fc8dc5573b1bbb","managementReview":"passed","reviewPath":"docs/harness/reviews/H01-management.md","dependsOn":["H00"],"decisionKeys":[],"owner":"implementation_pm","writeScope":["app/src/main/java/com/example/firststep/game/","app/src/main/res/values/game_*.xml","app/src/main/res/layout/game_*.xml","app/src/test/java/com/example/firststep/game/"],"goal":"Define independent screen state/actions, domain/adapter interfaces, resource tokens and a minimal preview shell.","acceptance":["UI reads state and emits actions without storage/sensor/game-rule calls","Fake adapters render a screen without camera/GPS/network","A token/layout-only change leaves behavior tests unchanged","Legacy app remains runnable until integration is authorized"],"integratedSha":"0c5f6336daaf4daf22fb4460a446f33e284dc62e"},
-    {"id":"H02","branch":"progress","status":"verified","integratedSha":"84dbff23368c0f58841fd554fffd134f5094f998","verifiedSha":"7b495c3e9791d77f3753b6538442c6dc2848d205","candidateSha":"1a369d24256f0e8d916d6a9f4bac2a1bbfd66a61","managementReview":"passed","reviewPath":"docs/harness/reviews/H02-management.md","dependsOn":["H01"],"decisionKeys":["coreGame"],"owner":"implementation_pm","writeScope":["app/src/main/java/com/example/firststep/game/domain/","app/src/main/java/com/example/firststep/game/data/local/","app/src/main/assets/game/","app/src/test/java/com/example/firststep/game/","app/src/androidTest/java/com/example/firststep/game/data/"],"goal":"Implement versioned per-building progress, free order, quiz eligibility, scoring and local repository adapters.","acceptance":["Multiple waiting buildings and restart preserve independent eligibility","2/3 pass, retries and shuffled choices preserve answer identity","Duplicate rewards are prevented","Legacy data migration/isolation policy is documented and tested"]},
-    {"id":"H03","branch":"discovery","status":"verified","candidateSha":"c90bb271a38211a0dbc25ab30f603d9c1ed0d8af","managementReview":"passed","reviewPath":"docs/harness/reviews/H03-management.md","integratedSha":"ab73238929d849e20b5aa830f70f316e382eeffa","verifiedSha":"28ebd70e0b5ce376595e1119947745a2899f90ca","dependsOn":["H02"],"decisionKeys":["coreGame"],"owner":"implementation_pm","writeScope":["app/src/main/java/com/example/firststep/game/device/","app/src/main/java/com/example/firststep/game/ui/discovery/","app/src/main/res/layout/game_discovery*.xml","app/src/test/java/com/example/firststep/game/device/"],"goal":"Build camera-overlay discovery, orientation and summon actions with explicit fallbacks.","acceptance":["Camera denial/absence does not trap the user","Distinct movement pulses are not duplicate samples","Unavailable/too-dark light input has a recoverable path","Overlay is never reported as tracked AR"]},
-    {"id":"H04","branch":"intro-quiz","status":"verified","integratedSha":"21dd08c8bd3ed4ba80f38ed2269524806387616d","candidateSha":"567ed5779f396a346b34ae1b670a70bcb730394d","verifiedSha":"329992a90a9ab698687d849d817fac27cd2ebd02","managementReview":"passed","reviewPath":"docs/harness/reviews/H04-management.md","dependsOn":["H02"],"decisionKeys":["coreGame"],"owner":"implementation_pm","writeScope":["app/src/main/java/com/example/firststep/game/ui/intro/","app/src/main/java/com/example/firststep/game/ui/quiz/","app/src/main/java/com/example/firststep/game/speech/","app/src/main/java/com/example/firststep/game/notifications/","app/src/main/res/layout/game_intro*.xml","app/src/main/res/layout/game_quiz*.xml"],"goal":"Build sentence-level TTS/captions, quiz/result screens and best-effort notifications.","acceptance":["No TTS voice still allows readable introduction","Replay/skip rules do not duplicate or reset eligibility unexpectedly","Late/denied notification does not block an eligible quiz","Interruption/recreation preserve the chosen quiz attempt policy"]},
-    {"id":"H05","branch":"map-home","status":"verified","integratedSha":"4e7654fc88f49adb23dd6f4608d76a8ad9f0e91e","candidateSha":"7b1f1af673b9d2575a8b9710c2d1fb5c0a44fdaa","verifiedSha":"b6613a86b1da48229585fe65ecef47adc8040162","managementReview":"passed","reviewPath":"docs/harness/reviews/H05-management.md","dependsOn":["H02","H04"],"decisionKeys":["coreGame","legacyFeatures"],"owner":"implementation_pm","writeScope":["app/src/main/java/com/example/firststep/game/ui/home/","app/src/main/java/com/example/firststep/game/ui/map/","app/src/main/java/com/example/firststep/game/ui/profile/","app/src/main/java/com/example/firststep/game/ui/ending/","app/src/main/res/layout/game_home*.xml","app/src/main/res/layout/game_map*.xml","app/src/main/res/layout/game_profile*.xml","app/src/main/res/layout/game_ending*.xml"],"goal":"Build home/map/profile/ending surfaces using stable state contracts.","acceptance":["Free-order progress and waiting quizzes are understandable","Illustrated map coordinate mapping is explicit, not guessed","Unknown departments are not falsely labeled digital-info students","Tokens/assets/layout can be replaced without domain changes"]},
-    {"id":"H06","branch":"integration","status":"verified","integratedSha":"25c0e6eddf57196e088c1740d5f9e3e0b9190697","candidateSha":"087e983158288342593931022d0ff2d20757b377","verifiedSha":"edf3848035d82f1538448ec2c0355e28ecafa15f","managementReview":"passed","reviewPath":"docs/harness/reviews/H06-management.md","dependsOn":["H03","H04","H05"],"decisionKeys":["coreGame"],"owner":"coordinator","writeScope":["app/","gradle/libs.versions.toml","docs/verification/","scripts/"],"goal":"Connect one explicitly simulated fixture-only digital-information/software technical loop under H06_SCOPE.md; authored campus content and expansion remain separately gated.","acceptance":["One complete loop passes before expanding content","Required Gradle checks and independent review pass","Screenshots identify real APK vs simulated input","Real-device/field limits and debug-mode evidence remain separate"]},
-    {"id":"H07","branch":"firebase","status":"in_progress","executionState":"app_entry_binding_in_isolated_worktree_parallel_sync_contracts","resumeScopePath":"docs/harness/H07_RESUME.md","candidateSha":"ab117d3c9144a6e908f1d51bd0f5932ee24a02d6","publishedSha":"a686a263b768082731afd98fe836df7375d64f9d","managementReview":"identity_and_app_entry_implemented_integrated_live_remaining_and_combined_validation_pending","implementationIntegratedSha":"982a17cc3274ec6726ff7ee4e7beb1a581874c05","reviewPath":"docs/harness/reviews/H07-management.md","activeSlice":"identity-profile","followUpSlice":"progress-sync: implementation dispatched under H07B_SCOPE.md; live/account and combined validation remain pending","dependsOn":["H06"],"decisionKeys":["firebaseAuth","firestore"],"owner":"implementation_pm","writeScope":["app/src/main/java/com/example/firststep/game/auth/","app/src/main/java/com/example/firststep/game/data/remote/","app/src/main/java/com/example/firststep/game/ui/","app/src/main/java/com/example/firststep/game/composition/","app/src/main/res/","app/src/main/AndroidManifest.xml","app/src/debug/","app/src/test/","app/src/androidTest/","app/build.gradle.kts","build.gradle.kts","gradle/libs.versions.toml",".gitignore","firebase/","scripts/"],"goal":"Implement Google Firebase identity and required first profile only under H07_SCOPE.md. H07B exploration sync is a later separate slice.","acceptance":["Ownership rules and account isolation are tested","Offline/retry/reset conflicts have defined behavior","Actual configured login/sync is distinguished from mock tests"]},
-    {"id":"H08","branch":"chatbot","status":"queued","dependsOn":["H06"],"decisionKeys":["geminiRag"],"owner":"implementation_pm","writeScope":["app/src/main/java/com/example/firststep/game/ui/chat/","app/src/main/java/com/example/firststep/game/chat/","backend/chat/","app/src/main/res/layout/game_chat*.xml"],"goal":"Add bounded official-source RAG without coupling quiz progress to network availability.","acceptance":["API keys remain server-side","Answers cite known source documents or abstain","Quota/network failure leaves exploration usable","Identity strategy and scope are resolved before implementation"]},
-    {"id":"H09","branch":"reskin","status":"queued","dependsOn":["H06"],"decisionKeys":[],"owner":"implementation_pm","writeScope":["app/src/main/java/com/example/firststep/game/ui/","app/src/main/res/"],"goal":"Apply selected design references by changing presentation, tokens and assets.","acceptance":["No domain/device/storage logic changes are needed for visual-only requirements","Behavior checks remain green","Reference-based visual QA checks text, spacing, scrolling and accessibility"]},
-    {"id":"H10","branch":"campus-content","status":"in_progress","implementationThread":"01a1c08e-5337-78d2-a4c4-4bffda0e21ed","activeSlice":"software-demo-episode","continuationScopePath":"docs/harness/H10C_SCOPE.md","priorSliceStatus":"H10 guide/practice and H10B narration accepted/integrated a3b8f0f","candidateSha":"55ba443aa46a0e73adc39f08a608988457912902","publishedSha":"0e2628e15d771cbcc447dae0f73bb09b4d40ba81","verifiedSha":null,"integratedSha":null,"managementReview":"H10C_exact_checkpoint_pass_combined_validation_pending","reviewPath":"docs/harness/reviews/H10C-management.md","baseSha":"8024f390606acbde7324d34f0e89570d93b1a821","coordinationPath":"docs/harness/reviews/H10-coordination.md","dependsOn":["H06"],"decisionKeys":["coreGame"],"owner":"implementation_pm","scopePath":"docs/harness/H10_SCOPE.md","writeScope":["app/src/main/java/com/example/firststep/game/content/","app/src/main/java/com/example/firststep/game/ui/guide/","app/src/main/java/com/example/firststep/MainActivity.java","app/src/main/java/com/example/firststep/game/ui/home/","app/src/main/assets/campus_content/","app/src/main/res/","app/src/main/AndroidManifest.xml","app/src/test/","app/src/androidTest/","docs/harness/handoffs/H10.md","docs/verification/","app/src/main/java/com/example/firststep/game/composition/integration/","app/src/main/java/com/example/firststep/game/ui/intro/","app/src/main/java/com/example/firststep/game/ui/quiz/","app/src/debug/","docs/harness/handoffs/H10C.md","docs/harness/evidence/H10C/"],"goal":"Connect one sourced software-department DEMO episode under H10C_SCOPE.md with isolated local progress; retain transient guide/practice/preview and all H07 gates.","acceptance":["Registered DEMO dataset and storage cannot collide with H06, legacy, field or account records","Approved sourced narration/questions and direction-SHAKE flow connect through actual APK with truthful simulated arrival","Retry, idempotent stamp, restart and stale/cancel/mismatch handling verified; existing flows preserved","Required checks, exact candidate independent review and isolated integration pass; field/cloud scope excluded"],"executionState":"H10C_complete_checkpoint_app_navigation_followup_active","priorAcceptedSlice":{"name":"H10B","candidateSha":"0e2628e15d771cbcc447dae0f73bb09b4d40ba81","verifiedSha":"311dcc690b5a3044e69458c96a1a5446106dc82f","integratedSha":"a3b8f0f7589a501f8a086e1dc9cda11889ec452d","reviewPath":"docs/harness/reviews/H10B-management.md"}}
-  ]
+    {
+      "id": "H00",
+      "branch": "codex/game-harness",
+      "status": "verified",
+      "integratedSha": "6dc8af1f67a8487c4a4c9e2f64b38367583ea701",
+      "dependsOn": [],
+      "decisionKeys": [],
+      "owner": "coordinator",
+      "writeScope": [
+        "AGENTS.md",
+        ".codex/agents/",
+        "docs/harness/",
+        "scripts/harness.py",
+        ".gitignore"
+      ],
+      "goal": "Install English agent instructions, staged task/worktree tooling, and replaceable UI boundaries.",
+      "acceptance": [
+        "Manifest and role profiles validate",
+        "Worktree checks reject missing baseline, dirty checkout, and inactive tasks",
+        "No app source or runtime settings changed"
+      ]
+    },
+    {
+      "id": "H01",
+      "branch": "codex/game-foundation",
+      "status": "verified",
+      "verifiedSha": "e21c2a645e5f5fea77a7029b74fc8dc5573b1bbb",
+      "managementReview": "passed",
+      "reviewPath": "docs/harness/reviews/H01-management.md",
+      "dependsOn": [
+        "H00"
+      ],
+      "decisionKeys": [],
+      "owner": "implementation_pm",
+      "writeScope": [
+        "app/src/main/java/com/example/firststep/game/",
+        "app/src/main/res/values/game_*.xml",
+        "app/src/main/res/layout/game_*.xml",
+        "app/src/test/java/com/example/firststep/game/"
+      ],
+      "goal": "Define independent screen state/actions, domain/adapter interfaces, resource tokens and a minimal preview shell.",
+      "acceptance": [
+        "UI reads state and emits actions without storage/sensor/game-rule calls",
+        "Fake adapters render a screen without camera/GPS/network",
+        "A token/layout-only change leaves behavior tests unchanged",
+        "Legacy app remains runnable until integration is authorized"
+      ],
+      "integratedSha": "0c5f6336daaf4daf22fb4460a446f33e284dc62e"
+    },
+    {
+      "id": "H02",
+      "branch": "progress",
+      "status": "verified",
+      "integratedSha": "84dbff23368c0f58841fd554fffd134f5094f998",
+      "verifiedSha": "7b495c3e9791d77f3753b6538442c6dc2848d205",
+      "candidateSha": "1a369d24256f0e8d916d6a9f4bac2a1bbfd66a61",
+      "managementReview": "passed",
+      "reviewPath": "docs/harness/reviews/H02-management.md",
+      "dependsOn": [
+        "H01"
+      ],
+      "decisionKeys": [
+        "coreGame"
+      ],
+      "owner": "implementation_pm",
+      "writeScope": [
+        "app/src/main/java/com/example/firststep/game/domain/",
+        "app/src/main/java/com/example/firststep/game/data/local/",
+        "app/src/main/assets/game/",
+        "app/src/test/java/com/example/firststep/game/",
+        "app/src/androidTest/java/com/example/firststep/game/data/"
+      ],
+      "goal": "Implement versioned per-building progress, free order, quiz eligibility, scoring and local repository adapters.",
+      "acceptance": [
+        "Multiple waiting buildings and restart preserve independent eligibility",
+        "2/3 pass, retries and shuffled choices preserve answer identity",
+        "Duplicate rewards are prevented",
+        "Legacy data migration/isolation policy is documented and tested"
+      ]
+    },
+    {
+      "id": "H03",
+      "branch": "discovery",
+      "status": "verified",
+      "candidateSha": "c90bb271a38211a0dbc25ab30f603d9c1ed0d8af",
+      "managementReview": "passed",
+      "reviewPath": "docs/harness/reviews/H03-management.md",
+      "integratedSha": "ab73238929d849e20b5aa830f70f316e382eeffa",
+      "verifiedSha": "28ebd70e0b5ce376595e1119947745a2899f90ca",
+      "dependsOn": [
+        "H02"
+      ],
+      "decisionKeys": [
+        "coreGame"
+      ],
+      "owner": "implementation_pm",
+      "writeScope": [
+        "app/src/main/java/com/example/firststep/game/device/",
+        "app/src/main/java/com/example/firststep/game/ui/discovery/",
+        "app/src/main/res/layout/game_discovery*.xml",
+        "app/src/test/java/com/example/firststep/game/device/"
+      ],
+      "goal": "Build camera-overlay discovery, orientation and summon actions with explicit fallbacks.",
+      "acceptance": [
+        "Camera denial/absence does not trap the user",
+        "Distinct movement pulses are not duplicate samples",
+        "Unavailable/too-dark light input has a recoverable path",
+        "Overlay is never reported as tracked AR"
+      ]
+    },
+    {
+      "id": "H04",
+      "branch": "intro-quiz",
+      "status": "verified",
+      "integratedSha": "21dd08c8bd3ed4ba80f38ed2269524806387616d",
+      "candidateSha": "567ed5779f396a346b34ae1b670a70bcb730394d",
+      "verifiedSha": "329992a90a9ab698687d849d817fac27cd2ebd02",
+      "managementReview": "passed",
+      "reviewPath": "docs/harness/reviews/H04-management.md",
+      "dependsOn": [
+        "H02"
+      ],
+      "decisionKeys": [
+        "coreGame"
+      ],
+      "owner": "implementation_pm",
+      "writeScope": [
+        "app/src/main/java/com/example/firststep/game/ui/intro/",
+        "app/src/main/java/com/example/firststep/game/ui/quiz/",
+        "app/src/main/java/com/example/firststep/game/speech/",
+        "app/src/main/java/com/example/firststep/game/notifications/",
+        "app/src/main/res/layout/game_intro*.xml",
+        "app/src/main/res/layout/game_quiz*.xml"
+      ],
+      "goal": "Build sentence-level TTS/captions, quiz/result screens and best-effort notifications.",
+      "acceptance": [
+        "No TTS voice still allows readable introduction",
+        "Replay/skip rules do not duplicate or reset eligibility unexpectedly",
+        "Late/denied notification does not block an eligible quiz",
+        "Interruption/recreation preserve the chosen quiz attempt policy"
+      ]
+    },
+    {
+      "id": "H05",
+      "branch": "map-home",
+      "status": "verified",
+      "integratedSha": "4e7654fc88f49adb23dd6f4608d76a8ad9f0e91e",
+      "candidateSha": "7b1f1af673b9d2575a8b9710c2d1fb5c0a44fdaa",
+      "verifiedSha": "b6613a86b1da48229585fe65ecef47adc8040162",
+      "managementReview": "passed",
+      "reviewPath": "docs/harness/reviews/H05-management.md",
+      "dependsOn": [
+        "H02",
+        "H04"
+      ],
+      "decisionKeys": [
+        "coreGame",
+        "legacyFeatures"
+      ],
+      "owner": "implementation_pm",
+      "writeScope": [
+        "app/src/main/java/com/example/firststep/game/ui/home/",
+        "app/src/main/java/com/example/firststep/game/ui/map/",
+        "app/src/main/java/com/example/firststep/game/ui/profile/",
+        "app/src/main/java/com/example/firststep/game/ui/ending/",
+        "app/src/main/res/layout/game_home*.xml",
+        "app/src/main/res/layout/game_map*.xml",
+        "app/src/main/res/layout/game_profile*.xml",
+        "app/src/main/res/layout/game_ending*.xml"
+      ],
+      "goal": "Build home/map/profile/ending surfaces using stable state contracts.",
+      "acceptance": [
+        "Free-order progress and waiting quizzes are understandable",
+        "Illustrated map coordinate mapping is explicit, not guessed",
+        "Unknown departments are not falsely labeled digital-info students",
+        "Tokens/assets/layout can be replaced without domain changes"
+      ]
+    },
+    {
+      "id": "H06",
+      "branch": "integration",
+      "status": "verified",
+      "integratedSha": "25c0e6eddf57196e088c1740d5f9e3e0b9190697",
+      "candidateSha": "087e983158288342593931022d0ff2d20757b377",
+      "verifiedSha": "edf3848035d82f1538448ec2c0355e28ecafa15f",
+      "managementReview": "passed",
+      "reviewPath": "docs/harness/reviews/H06-management.md",
+      "dependsOn": [
+        "H03",
+        "H04",
+        "H05"
+      ],
+      "decisionKeys": [
+        "coreGame"
+      ],
+      "owner": "coordinator",
+      "writeScope": [
+        "app/",
+        "gradle/libs.versions.toml",
+        "docs/verification/",
+        "scripts/"
+      ],
+      "goal": "Connect one explicitly simulated fixture-only digital-information/software technical loop under H06_SCOPE.md; authored campus content and expansion remain separately gated.",
+      "acceptance": [
+        "One complete loop passes before expanding content",
+        "Required Gradle checks and independent review pass",
+        "Screenshots identify real APK vs simulated input",
+        "Real-device/field limits and debug-mode evidence remain separate"
+      ]
+    },
+    {
+      "id": "H07",
+      "branch": "firebase",
+      "status": "in_progress",
+      "executionState": "identity_and_campus_home_integrated_sync_core_integrated_binding_next",
+      "resumeScopePath": "docs/harness/H07_RESUME.md",
+      "candidateSha": "ab117d3c9144a6e908f1d51bd0f5932ee24a02d6",
+      "publishedSha": "a686a263b768082731afd98fe836df7375d64f9d",
+      "managementReview": "identity_and_app_entry_implemented_integrated_live_remaining_and_combined_validation_pending",
+      "implementationIntegratedSha": "982a17cc3274ec6726ff7ee4e7beb1a581874c05",
+      "reviewPath": "docs/harness/reviews/H07-management.md",
+      "activeSlice": "identity-profile",
+      "followUpSlice": "progress-sync core integrated934d9b0; session/gameplay delivery requires implementation before combined validation",
+      "dependsOn": [
+        "H06"
+      ],
+      "decisionKeys": [
+        "firebaseAuth",
+        "firestore"
+      ],
+      "owner": "implementation_pm",
+      "writeScope": [
+        "app/src/main/java/com/example/firststep/game/auth/",
+        "app/src/main/java/com/example/firststep/game/data/remote/",
+        "app/src/main/java/com/example/firststep/game/ui/",
+        "app/src/main/java/com/example/firststep/game/composition/",
+        "app/src/main/res/",
+        "app/src/main/AndroidManifest.xml",
+        "app/src/debug/",
+        "app/src/test/",
+        "app/src/androidTest/",
+        "app/build.gradle.kts",
+        "build.gradle.kts",
+        "gradle/libs.versions.toml",
+        ".gitignore",
+        "firebase/",
+        "scripts/"
+      ],
+      "goal": "Implement Google Firebase identity and required first profile only under H07_SCOPE.md. H07B exploration sync is a later separate slice.",
+      "acceptance": [
+        "Ownership rules and account isolation are tested",
+        "Offline/retry/reset conflicts have defined behavior",
+        "Actual configured login/sync is distinguished from mock tests"
+      ]
+    },
+    {
+      "id": "H08",
+      "branch": "chatbot",
+      "status": "queued",
+      "dependsOn": [
+        "H06"
+      ],
+      "decisionKeys": [
+        "geminiRag"
+      ],
+      "owner": "implementation_pm",
+      "writeScope": [
+        "app/src/main/java/com/example/firststep/game/ui/chat/",
+        "app/src/main/java/com/example/firststep/game/chat/",
+        "backend/chat/",
+        "app/src/main/res/layout/game_chat*.xml"
+      ],
+      "goal": "Add bounded official-source RAG without coupling quiz progress to network availability.",
+      "acceptance": [
+        "API keys remain server-side",
+        "Answers cite known source documents or abstain",
+        "Quota/network failure leaves exploration usable",
+        "Identity strategy and scope are resolved before implementation"
+      ]
+    },
+    {
+      "id": "H09",
+      "branch": "reskin",
+      "status": "queued",
+      "dependsOn": [
+        "H06"
+      ],
+      "decisionKeys": [],
+      "owner": "implementation_pm",
+      "writeScope": [
+        "app/src/main/java/com/example/firststep/game/ui/",
+        "app/src/main/res/"
+      ],
+      "goal": "Apply selected design references by changing presentation, tokens and assets.",
+      "acceptance": [
+        "No domain/device/storage logic changes are needed for visual-only requirements",
+        "Behavior checks remain green",
+        "Reference-based visual QA checks text, spacing, scrolling and accessibility"
+      ]
+    },
+    {
+      "id": "H10",
+      "branch": "campus-content",
+      "status": "in_progress",
+      "implementationThread": "01a1c08e-5337-78d2-a4c4-4bffda0e21ed",
+      "activeSlice": "software-demo-episode",
+      "continuationScopePath": "docs/harness/H10C_SCOPE.md",
+      "priorSliceStatus": "H10 guide/practice and H10B narration accepted/integrated a3b8f0f",
+      "candidateSha": "55ba443aa46a0e73adc39f08a608988457912902",
+      "publishedSha": "0e2628e15d771cbcc447dae0f73bb09b4d40ba81",
+      "verifiedSha": null,
+      "integratedSha": null,
+      "managementReview": "H10C_exact_checkpoint_pass_combined_validation_pending",
+      "reviewPath": "docs/harness/reviews/H10C-management.md",
+      "baseSha": "8024f390606acbde7324d34f0e89570d93b1a821",
+      "coordinationPath": "docs/harness/reviews/H10-coordination.md",
+      "dependsOn": [
+        "H06"
+      ],
+      "decisionKeys": [
+        "coreGame"
+      ],
+      "owner": "implementation_pm",
+      "scopePath": "docs/harness/H10_SCOPE.md",
+      "writeScope": [
+        "app/src/main/java/com/example/firststep/game/content/",
+        "app/src/main/java/com/example/firststep/game/ui/guide/",
+        "app/src/main/java/com/example/firststep/MainActivity.java",
+        "app/src/main/java/com/example/firststep/game/ui/home/",
+        "app/src/main/assets/campus_content/",
+        "app/src/main/res/",
+        "app/src/main/AndroidManifest.xml",
+        "app/src/test/",
+        "app/src/androidTest/",
+        "docs/harness/handoffs/H10.md",
+        "docs/verification/",
+        "app/src/main/java/com/example/firststep/game/composition/integration/",
+        "app/src/main/java/com/example/firststep/game/ui/intro/",
+        "app/src/main/java/com/example/firststep/game/ui/quiz/",
+        "app/src/debug/",
+        "docs/harness/handoffs/H10C.md",
+        "docs/harness/evidence/H10C/"
+      ],
+      "goal": "Connect one sourced software-department DEMO episode under H10C_SCOPE.md with isolated local progress; retain transient guide/practice/preview and all H07 gates.",
+      "acceptance": [
+        "Registered DEMO dataset and storage cannot collide with H06, legacy, field or account records",
+        "Approved sourced narration/questions and direction-SHAKE flow connect through actual APK with truthful simulated arrival",
+        "Retry, idempotent stamp, restart and stale/cancel/mismatch handling verified; existing flows preserved",
+        "Required checks, exact candidate independent review and isolated integration pass; field/cloud scope excluded"
+      ],
+      "executionState": "H10C_integrated982a17c_campus_home_navigation_integrated02eadec",
+      "priorAcceptedSlice": {
+        "name": "H10B",
+        "candidateSha": "0e2628e15d771cbcc447dae0f73bb09b4d40ba81",
+        "verifiedSha": "311dcc690b5a3044e69458c96a1a5446106dc82f",
+        "integratedSha": "a3b8f0f7589a501f8a086e1dc9cda11889ec452d",
+        "reviewPath": "docs/harness/reviews/H10B-management.md"
+      },
+      "navigationIntegratedSha": "02eadec6744cd16f919a33918013f32ed5a2ce7c"
+    }
+  ],
+  "progressSyncCheckpoint": {
+    "branch": "progress-sync",
+    "candidateSha": "68f7978aa12ebb7908fcf77f99271682cf2d0c06",
+    "integratedSha": "934d9b0a5b30b4e36b9bc2a21d167534dbe44f58",
+    "status": "core_integrated_binding_not_yet_implemented",
+    "productionRegistry": "empty; no live progress access enabled"
+  }
 }
