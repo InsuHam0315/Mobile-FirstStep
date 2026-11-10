@@ -10,7 +10,8 @@ public final class IdentityViewModel extends ViewModel {
 
   IdentityViewModel(IdentityRuntime runtime) {
     this.runtime = runtime;
-    controller = new SessionController(runtime.auth(), runtime.profiles());
+    controller =
+        new SessionController(runtime.auth(), runtime.profiles(), runtime.confirmedOwnerObserver());
   }
 
   @Override
