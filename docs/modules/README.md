@@ -13,12 +13,12 @@ This index is management-owned. Each implementation owner maintains its own `doc
 | [map-home](map-home/README.md) | Map, facility lookup and Home presentation | Source-based contract recorded; implementation evidence/limits in linked page |
 | [integration](integration/README.md) | Registered datasets, navigation and isolated compositions | Source-based contract recorded; implementation evidence/limits in linked page |
 | [firebase](firebase/README.md) | Google identity and server-confirmed first profile | Source-based contract recorded; implementation evidence/limits in linked page |
-| [app-entry](app-entry/README.md) | Confirmed account Home to Campus Home; process-scoped account access | Graph integratedb240a03; explicit readback43175eb integrateda1bd986, runtime pending |
-| [campus-content](campus-content/README.md) | Sourced guide/DEMO, map/facility navigation, separate authored host | Authored5b961de + navigation integrated167923d; source PASS, combined runtime pending |
-| [progress-sync](progress-sync/README.md) | Account guard, durable authored progress/outbox, backend and recovery | Core integrated5c180ca; rule candidateeabed51 integratedeca7938,14localrulescasesPASS; deployedrulesunchanged |
-| [home-progress](home-progress/README.md) | Account Home, reminders and facility/map bridge | Candidated56332a integrated167923d; source PASS, actualruntimepending |
-| reskin (contract pending owner) | Latest teammate visuals on current actual consumers | Active13f485b under RESKIN_SCOPE; no runtimeclaim |
-| validation (contract pending owner) | Combined actualActivity/storage test preparation | Activee19c10e; finalgate afterdesign |
+| [app-entry](app-entry/README.md) | Confirmed account Home to Campus Home; process-scoped account access | Account Home → Campus Home and readback caller included in final31 actualActivity checks; synthetic identity |
+| [campus-content](campus-content/README.md) | Sourced guide/DEMO, map/facility navigation, separate authored host | Authored5b961de integrated167923d; final syntheticActivity/SQLite suite PASS; production targets closed |
+| [progress-sync](progress-sync/README.md) | Account guard, durable authored progress/outbox, backend and recovery | Core/candidate rules integrated;14 historical rules cases +1 actualAndroidSDK local scenario PASS; production unchanged |
+| [home-progress](home-progress/README.md) | Account Home, reminders and facility/map bridge | 6c1e05e countdown repair integrated; finalHome/facility runtime and2 reminder permission/receiver checks PASS |
+| [reskin](reskin/README.md) | Latest teammate visuals on actual consumers | 4303c1c integrated7cd25b9; portrait/large-landscape repaired and visually verified |
+| [validation](validation/README.md) | Combined actualActivity/storage/local SDK checks | e4b3453 integrated7cd25b9; exact evidence and remaining limits in final review |
 
 Page paths follow `docs/modules/<module>/README.md`; entries marked being added are not existing documentation or completed implementation claims. Historical detailed evidence remains in `docs/harness/handoffs/` and `docs/harness/reviews/`; link to it rather than duplicating entire histories.
 
@@ -27,6 +27,12 @@ Page paths follow `docs/modules/<module>/README.md`; entries marked being added 
 Describe current responsibility and exclusions, actual public signatures and source paths, input/output validation, dependencies, a caller example grounded in code, storage/account/dataset ownership, implementation state, exact tested versus pending behavior, and integration points. Separate proposed APIs from implemented APIs. Update caller and callee pages when a contract changes.
 
 Current shared constraints: Java/XML; no silent DEMO/fixture/anonymous-to-account migration; no fabricated campus coordinates; camera overlay is not tracked AR. Identity-profile success does not imply cloud progress success. Current implementation-first/design-last/combined-validation order is in `../harness/IMPLEMENTATION_FIRST.md`.
+
+## Final combined checkpoint7cd25b9
+
+Required implemented V1 scope and latest presentation are integrated and reviewed. 233 JVM tests,31 actualActivity/storage cases,4 visual cases in portrait and130% landscape,1 real Android Firebase SDK local scenario and2 notification permission/direct-receiver cases passed. Final lint has0errors/107warnings. Repeated runs are not extra unique tests. See [exact review and evidence](../harness/reviews/FINAL_V1-management.md).
+
+The unconfigured QA APK and the separately built Google-configured user-preview APK are different artifacts. Live login on the latter remains a user check. Production authored registry/coordinates and rule activation remain closed; no synthetic progress is promoted. User-held5564/5572/5580 were unchanged. Notification delivery after elapsed alarms/taps/process death and campus physical hardware were not established.
 
 ## Functional checkpoint167923d
 
@@ -40,4 +46,4 @@ Combined checkpoint934d9b0 passed36 focused JVM tests, APK assembly, Android tes
 
 Later checkpoint5c180ca adds confirmed-owner events and durable authored source/reconciliation with47 focused tests/build/lint PASS. Graph checkpointbe936439 integrates atb240a03: actual IdentityViewModel -> confirmed-owner observer -> process-scoped named Firebase guard/access,52 focused tests/build/lint PASS in the candidate. Management verified identical app/build inputs on integration and did not rerun unchanged tests. The NORMAL gameplay host consumer is now an active implementation under [its scope](../harness/AUTHORED_HOST_SCOPE.md); it is not completed merely by the graph API. No production datasets or server rules activated.
 
-Current continuation: exact authoredb2795f1 review found two P2s (quiz incorrectly requires continuing proximity; explicit send observer can be displaced). It is not integrated into main. Required GPS policy/adapters, NORMAL heading/SHAKE, explicit readback and intro hooks continue under AUTHORED_FLOW_CONTINUATION. Home summaries/reminders are a parallel caller module, and server rules are an isolated candidate under PROGRESS_RULES_SCOPE. Latest teammate design remains deferred; source/build checks are not actual device/cloud/field verification.
+Historical pre-integration continuation (superseded by167923d and final7cd25b9): exact authoredb2795f1 review found two P2s (quiz incorrectly requires continuing proximity; explicit send observer can be displaced). It is not integrated into main. Required GPS policy/adapters, NORMAL heading/SHAKE, explicit readback and intro hooks continue under AUTHORED_FLOW_CONTINUATION. Home summaries/reminders are a parallel caller module, and server rules are an isolated candidate under PROGRESS_RULES_SCOPE. Latest teammate design remains deferred; source/build checks are not actual device/cloud/field verification.
