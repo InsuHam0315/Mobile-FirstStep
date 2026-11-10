@@ -13,3 +13,11 @@
 The four tests cover the disabled branded login without authentication, Campus Home through the bundled software guide and narration into transient practice and back, a fresh isolated local DEMO route through discovery entry and back without completing it, and the selected-facility browse map. The map screenshot is captured before checking that both drawable map area and the in-canvas attribution band are visible. The test checks reachability and enabled states without granting permissions or modifying account progress or favorites. The isolated DEMO uses its own debug run identity and records only its own navigation. Account profile/Home screenshots are supplied by the existing identity fake suite.
 
 `:app:compileDebugAndroidTestJavaWithJavac --console=plain` passed with 29 tasks, 1 executed and 28 up-to-date. All screenshot and interaction outcomes remain pending device execution.
+
+## Landscape map repair
+
+The combined visual run exposed a selected-facility map with only about 13 pixels of drawable content at 1920 × 1080, density 420 and font scale 1.3. The landscape resource now gives the canvas the full available height beside a separate scrolling panel. Facility context, the external attribution link and controls remain in the panel. Canvas drawing, its built-in credit strip, touch and pan logic, browse-only eligibility, and the portrait layout are unchanged.
+
+The smoke test checks that the in-canvas attribution is inside the visible viewport and at least 96dp of drawable map is available above it. That lower bound gives the content two 48dp touch-target heights for panning rather than counting a sliver as usable. The test also reveals each browse control, captures a second image and checks the map area again after scrolling.
+
+Debug APK and Android test compilation passed with 48 actionable tasks, 9 executed and 39 up-to-date. Static inspection confirmed that the two layout variants have identical IDs, visible copy and visibility/live-region attributes. The repaired source still needs the landscape device rerun.

@@ -171,12 +171,17 @@ public final class ReskinVisualSmokeTest {
         TextView label = activity.findViewById(R.id.map_facility_context);
         return selected.contentEquals(label.getText());
       });
-      onView(withId(R.id.map_facility_context)).check(matches(withText(selected)));
-      onView(withId(R.id.map_facility_lookup)).check(matches(isDisplayed()));
-      onView(withId(R.id.map_attribution)).check(matches(isDisplayed()));
       capture(RouteMapActivity.class, "browse-map-selected-unverified-facility");
       ready(RouteMapActivity.class, ReskinVisualSmokeTest::hasVisibleMapAndCredit);
-      onView(withId(R.id.map_back)).perform(click());
+      onView(withId(R.id.map_facility_context)).perform(reveal()).check(matches(withText(selected)));
+      for (int id : new int[] {R.id.map_attribution, R.id.map_zoom_in, R.id.map_zoom_out,
+          R.id.map_campus, R.id.map_location, R.id.map_retry, R.id.map_facility_lookup,
+          R.id.map_back}) {
+        onView(withId(id)).perform(reveal()).check(matches(isEnabled()));
+      }
+      capture(RouteMapActivity.class, "browse-map-controls-reachable");
+      ready(RouteMapActivity.class, ReskinVisualSmokeTest::hasVisibleMapAndCredit);
+      tap(R.id.map_back);
     }
   }
 
@@ -185,7 +190,10 @@ public final class ReskinVisualSmokeTest {
     Rect viewport = new Rect();
     if (!map.getLocalVisibleRect(viewport) || viewport.isEmpty()) return false;
     Rect credit = map.attributionBoundsForTest();
-    return !credit.isEmpty() && viewport.contains(credit) && credit.top > viewport.top;
+    // Reserve at least two 48dp touch-target heights for the drawable map above the credit.
+    int minimumMapHeight = (int) Math.ceil(96 * map.getResources().getDisplayMetrics().density);
+    return !credit.isEmpty() && viewport.contains(credit)
+        && credit.top - viewport.top >= minimumMapHeight;
   }
 
   private static boolean showsText(Activity activity, int id, int label) {
