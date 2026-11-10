@@ -43,6 +43,8 @@ The controller emits revocation before sign-in, reselection and logout, when it 
 
 The production registry is empty, and no Activity or authored composition calls this access yet. The graph reuses the named Firestore instance from profile verification and creates no progress reads or writes during setup. See the [account binding scope](../../harness/ACCOUNT_SYNC_BINDING_SCOPE.md), [Firebase module](../firebase/README.md), and [progress sync module](../progress-sync/README.md).
 
+For an explicit fetch action, pass the scope from `capture(datasetId, buildingId)` to `public CompletableFuture<OutboxState> refresh(SyncScope scope)`. The coordinator reads the server and updates the local sync projection without uploading or changing authored gameplay. The caller should recheck the captured scope through `owner().whileCurrent(...)` before applying the result to the current account. The registry rejects ineligible scopes before scheduling work. A stale owner fails the future and cannot apply a delayed result. The campus authored composition owns the future UI action and must keep remote summaries separate from gameplay attempts and rewards. The [readback checkpoint](../../harness/handoffs/APP_ENTRY.md#explicit-account-progress-readback) records the fake backend and retained coordinator checks.
+
 ## Implementation and verification
 
 The v3 binding uses the campus route from the prepared `8158893` candidate. Its build and source checks are recorded in the [app-entry verification handoff](../../harness/handoffs/APP_ENTRY.md). The unified route still needs runtime validation.

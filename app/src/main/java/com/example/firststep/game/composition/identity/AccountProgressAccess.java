@@ -44,6 +44,11 @@ public final class AccountProgressAccess {
     return new MilestoneReconciler(registry, session, source, sync, worker);
   }
 
+  /** Fetch the server summary for an explicit user request and update the local projection. */
+  public CompletableFuture<OutboxState> refresh(SyncScope scope) {
+    return sync.refresh(scope);
+  }
+
   /** Explicit networking step after an authored milestone has been reconciled. */
   public CompletableFuture<OutboxState> flush(SyncScope scope) {
     return sync.flush(scope);
