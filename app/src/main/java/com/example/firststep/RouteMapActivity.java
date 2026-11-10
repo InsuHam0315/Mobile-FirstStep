@@ -1,6 +1,7 @@
 package com.example.firststep;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -8,23 +9,37 @@ import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
+import com.example.firststep.data.Mission;
+import com.example.firststep.data.MissionRepository;
+import java.util.Collections;
+import java.util.List;
 
 public final class RouteMapActivity extends AppCompatActivity {
+    private static final String EXTRA_BROWSE_ONLY = "firststep.campus_map.browse_only";
+
+    /** Opens campus map browsing without a legacy route or mission repository. */
+    public static Intent browseIntent(Context context) {
+        return new Intent(context, RouteMapActivity.class).putExtra(EXTRA_BROWSE_ONLY, true);
+    }
+
     private com.example.firststep.map.CampusMapView map;
     private com.example.firststep.location.LocationController location;
     private android.widget.TextView status;
     private final android.os.Handler handler=new android.os.Handler(android.os.Looper.getMainLooper());
-    private boolean following, followCenter, locationWanted;
+    private boolean following, followCenter, locationWanted, browseOnly;
     @Override protected void onCreate(Bundle state) {
-        super.onCreate(state); geographic();
+        super.onCreate(state);
+        browseOnly = getIntent().getBooleanExtra(EXTRA_BROWSE_ONLY, false);
+        geographic();
     }
     private void geographic() {
         setContentView(R.layout.activity_geographic_map);Ui.applyInsets(findViewById(R.id.map_root));
         map=findViewById(R.id.campus_map);status=findViewById(R.id.map_status);
-        map.configure(com.example.firststep.data.MissionRepository.getInstance(this).getMissions(),new com.example.firststep.map.CampusMapView.Listener(){
+        List<Mission> missions = browseOnly ? Collections.emptyList() : MissionRepository.getInstance(this).getMissions();
+        map.configure(missions,new com.example.firststep.map.CampusMapView.Listener(){
             public void status(String text){if(!following)status.setText(text);}
             public void panned(){followCenter=false;}
-            public void selected(com.example.firststep.data.Mission m){new androidx.appcompat.app.AlertDialog.Builder(RouteMapActivity.this).setTitle(m.place).setMessage(m.explanation+"\n\n도착 확인과 미션 시작은 코스 화면에서 진행해 주세요.").setPositiveButton("확인",null).show();}
+            public void selected(Mission m){new androidx.appcompat.app.AlertDialog.Builder(RouteMapActivity.this).setTitle(m.place).setMessage(m.explanation+"\n\n도착 확인과 미션 시작은 코스 화면에서 진행해 주세요.").setPositiveButton("확인",null).show();}
         });
         findViewById(R.id.map_zoom_in).setOnClickListener(v->map.zoom(1));
         findViewById(R.id.map_zoom_out).setOnClickListener(v->map.zoom(-1));
@@ -32,7 +47,9 @@ public final class RouteMapActivity extends AppCompatActivity {
         findViewById(R.id.map_retry).setOnClickListener(v->map.retry());
         findViewById(R.id.map_attribution).setOnClickListener(v->startActivity(new android.content.Intent(android.content.Intent.ACTION_VIEW,android.net.Uri.parse("https://www.openstreetmap.org/copyright"))));
         findViewById(R.id.map_location).setOnClickListener(v->locate());
-        findViewById(R.id.map_route).setOnClickListener(v->{locationWanted=false;stopLocation();map.close();map=null;route();});
+        View routeButton = findViewById(R.id.map_route);
+        if (browseOnly) routeButton.setVisibility(View.GONE);
+        else routeButton.setOnClickListener(v->{locationWanted=false;stopLocation();map.close();map=null;route();});
         findViewById(R.id.map_back).setOnClickListener(v->finish());
     }
     private void locate() {

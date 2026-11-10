@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/game_campus_home_scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@color/game_color_surface">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/game_space_medium">
+        <TextView
+            android:id="@+id/game_campus_home_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/game_campus_home_title"
+            android:textColor="@color/game_color_text"
+            android:textSize="@dimen/game_text_title" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/game_campus_home_description"
+            android:textColor="@color/game_color_text"
+            android:textSize="@dimen/game_text_body" />
+        <Button
+            android:id="@+id/game_campus_home_map"
+            style="@style/GameActionButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/game_campus_home_map" />
+        <Button
+            android:id="@+id/game_campus_home_facilities"
+            style="@style/GameActionButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/game_campus_home_facilities" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/game_campus_home_favorites_note"
+            android:textColor="@color/game_color_text"
+            android:textSize="@dimen/game_text_body" />
+        <Button
+            android:id="@+id/game_campus_home_guide"
+            style="@style/GameActionButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/game_campus_home_guide" />
+        <Button
+            android:id="@+id/game_campus_home_back"
+            style="@style/GameActionButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/game_campus_home_back" />
+    </LinearLayout>
+</ScrollView>
