@@ -1,5 +1,7 @@
 # Product decisions after H02 dispatch
 
+Sequencing clarification 2026-11-10: IMPLEMENTATION_FIRST.md supersedes older per-module live acceptance as a prerequisite for implementing independent approved code. The product choices below remain unchanged; live checks are deferred to combined validation, not claimed passed. User confirmed the immediate login complaint is a missing exploration entry after Home, not failed profile saving; APP_ENTRY_SCOPE.md addresses that gap.
+
 Source: direct user messages in the management chat, 2026-11-06 (Asia/Seoul). These decisions supplement the game design PDF and CORE_GAME_SCOPE.md. Do not infer implementation or verification from a decision record.
 
 ## First department, then expansion
