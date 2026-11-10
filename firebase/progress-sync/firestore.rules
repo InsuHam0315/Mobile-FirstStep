@@ -1,0 +1,89 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function owner(uid) { return request.auth != null && request.auth.uid == uid; }
+    function text(value, limit) {
+      return value is string && value.size() > 0 && value.size() <= limit
+        && !value.matches('(?s)^[\\x00-\\x20].*') && !value.matches('(?s).*[\\x00-\\x20]$');
+    }
+    function exactFields(data, fields) {
+      return data is map && data.keys().hasAll(fields) && data.keys().hasOnly(fields);
+    }
+    function profileShape(d, uid) {
+      return exactFields(d, ['schemaVersion','uid','name','studentNumber','department','createdAt','updatedAt'])
+        && d.schemaVersion is int && d.schemaVersion == 1 && d.uid == uid
+        && text(d.name,80) && text(d.studentNumber,40) && text(d.department,120)
+        && d.createdAt is timestamp && d.updatedAt is timestamp;
+    }
+    function validProfileWrite(uid) {
+      return profileShape(request.resource.data, uid) && request.resource.data.updatedAt == request.time;
+    }
+    match /users/{uid} {
+      allow get: if owner(uid);
+      allow list, delete: if false;
+      allow create: if owner(uid) && validProfileWrite(uid) && request.resource.data.createdAt == request.time;
+      allow update: if owner(uid) && validProfileWrite(uid)
+        && resource.data.uid == uid && request.resource.data.uid == resource.data.uid
+        && request.resource.data.schemaVersion == resource.data.schemaVersion
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name','studentNumber','department','updatedAt']);
+    }
+
+    function identifier(value) {
+      return value is string && value.matches('^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$');
+    }
+    function googleSignIn() {
+      let providerClaims = request.auth.token.get('firebase', {});
+      return providerClaims is map && providerClaims.get('sign_in_provider', '') == 'google.com';
+    }
+    function progressOwner(uid) {
+      let profilePath = /databases/$(database)/documents/users/$(uid);
+      return owner(uid) && identifier(uid) && !uid.matches('(?i)^(guest|anonymous)$')
+        && googleSignIn() && exists(profilePath) && profileShape(get(profilePath).data, uid);
+    }
+    function registeredTarget(datasetId, buildingId) {
+      // Registration is seeded by trusted infrastructure. Client access to this path is denied.
+      let path = /databases/$(database)/documents/_firststepProgressAllowlist/$(datasetId)/buildings/$(buildingId);
+      return exists(path) && enabledRegistration(get(path).data);
+    }
+    function enabledRegistration(registration) {
+      return exactFields(registration, ['enabled']) && registration.enabled == true;
+    }
+    function eligible(datasetId, mode, buildingId) {
+      return mode == 'NORMAL' && identifier(datasetId) && identifier(buildingId)
+        && !datasetId.matches('(?i)^(legacy.*|.*(fixture|practice|demo).*|synthetic-v1|software_guide_v1|software_narration_v1)$')
+        && registeredTarget(datasetId, buildingId);
+    }
+    function millis(value) {
+      return value is int && value >= 0 && value <= 253402300799999;
+    }
+    function validCompletion(d, intro) {
+      return exactFields(d, ['attemptId','contentVersion','correct','completedAtMillis'])
+        && identifier(d.attemptId) && identifier(d.contentVersion)
+        && d.correct is int && d.correct >= 2 && d.correct <= 3
+        && millis(d.completedAtMillis) && d.completedAtMillis >= intro + 900000;
+    }
+    function validMilestone(d) {
+      return exactFields(d, ['schemaVersion','introDoneAtMillis','completion'])
+        && d.schemaVersion is int && d.schemaVersion == 1
+        && millis(d.introDoneAtMillis)
+        && (d.completion == null || validCompletion(d.completion, d.introDoneAtMillis));
+    }
+    function preservesMilestone(old, next) {
+      return next.introDoneAtMillis <= old.introDoneAtMillis
+        && (old.completion == null || next.completion == old.completion);
+    }
+
+    match /users/{uid}/progressDatasets/{datasetId}/modes/{mode}/buildings/{buildingId} {
+      allow get: if progressOwner(uid) && eligible(datasetId, mode, buildingId)
+        && (resource == null || validMilestone(resource.data));
+      allow create: if progressOwner(uid) && eligible(datasetId, mode, buildingId)
+        && validMilestone(request.resource.data);
+      allow update: if progressOwner(uid) && eligible(datasetId, mode, buildingId)
+        && validMilestone(resource.data) && validMilestone(request.resource.data)
+        && preservesMilestone(resource.data, request.resource.data);
+      allow list, delete: if false;
+    }
+    match /{document=**} { allow read, write: if false; }
+  }
+}
