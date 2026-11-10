@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/facility_root" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="#FAF7F3">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/facility_root" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="@color/game_color_surface">
     <ScrollView android:id="@+id/facility_scroll" android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true">
         <LinearLayout android:id="@+id/facility_content" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingStart="24dp" android:paddingTop="20dp" android:paddingEnd="24dp" android:paddingBottom="32dp" />
     </ScrollView>

@@ -1,0 +1,25 @@
+<resources>
+    <color name="game_reskin_muted">#63515A</color>
+    <color name="game_reskin_paper">#FFFCF7</color>
+    <color name="game_reskin_tinted">#F4E5D6</color>
+    <color name="game_reskin_line">#DDCBBD</color>
+    <color name="game_reskin_link">#684059</color>
+    <color name="game_reskin_disabled_fill">#E5DAD5</color>
+    <color name="game_reskin_disabled_text">#62545D</color>
+    <dimen name="game_reskin_identity_hero_height">180dp</dimen>
+    <dimen name="game_reskin_campus_hero_height">136dp</dimen>
+    <dimen name="game_reskin_card_corner">20dp</dimen>
+    <dimen name="game_reskin_control_space">8dp</dimen>
+
+    <style name="GameSecondaryButton" parent="GameActionButton">
+        <item name="backgroundTint">@color/game_reskin_secondary_tint</item>
+        <item name="android:textColor">@color/game_reskin_secondary_text</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="strokeColor">@color/game_reskin_line</item>
+    </style>
+    <style name="GameMapButton" parent="GameSecondaryButton">
+        <item name="android:textSize">14sp</item>
+        <item name="android:paddingStart">@dimen/game_reskin_control_space</item>
+        <item name="android:paddingEnd">@dimen/game_reskin_control_space</item>
+    </style>
+</resources>

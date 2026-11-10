@@ -43,6 +43,7 @@ import com.example.firststep.game.presentation.discovery.DiscoveryController;
 import com.example.firststep.game.presentation.discovery.DiscoveryState;
 import com.example.firststep.game.domain.Progress;
 import com.example.firststep.game.speech.IntroSpeech;
+import com.example.firststep.game.ui.GameVisuals;
 import com.example.firststep.game.sync.OutboxState;
 import com.example.firststep.game.sync.SyncScope;
 import java.util.LinkedHashMap;
@@ -849,7 +850,9 @@ public final class AuthoredEpisodeActivity extends AppCompatActivity {
 
   private Button newButton(int label) {
     Button button = new Button(this);
-    button.setMinHeight(getResources().getDimensionPixelSize(R.dimen.game_touch_min));
+    GameVisuals.action(button, label == R.string.game_authored_discovery_start
+        || label == R.string.game_authored_finish_intro || label == R.string.game_authored_start_quiz
+        || label == R.string.game_authored_submit);
     button.setText(label);
     button.setLayoutParams(new LinearLayout.LayoutParams(
         LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));

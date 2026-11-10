@@ -1,10 +1,16 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/game_identity_root" android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/game_identity_root" android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true" android:background="@color/game_color_surface">
  <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="@dimen/game_space_medium">
   <LinearLayout android:id="@+id/game_identity_entry" android:layout_width="match_parent"
       android:layout_height="wrap_content" android:orientation="vertical">
-  <ImageView android:layout_width="@dimen/game_touch_min" android:layout_height="@dimen/game_touch_min"
-      android:layout_gravity="center_horizontal" android:importantForAccessibility="no"
-      android:src="@mipmap/ic_launcher_round" />
+  <FrameLayout android:layout_width="match_parent" android:layout_height="@dimen/game_reskin_identity_hero_height"
+      android:layout_marginBottom="@dimen/game_space_medium"
+      android:background="@drawable/game_reskin_card" android:clipToOutline="true">
+   <ImageView android:layout_width="match_parent" android:layout_height="match_parent"
+       android:scaleType="centerCrop" android:src="@drawable/game_reskin_artwork"
+       android:contentDescription="@null" android:importantForAccessibility="no" />
+   <View android:layout_width="match_parent" android:layout_height="match_parent"
+       android:background="@drawable/game_reskin_hero_scrim" android:importantForAccessibility="no" />
+  </FrameLayout>
   <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
       android:gravity="center" android:text="@string/app_name" android:textColor="@color/game_color_text"
       android:textSize="@dimen/game_text_title" android:textStyle="bold" />
@@ -18,7 +24,8 @@
   </LinearLayout>
   <include layout="@layout/game_identity_home" />
   <LinearLayout android:id="@+id/game_identity_profile_panel" android:layout_width="match_parent"
-      android:layout_height="wrap_content" android:orientation="vertical" android:visibility="gone">
+      android:layout_height="wrap_content" android:orientation="vertical" android:visibility="gone"
+      android:padding="@dimen/game_space_medium" android:background="@drawable/game_reskin_card">
    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
        android:text="@string/game_identity_home_profile" android:textColor="@color/game_color_text"
        android:textSize="@dimen/game_text_title" android:textStyle="bold" />
@@ -30,21 +37,31 @@
   <TextView android:id="@+id/game_identity_status" android:layout_width="match_parent"
       android:layout_height="wrap_content" android:layout_marginTop="@dimen/game_space_medium"
       android:textColor="@color/game_color_text" android:textSize="@dimen/game_text_body" />
-  <LinearLayout android:id="@+id/game_identity_form" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:visibility="gone">
-   <EditText android:id="@+id/game_identity_name" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="@dimen/game_touch_min" android:inputType="textPersonName" android:singleLine="true" android:importantForAutofill="no" android:saveEnabled="false" android:hint="@string/game_identity_name" />
-   <EditText android:id="@+id/game_identity_student" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="@dimen/game_touch_min" android:inputType="textNoSuggestions" android:singleLine="true" android:importantForAutofill="no" android:saveEnabled="false" android:hint="@string/game_identity_student" />
-   <EditText android:id="@+id/game_identity_department" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="@dimen/game_touch_min" android:inputType="text" android:singleLine="true" android:importantForAutofill="no" android:saveEnabled="false" android:hint="@string/game_identity_department" />
+  <LinearLayout android:id="@+id/game_identity_form"
+      android:layout_width="match_parent" android:layout_height="wrap_content"
+      android:orientation="vertical" android:visibility="gone"
+      android:layout_marginVertical="@dimen/game_reskin_control_space"
+      android:padding="@dimen/game_space_medium" android:background="@drawable/game_reskin_card">
+   <EditText android:id="@+id/game_identity_name" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="@dimen/game_touch_min" android:inputType="textPersonName" android:singleLine="true" android:importantForAutofill="no" android:saveEnabled="false"
+       android:textColor="@color/game_color_text" android:textColorHint="@color/game_reskin_muted"
+       android:hint="@string/game_identity_name" />
+   <EditText android:id="@+id/game_identity_student" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="@dimen/game_touch_min" android:inputType="textNoSuggestions" android:singleLine="true" android:importantForAutofill="no" android:saveEnabled="false"
+       android:textColor="@color/game_color_text" android:textColorHint="@color/game_reskin_muted"
+       android:hint="@string/game_identity_student" />
+   <EditText android:id="@+id/game_identity_department" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="@dimen/game_touch_min" android:inputType="text" android:singleLine="true" android:importantForAutofill="no" android:saveEnabled="false"
+       android:textColor="@color/game_color_text" android:textColorHint="@color/game_reskin_muted"
+       android:hint="@string/game_identity_department" />
   </LinearLayout>
   <Button android:id="@+id/game_identity_save" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_identity_save" />
-  <Button android:id="@+id/game_identity_retry" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_identity_retry" />
-  <Button android:id="@+id/game_identity_reselect" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_identity_reselect" />
-  <Button android:id="@+id/game_identity_logout" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_identity_logout" />
+  <Button android:id="@+id/game_identity_retry" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_identity_retry" />
+  <Button android:id="@+id/game_identity_reselect" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_identity_reselect" />
+  <Button android:id="@+id/game_identity_logout" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_identity_logout" />
   <TextView android:id="@+id/game_identity_environment" android:layout_width="match_parent"
       android:layout_height="wrap_content" android:layout_marginTop="@dimen/game_space_medium"
       android:textColor="@color/game_color_text" android:textSize="14sp" android:textStyle="bold" />
   <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
       android:text="@string/game_identity_notice" android:textColor="@color/game_color_text"
       android:textSize="14sp" />
-  <Button android:id="@+id/game_identity_back" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_identity_back" />
+  <Button android:id="@+id/game_identity_back" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_identity_back" />
  </LinearLayout>
 </ScrollView>

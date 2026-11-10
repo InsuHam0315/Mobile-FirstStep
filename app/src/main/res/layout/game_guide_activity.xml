@@ -5,7 +5,7 @@
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
         android:orientation="vertical" android:padding="@dimen/game_space_medium">
         <TextView android:id="@+id/game_guide_title" android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:text="@string/game_guide_entry" android:textSize="@dimen/game_text_title" android:textColor="@color/game_color_text"/>
+            android:text="@string/game_guide_entry" android:textSize="@dimen/game_text_title" android:textStyle="bold" android:accessibilityHeading="true" android:textColor="@color/game_color_text"/>
         <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
             android:text="@string/game_guide_no_progress" android:textSize="@dimen/game_text_body" android:textColor="@color/game_color_text"/>
         <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -14,9 +14,9 @@
             android:textSize="@dimen/game_text_body" android:textColor="@color/game_color_text" android:visibility="gone"/>
         <TextView android:id="@+id/game_guide_status" android:layout_width="match_parent" android:layout_height="wrap_content"
             android:textSize="@dimen/game_text_body" android:textColor="@color/game_color_text" android:accessibilityLiveRegion="polite"/>
-        <LinearLayout android:id="@+id/game_guide_content" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical"/>
+        <LinearLayout android:id="@+id/game_guide_content" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="@dimen/game_space_medium" android:background="@drawable/game_reskin_tinted_card" />
         <Button android:id="@+id/game_guide_primary" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_guide_start"/>
-        <Button android:id="@+id/game_guide_read_again" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_guide_read_again"/>
-        <Button android:id="@+id/game_guide_close" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_guide_close"/>
+        <Button android:id="@+id/game_guide_read_again" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_guide_read_again"/>
+        <Button android:id="@+id/game_guide_close" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_guide_close"/>
     </LinearLayout>
 </ScrollView>

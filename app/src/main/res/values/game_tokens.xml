@@ -1,22 +1,28 @@
 <resources>
     <style name="Theme.FirstStep.GamePreview" parent="Theme.FirstStep">
         <item name="android:windowBackground">@color/game_color_surface</item>
+        <item name="android:statusBarColor">@color/game_color_surface</item>
+        <item name="android:navigationBarColor">@color/game_color_surface</item>
+        <item name="colorPrimary">@color/game_color_action</item>
+        <item name="colorSecondary">@color/game_color_action</item>
     </style>
-    <color name="game_color_surface">#FAF7EF</color>
-    <color name="game_color_text">#1E2B39</color>
-    <color name="game_color_action">#873E27</color>
+    <color name="game_color_surface">#FBF5EC</color>
+    <color name="game_color_text">#342533</color>
+    <color name="game_color_action">#703B56</color>
     <color name="game_color_on_action">#FFFFFF</color>
     <dimen name="game_space_medium">16dp</dimen>
     <dimen name="game_space_large">24dp</dimen>
     <dimen name="game_touch_min">48dp</dimen>
     <dimen name="game_text_title">28sp</dimen>
     <dimen name="game_text_body">17sp</dimen>
-    <dimen name="game_shape_action_corner">12dp</dimen>
+    <dimen name="game_shape_action_corner">16dp</dimen>
     <style name="GameActionButton" parent="Widget.MaterialComponents.Button">
         <item name="cornerRadius">@dimen/game_shape_action_corner</item>
         <item name="android:textSize">@dimen/game_text_body</item>
-        <item name="backgroundTint">@color/game_color_action</item>
-        <item name="android:textColor">@color/game_color_on_action</item>
+        <item name="backgroundTint">@color/game_reskin_primary_tint</item>
+        <item name="android:textColor">@color/game_reskin_primary_text</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:letterSpacing">0</item>
         <item name="android:minHeight">@dimen/game_touch_min</item>
     </style>
 </resources>
