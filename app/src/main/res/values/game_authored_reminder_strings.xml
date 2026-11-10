@@ -1,0 +1,5 @@
+<resources>
+    <string name="authored_reminder_channel">퀴즈 알림</string>
+    <string name="authored_reminder_title">퀴즈를 시작할 수 있어요</string>
+    <string name="authored_reminder_text">앱에서 기다리던 퀴즈를 확인해 보세요.</string>
+</resources>
