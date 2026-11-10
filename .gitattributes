@@ -1,0 +1,7 @@
+# Preserve exported media bytes; Markdown intentionally uses two-space line breaks.
+*.pdf binary
+*.pptx binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.md whitespace=-blank-at-eol

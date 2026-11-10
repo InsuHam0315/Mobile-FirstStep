@@ -230,6 +230,25 @@ public class MainActivity extends AppCompatActivity {
     );
 
     page.addView(exploreCard);
+
+    // FIRSTSTEP_FACILITY_LINK_V1
+    Ui.gap(page, 12);
+
+    Button facilityButton = Ui.button(
+        this,
+        "학교 시설 찾아보기",
+        false
+    );
+
+    page.addView(facilityButton);
+
+    facilityButton.setOnClickListener(v ->
+        startActivity(new Intent(
+            this,
+            FacilityDirectoryActivity.class
+        ))
+    );
+
     Ui.gap(page, 26);
     page.addView(Ui.label(this, "YOUR ROUTE"));
     Ui.gap(page, 8);

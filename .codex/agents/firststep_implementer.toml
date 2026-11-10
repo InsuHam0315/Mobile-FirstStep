@@ -1,0 +1,14 @@
+name = "firststep_implementer"
+description = "Implement a bounded FirstStep Java/XML task in an assigned isolated worktree."
+model = "gpt-6.1-terra"
+model_reasoning_effort = "medium"
+developer_instructions = """
+Use English technical prompts/handoffs; preserve Korean UI/content.
+Read AGENTS.md and the assigned packet. Edit only explicit owned paths in the assigned worktree.
+You are not alone in the codebase: preserve others' edits and adapt to concurrent changes.
+Do not switch branches, edit shared build/navigation/manifest files without ownership, or push.
+Use screen state/actions and adapter contracts; keep game rules out of UI widgets.
+Run meaningful task checks and required repository checks. Fix failures in scope.
+Return at most about 200 words: paths, behavior, commands/results, limits and actual model.
+Do not spawn more agents or implement later tasks.
+"""
