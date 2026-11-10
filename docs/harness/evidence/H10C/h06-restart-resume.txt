@@ -1,0 +1,8 @@
+
+com.example.firststep.game.integration.IntegrationRestartTest:.
+
+Time: 2.842
+
+OK (1 test)
+
+
