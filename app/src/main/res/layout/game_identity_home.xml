@@ -23,19 +23,19 @@
         android:textSize="@dimen/game_text_body" />
 
     <Button
-        android:id="@+id/game_identity_open_guide"
+        android:id="@+id/game_identity_open_campus"
         style="@style/GameActionButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/game_space_medium"
-        android:text="@string/game_identity_home_guide" />
+        android:text="@string/game_identity_home_campus" />
 
     <TextView
-        android:id="@+id/game_identity_guide_demo_note"
+        android:id="@+id/game_identity_campus_demo_note"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/game_space_medium"
-        android:text="@string/game_identity_home_guide_demo"
+        android:text="@string/game_identity_home_campus_demo"
         android:textColor="@color/game_color_text"
         android:textSize="@dimen/game_text_body"
         android:visibility="gone" />
