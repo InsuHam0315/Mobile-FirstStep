@@ -51,7 +51,9 @@ public final class AuthoredEpisodeRouteTest {
           context.getString(R.string.game_authored_sync_pass_confirmed, 2));
       awaitText(scenario, R.id.game_authored_state, waitingForArrival);
       assertEquals(1, fixture.remoteReads.get());
+      assertEquals(0, fixture.remoteWrites.get());
       assertEquals(0, fixture.localWrites.get());
+      assertNull(fixture.localProgress());
     }
   }
 
