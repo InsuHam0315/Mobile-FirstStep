@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/game_discovery_scroll" android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true">
+ <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="@dimen/game_space_medium">
+  <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_discovery_title" android:textColor="@color/game_color_text" android:textSize="@dimen/game_text_title" />
+  <TextView android:id="@+id/game_integration_discovery_context" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/game_color_text" android:textSize="@dimen/game_text_body" />
+  <Button android:id="@+id/game_discovery_arrival" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_discovery_arrival" />
+  <Button android:id="@+id/game_discovery_camera_fallback" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_discovery_camera_fallback" />
+  <TextView android:id="@+id/game_discovery_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/game_color_text" android:textSize="@dimen/game_text_body" />
+  <FrameLayout
+      android:layout_width="280dp"
+      android:layout_height="160dp"
+      android:layout_gravity="center_horizontal"
+      android:layout_marginVertical="@dimen/game_reskin_control_space">
+   <androidx.camera.view.PreviewView android:id="@+id/game_discovery_preview" android:layout_width="match_parent" android:layout_height="match_parent" />
+   <ImageView android:id="@+id/game_discovery_art" android:layout_width="@dimen/game_discovery_art_size" android:layout_height="@dimen/game_discovery_art_size" android:layout_gravity="center" android:src="@drawable/game_discovery_placeholder" android:contentDescription="@string/game_discovery_art" />
+  </FrameLayout>
+  <TextView android:id="@+id/game_discovery_disclosure" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_discovery_disclosure" android:textColor="@color/game_color_text" android:textSize="@dimen/game_text_body" />
+  <TextView android:id="@+id/game_discovery_heading" android:textStyle="bold" android:accessibilityHeading="true" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/game_color_text" android:textSize="@dimen/game_text_body" />
+  <Button android:id="@+id/game_discovery_align_fallback" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_discovery_align_fallback" />
+  <Button android:id="@+id/game_discovery_method_shake" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_discovery_shake" />
+  <Button android:id="@+id/game_discovery_method_light" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_discovery_light" />
+  <Button android:id="@+id/game_discovery_hold" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_discovery_hold" />
+  <Button android:id="@+id/game_discovery_retry" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_discovery_retry" />
+  <TextView android:id="@+id/game_discovery_result" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/game_color_text" android:textSize="@dimen/game_text_body" />
+  <Button android:id="@+id/game_integration_discovery_continue" android:visibility="gone" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_integration_continue" />
+  <Button android:id="@+id/game_discovery_exit" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_discovery_exit" />
+ </LinearLayout>
+</ScrollView>

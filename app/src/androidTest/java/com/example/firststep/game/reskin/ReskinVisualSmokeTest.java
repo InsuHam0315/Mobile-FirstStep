@@ -153,10 +153,18 @@ public final class ReskinVisualSmokeTest {
       tap(R.id.game_home_prototype);
       ready(DiscoveryActivity.class, activity -> activity.snapshot() != null
           && activity.findViewById(R.id.game_discovery_arrival).isEnabled());
+      capture(DiscoveryActivity.class, "software-local-demo-simulated-arrival-entry");
+      if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        onView(withId(R.id.game_discovery_arrival)).check(matches(
+            allOf(isDisplayingAtLeast(90), isEnabled())));
+        onView(withId(R.id.game_discovery_camera_fallback)).check(matches(
+            allOf(isDisplayingAtLeast(90), isEnabled())));
+      }
       onView(withId(R.id.game_integration_discovery_context)).perform(reveal())
           .check(matches(withText(R.string.game_software_demo_discovery_disclosure)));
       onView(withId(R.id.game_discovery_arrival)).perform(reveal()).check(matches(isEnabled()));
-      capture(DiscoveryActivity.class, "software-local-demo-simulated-arrival-entry");
+      onView(withId(R.id.game_discovery_camera_fallback)).perform(reveal())
+          .check(matches(isEnabled()));
       tap(R.id.game_discovery_exit);
       ready(GameHomeActivity.class, activity -> activity.findViewById(R.id.game_home_back).isShown());
       tap(R.id.game_home_back);
