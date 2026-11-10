@@ -48,4 +48,18 @@ The independent `/root/h07_exact_review_pm` (`gpt-6.1-sol`, high) reviewed the e
 
 No gameplay or UI caller uses the new access yet. The closed production registry rejects all datasets, including DEMO. No automatic cloud read, enqueue or flush is initiated by graph creation. The SDK snapshot check was tested with simulated notification timing. Real SDK callback ordering and concurrent visibility, device execution, live auth and sync behavior, Android SQLite restart, and service readback remain unverified. The next bounded gameplay step requires eligible authored registration, a bound authored repository and explicit reconciliation after save and on reopen.
 
+## Explicit account progress readback
+
+`app-entry` v6, worktree `C:/Users/InsuHam/FirstStep-worktrees/app-entry`, base `be9364390bd1e69c8f59aa193bbe5475cb8c1a29`. The checkpoint SHA is recorded in `.local/harness/APP_ENTRY/v6/verified-commit.log`. Management owns publication and integration.
+
+`AccountProgressAccess.java` adds `public CompletableFuture<OutboxState> refresh(SyncScope scope)` for an explicit fetch action. It delegates to `SyncCoordinator.refresh(scope)`, using the existing registry, named Firestore backend, and owner guard before the read and again before the local projection update. The caller should recheck its captured scope before rendering the result. The returned summary stays in the sync projection. This path has no authored repository or reward writer, and it does not upload. The app-entry module README describes the caller contract. The campus owner has the UI follow-up.
+
+`AccountProgressSessionTest.java` uses a fake backend and an empty in-memory sync store to verify the facade makes one read for the captured scope and persists a confirmed remote pass without an upload or pending milestone. The same test class rejects refresh on unregistered and DEMO scopes before work. `AccountReadbackTestRegistry.java` grants one synthetic registration to the test only. Retained `ProgressSyncContractTest.newGenerationForSameUidRejectsLateRead` verifies a delayed response fails after an epoch change and leaves the local store untouched. This does not establish real Firestore or gameplay UI behavior.
+
+With Android Studio JBR and the local Android SDK on Windows, `.\gradlew.bat :app:testDebugUnitTest --tests com.example.firststep.game.composition.identity.AccountProgressSessionTest --tests com.example.firststep.game.sync.ProgressSyncContractTest :app:assembleDebug :app:lintDebug --console=plain` passed. All 18 selected tests passed with zero failures, errors or skips. Gradle ran 16 tasks and reused 35. Unit tests, APK assembly and lint ran. Lint reported zero errors, 95 warnings and zero findings in the changed paths. The harness and whitespace checks passed. No build or test failure occurred. Logs and exact source diff are under `.local/harness/APP_ENTRY/v6/`.
+
+The root implemented the patch and ran the checks. The independent `/root/h07_exact_review_pm` (`gpt-6.1-sol`, high) reviewed the three code and test paths and reported PASS with no actionable findings. The full-index binary patch SHA256 was `E273FEB83F11E555F132A61C251B461CABDA294743EE2111424523E52937B929`. The reviewer performed source review only.
+
+The production registry stays closed. This checkpoint includes no UI caller, startup fetch, account operation, service access, emulator run or real-device verification. Live cross-device readback remains pending.
+
 Journal update: pending management review.

@@ -6,6 +6,8 @@ import com.example.firststep.game.auth.AuthPort;
 import com.example.firststep.game.auth.Profile;
 import com.example.firststep.game.auth.ProfilePort;
 import com.example.firststep.game.auth.SessionController;
+import com.example.firststep.game.domain.Progress;
+import com.example.firststep.game.sync.AccountReadbackTestRegistry;
 import com.example.firststep.game.sync.DatasetRegistry;
 import com.example.firststep.game.sync.Milestone;
 import com.example.firststep.game.sync.OutboxState;
@@ -198,7 +200,59 @@ public final class AccountProgressSessionTest {
           throw new AssertionError("Unexpected source read");
         }).reconcile(internal));
     assertThrows(IllegalArgumentException.class, () -> access.flush(internal));
+    assertThrows(IllegalArgumentException.class, () -> access.refresh(internal));
+    SyncScope demo = new SyncScope(
+        internal.projectId, internal.uid, internal.sessionGeneration,
+        "software_episode_demo_v1", Progress.Mode.DEMO, internal.buildingId);
+    assertThrows(IllegalArgumentException.class, () -> access.refresh(demo));
     assertFalse(new UnconfiguredRuntime().accountProgress().isPresent());
+  }
+
+  @Test
+  public void explicitRefreshProjectsRemotePassIntoAnEmptyLocalOutbox() {
+    DatasetRegistry registry =
+        AccountReadbackTestRegistry.forBuilding("authored-course", "building-a");
+    Milestone remote =
+        new Milestone(10_000, new Milestone.Completion("remote-pass", "content-v1", 2, 920_000));
+    List<SyncScope> reads = new ArrayList<>();
+    SyncBackend backend = new SyncBackend() {
+      public CompletableFuture<Milestone> read(SyncScope scope) {
+        reads.add(scope);
+        return CompletableFuture.completedFuture(remote);
+      }
+
+      public CompletableFuture<Milestone> merge(SyncScope scope, Milestone milestone) {
+        throw new AssertionError("Refresh must not upload");
+      }
+    };
+    SyncStore cleanStore = new SyncStore() {
+      private OutboxState state = OutboxState.empty();
+
+      public OutboxState read(SyncScope scope) {
+        return state;
+      }
+
+      public OutboxState update(SyncScope scope, UnaryOperator<OutboxState> change) {
+        state = change.apply(state);
+        return state;
+      }
+    };
+    SyncCoordinator sync = new SyncCoordinator(registry, session, cleanStore, backend, Runnable::run);
+    AccountProgressAccess access = new AccountProgressAccess(registry, session, sync, Runnable::run);
+    controller.resume();
+    profiles.latest(ProfilePort.Source.SERVER);
+    SyncScope scope = access.capture("authored-course", "building-a");
+    assertTrue(reads.isEmpty());
+    assertEquals(OutboxState.Status.EMPTY, cleanStore.read(scope).status);
+
+    OutboxState result = access.refresh(scope).join();
+
+    assertEquals(1, reads.size());
+    assertSame(scope, reads.get(0));
+    assertSame(result, cleanStore.read(scope));
+    assertEquals(OutboxState.Status.CONFIRMED, result.status);
+    assertEquals(remote, result.confirmed);
+    assertNull(result.pending);
   }
 
   private static SyncStore unusedStore() {
