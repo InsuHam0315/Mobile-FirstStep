@@ -1,5 +1,7 @@
 # Sequential module integration and advancement
 
+Current override (2026-11-10): IMPLEMENTATION_FIRST.md supersedes the sequential certification/advancement order below. Coherent implementations may be integrated with short relevant checks and explicit pending combined validation. Historical evidence is preserved; known failing/incompatible code must still be repaired. Latest teammate design is integrated last, followed by whole-app verification.
+
 User authorization, 2026-11-06: finish one module, resolve issues and verify it, then merge into main and proceed to the next module. Routine integration, main push and next eligible module dispatch no longer need repeated approval. This supersedes older requirements for a separate integration approval. It does not authorize bypassing unresolved feature choices, spending, credentials, deployment or rewriting published history.
 
 ## Ownership and gate

@@ -1,5 +1,7 @@
 # H07B preparation — not a dispatch
 
+Sequencing update 2026-11-10: IMPLEMENTATION_FIRST.md supersedes this document's requirement to wait for H07 live acceptance before any approved sync implementation. A bounded scope and exclusive write ownership are still required before dispatch. Local/contracts-based implementation is permitted while real account checks remain pending; live authored-data eligibility and deployment permissions are not implied.
+
 2026-11-09. Prepared by management with a read-only implementation PM audit while H07 account-home validation runs. User requested useful parallel V1 work and continued authorized engineering. Existing native workers suffice for this bounded independent planning/review; no additional user chat, branch, app edits or parallel dependent implementation was created. H07 live acceptance and integration remain prerequisites. Reconcile this proposal with actual main before issuing H07B_SCOPE.md.
 
 ## Proposed technical boundary

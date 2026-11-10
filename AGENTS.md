@@ -7,6 +7,8 @@
 
 ## Staged game rebuild harness
 
+- Current sequencing override 2026-11-10: read docs/harness/IMPLEMENTATION_FIRST.md. The user now requests parallel independent required V1 implementation, short per-checkpoint build/interface checks, latest teammate design last, and comprehensive combined verification afterward. Pending human H07 checks no longer alone block approved implementation against explicit contracts; they remain unverified. Older sequential/live-acceptance-before-dispatch wording is historical where it conflicts. Preserve ownership, data isolation, external-service/account permissions and truthful validation status.
+
 - Current continuation 2026-11-10: H10C is the bounded next campus-content slice under H10C_SCOPE.md, connecting one sourced software-department DEMO episode with a separate registered local storage namespace. Existing H10/H10B no-reward paths stay unchanged. H07 remains independent human-controlled QA; the user-supplied latest QA screenshot reports an existing profile, not new onboarding or verified logout. Preserve 5564/5572 and do not automate account choices. H07B still waits for accepted/integrated H07. This entry supersedes the older no-active-H10 checkpoint only for H10C; no optional backlog release.
 
 - Current checkpoint 2026-11-09: H10B narration is accepted/integrated at a3b8f0f; its independent slice is complete. H07 remains open for human-selected separate QA account checks. No active H10 implementation or H07B dispatch. Preserve existing signed-in emulator-5564; QA entry is emulator-5572. Earlier parallel-continuation paragraphs record bounded authorization, not a new dispatch.
