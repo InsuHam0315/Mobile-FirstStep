@@ -112,7 +112,7 @@ public final class CampusHomeActivity extends AppCompatActivity {
     TextView current = findViewById(R.id.game_campus_progress_state);
     if (state.status == AccountHomeState.Status.WAITING) {
       long seconds = state.remainingMillis / 1000 + (state.remainingMillis % 1000 == 0 ? 0 : 1);
-      current.setText(getString(status, seconds / 60, seconds % 60));
+      current.setText(getString(R.string.game_campus_progress_waiting, seconds / 60, seconds % 60));
     } else current.setText(status);
 
     findViewById(R.id.game_campus_progress_reminder_note).setVisibility(
