@@ -17,7 +17,7 @@
             <Button style="@style/GameActionButton" android:id="@+id/game_home_map" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_home_map" />
             <Button style="@style/GameActionButton" android:id="@+id/game_home_profile" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_home_profile" />
             <Button style="@style/GameActionButton" android:id="@+id/game_home_ending" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_home_ending" />
-            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_home_favorites_title" android:textColor="@color/game_color_text" android:textSize="@dimen/game_text_body" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_home_favorites_title" android:textColor="@color/game_color_text" android:textSize="20sp" android:textStyle="bold" android:accessibilityHeading="true" />
             <LinearLayout android:id="@+id/game_home_favorites" android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content" />
         </LinearLayout>
         <LinearLayout android:id="@+id/game_home_search_panel" android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content">

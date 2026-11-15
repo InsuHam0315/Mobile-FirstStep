@@ -1,9 +1,9 @@
 <resources>
     <color name="game_welcome_background">#110B15</color>
-    <color name="game_welcome_pink">#F9A9C1</color>
+    <color name="game_welcome_pink">#FFC0D0</color>
     <color name="game_welcome_ink">#2A1B29</color>
     <color name="game_welcome_muted">#F0DFE5</color>
-    <color name="game_welcome_guest_fill">#F0211923</color>
+    <color name="game_welcome_guest_fill">#302B3733</color>
 
     <string name="game_welcome_brand">FIRST STEP / KUNSAN NATIONAL UNIVERSITY</string>
     <string name="game_welcome_tagline">당신의 첫 번째 캠퍼스 탐험이 시작됩니다.</string>
@@ -20,6 +20,6 @@
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">16sp</item>
         <item name="android:stateListAnimator">@null</item>
-        <item name="cornerRadius">18dp</item>
+        <item name="cornerRadius">16dp</item>
     </style>
 </resources>

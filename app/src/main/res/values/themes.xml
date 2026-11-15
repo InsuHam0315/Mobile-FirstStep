@@ -2,10 +2,10 @@
     <style name="Theme.FirstStep" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="android:fontFamily">sans</item>
         <item name="android:windowLightStatusBar">true</item>
-        <item name="android:statusBarColor">#FAF7EF</item>
-        <item name="android:navigationBarColor">#FAF7EF</item>
-        <item name="colorPrimary">#AB5336</item>
-        <item name="colorSecondary">#1E2B39</item>
+        <item name="android:statusBarColor">@color/game_color_surface</item>
+        <item name="android:navigationBarColor">@color/game_color_surface</item>
+        <item name="colorPrimary">@color/game_color_action</item>
+        <item name="colorSecondary">@color/game_reskin_link</item>
         <item name="android:windowActionModeOverlay">true</item>
     </style>
 </resources>

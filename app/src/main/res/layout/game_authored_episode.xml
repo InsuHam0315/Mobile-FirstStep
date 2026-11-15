@@ -34,7 +34,7 @@
             android:textSize="@dimen/game_text_body" />
         <LinearLayout
             android:id="@+id/game_authored_body"
-            android:background="@drawable/game_reskin_tinted_card"
+            android:background="@drawable/game_reskin_card"
             android:padding="@dimen/game_space_medium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

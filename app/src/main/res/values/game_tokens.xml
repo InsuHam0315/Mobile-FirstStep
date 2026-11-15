@@ -6,15 +6,15 @@
         <item name="colorPrimary">@color/game_color_action</item>
         <item name="colorSecondary">@color/game_color_action</item>
     </style>
-    <color name="game_color_surface">#FBF5EC</color>
-    <color name="game_color_text">#342533</color>
-    <color name="game_color_action">#703B56</color>
+    <color name="game_color_surface">#FBF8F2</color>
+    <color name="game_color_text">#272C2A</color>
+    <color name="game_color_action">#873856</color>
     <color name="game_color_on_action">#FFFFFF</color>
     <dimen name="game_space_medium">16dp</dimen>
     <dimen name="game_space_large">24dp</dimen>
     <dimen name="game_touch_min">48dp</dimen>
-    <dimen name="game_text_title">28sp</dimen>
-    <dimen name="game_text_body">17sp</dimen>
+    <dimen name="game_text_title">30sp</dimen>
+    <dimen name="game_text_body">16sp</dimen>
     <dimen name="game_shape_action_corner">16dp</dimen>
     <style name="GameActionButton" parent="Widget.MaterialComponents.Button">
         <item name="cornerRadius">@dimen/game_shape_action_corner</item>
