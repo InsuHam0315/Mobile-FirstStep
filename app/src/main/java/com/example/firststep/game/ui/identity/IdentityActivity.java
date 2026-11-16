@@ -27,7 +27,7 @@ public final class IdentityActivity extends AppCompatActivity {
   private IdentityViewModel model;
   private EditText name, student, department;
   private boolean binding, viewingProfile;
-  private boolean choosingAccount;
+  private boolean choosingAccount, loginInfoExpanded;
   private boolean openingCampusHome;
   private String displayedUid;
   private final OnBackPressedCallback accountBack =
@@ -48,6 +48,7 @@ public final class IdentityActivity extends AppCompatActivity {
     EdgeToEdge.enable(this);
     setContentView(R.layout.game_identity_activity);
     choosingAccount = state != null && state.getBoolean(ACCOUNT_ENTRY_OPEN);
+    loginInfoExpanded = state != null && state.getBoolean("login_info_expanded");
     getOnBackPressedDispatcher().addCallback(this, accountBack);
     model =
         new ViewModelProvider(
@@ -104,10 +105,22 @@ public final class IdentityActivity extends AppCompatActivity {
         startActivity(new Intent(this, GuideActivity.class));
       }
     });
-    if (BuildConfig.DEBUG) {
-      ((TextView) findViewById(R.id.game_identity_welcome_guest_note))
-          .setText(R.string.game_welcome_guest_debug_note);
-    }
+    TextView guestEntry = findViewById(R.id.game_identity_welcome_guest);
+    String guestLabel = getString(R.string.game_welcome_guest);
+    String guestNote = getString(BuildConfig.DEBUG
+        ? R.string.game_welcome_guest_debug_note : R.string.game_welcome_guest_note);
+    SpannableString guestText = new SpannableString(guestLabel + "\n" + guestNote);
+    int noteStart = guestLabel.length() + 1;
+    guestText.setSpan(new android.text.style.RelativeSizeSpan(0.8f), noteStart, guestText.length(),
+        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+    guestText.setSpan(new android.text.style.ForegroundColorSpan(getColor(R.color.game_reskin_muted)),
+        noteStart, guestText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+    guestEntry.setText(guestText);
+    findViewById(R.id.game_identity_login_back).setOnClickListener(v -> closeAccountScreen());
+    findViewById(R.id.game_identity_info_toggle).setOnClickListener(v -> {
+      loginInfoExpanded = !loginInfoExpanded;
+      renderLoginInfo(true);
+    });
     findViewById(R.id.game_identity_login).setOnClickListener(v -> model.controller.signIn(false));
     findViewById(R.id.game_identity_reselect)
         .setOnClickListener(v -> model.controller.signIn(true));
@@ -189,6 +202,28 @@ public final class IdentityActivity extends AppCompatActivity {
     startActivity(CampusHomeRoute.intent(this));
   }
 
+  private void renderLoginInfo(boolean loginScreen) {
+    visible(R.id.game_identity_info_toggle, loginScreen);
+    visible(R.id.game_identity_info_detail, !loginScreen || loginInfoExpanded);
+    TextView toggle = findViewById(R.id.game_identity_info_toggle);
+    toggle.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0,
+        loginInfoExpanded ? R.drawable.game_guide_icon_up : R.drawable.game_guide_icon_down, 0);
+    androidx.core.view.ViewCompat.setStateDescription(toggle, getString(loginInfoExpanded
+        ? R.string.game_guide_expanded : R.string.game_guide_collapsed));
+  }
+
+  private void renderLoginStatus(SessionState state, boolean loginScreen) {
+    boolean unconfigured = state.getStage() == SessionState.Stage.UNCONFIGURED;
+    View panel = findViewById(R.id.game_identity_status_panel);
+    panel.setBackgroundResource(unconfigured ? R.drawable.game_reskin_tinted_card : 0);
+    int padding = unconfigured
+        ? getResources().getDimensionPixelSize(R.dimen.game_space_medium) : 0;
+    panel.setPadding(padding, padding, padding, padding);
+    visible(R.id.game_identity_status_heading, unconfigured);
+    visible(R.id.game_identity_status_panel, !loginScreen || unconfigured || state.getFailure() != null
+        || model.runtime.kind() == IdentityRuntime.Kind.FAKE || model.runtime.kind() == IdentityRuntime.Kind.LOCAL_EMULATOR);
+  }
+
   private void render(SessionState s) {
     binding = true;
     boolean changed = !Objects.equals(displayedUid, s.getUid());
@@ -205,6 +240,11 @@ public final class IdentityActivity extends AppCompatActivity {
     boolean complete = stage == SessionState.Stage.COMPLETE;
     if (changed || !complete) viewingProfile = false;
     boolean showWelcome = isSignedOut(s) && !choosingAccount;
+    boolean loginScreen = !showWelcome && isSignedOut(s);
+    visible(R.id.game_identity_login_header, loginScreen);
+    visible(R.id.game_identity_login_spacer, loginScreen);
+    renderLoginInfo(loginScreen);
+    renderLoginStatus(s, loginScreen);
     visible(R.id.game_identity_welcome, showWelcome);
     visible(R.id.game_identity_root, !showWelcome);
     WindowInsetsControllerCompat bars =

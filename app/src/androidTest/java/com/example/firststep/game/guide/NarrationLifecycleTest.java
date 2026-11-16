@@ -69,7 +69,7 @@ public final class NarrationLifecycleTest {
       onView(withId(R.id.narration_status)).check(matches(withText(R.string.game_intro_speech_1)));
       tap(R.id.narration_next); tap(R.id.narration_next); tap(R.id.narration_next);
       assertEquals("학과 공식 위치 안내에는 디지털정보관 1층이 적혀 있어요.", text(s, R.id.narration_caption));
-      assertTrue(text(s, R.id.narration_source).contains("2026-11-08"));
+      onView(withId(R.id.narration_source)).check(matches(withText(R.string.game_guide_review_source)));
       s.moveToState(Lifecycle.State.CREATED);
       s.moveToState(Lifecycle.State.RESUMED);
       assertEquals("학과 공식 위치 안내에는 디지털정보관 1층이 적혀 있어요.", text(s, R.id.narration_caption));

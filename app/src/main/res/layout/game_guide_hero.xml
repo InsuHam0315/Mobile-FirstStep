@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/game_reskin_tinted_card"
+    android:padding="@dimen/game_space_medium">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:accessibilityHeading="true"
+            android:text="@string/game_guide_hero"
+            android:textColor="@color/game_color_text"
+            android:textSize="20sp"
+            android:maxLines="1"
+            app:autoSizeTextType="uniform"
+            app:autoSizeMinTextSize="12sp"
+            app:autoSizeMaxTextSize="20sp"
+            app:autoSizeStepGranularity="1sp"
+            android:textStyle="bold" />
+        <ImageView
+            android:layout_width="108dp"
+            android:layout_height="108dp"
+            android:contentDescription="@string/game_narration_kangrin_art"
+            android:scaleType="fitCenter"
+            android:src="@drawable/game_narration_kangrin" />
+    </LinearLayout>
+    <com.google.android.material.button.MaterialButton
+        android:id="@id/game_guide_demo_entry"
+        style="@style/GameActionButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/game_guide_demo_start"
+        app:icon="@drawable/game_guide_icon_play" app:iconGravity="textEnd" app:iconSize="20dp"
+        app:iconTint="@color/game_reskin_primary_text" />
+    <com.google.android.material.button.MaterialButton
+        android:id="@id/game_narration_entry"
+        style="@style/GameSecondaryButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/game_narration_title"
+        app:icon="@drawable/game_guide_icon_smile" app:iconGravity="textStart" app:iconSize="20dp"
+        app:iconTint="@color/game_reskin_secondary_text" />
+</LinearLayout>

@@ -5,12 +5,12 @@
     <color name="game_welcome_muted">#F0DFE5</color>
     <color name="game_welcome_guest_fill">#302B3733</color>
 
-    <string name="game_welcome_brand">FIRST STEP / KUNSAN NATIONAL UNIVERSITY</string>
+    <string name="game_welcome_brand">국립군산대학교 캠퍼스 탐방</string>
     <string name="game_welcome_tagline">당신의 첫 번째 캠퍼스 탐험이 시작됩니다.</string>
-    <string name="game_welcome_login">계정으로 로그인</string>
-    <string name="game_welcome_guest">게스트로 시작하기</string>
-    <string name="game_welcome_guest_note">게스트는 학과 안내와 연습을 이용할 수 있어요.</string>
-    <string name="game_welcome_guest_debug_note">학과 안내·연습과 로컬 시연을 이용할 수 있어요.</string>
+    <string name="game_welcome_login">Google 계정으로 로그인</string>
+    <string name="game_welcome_guest">게스트로 둘러보기</string>
+    <string name="game_welcome_guest_note">학과 안내와 연습</string>
+    <string name="game_welcome_guest_debug_note">학과 안내와 탐방 시연</string>
     <string name="game_welcome_footer">EXPLORE · DISCOVER · REMEMBER</string>
 
     <style name="GameWelcomeButton" parent="Widget.MaterialComponents.Button">
@@ -22,6 +22,12 @@
         <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:letterSpacing">0</item>
         <item name="android:stateListAnimator">@null</item>
+        <item name="android:gravity">start|center_vertical</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="icon">@drawable/game_demo_hub_arrow_icon</item>
+        <item name="iconGravity">end</item>
+        <item name="iconSize">20dp</item>
         <item name="cornerRadius">16dp</item>
     </style>
 </resources>

@@ -32,10 +32,12 @@ public final class DiscoveryActivity extends AppCompatActivity
   public static final String MODE_EXTRA = "com.example.firststep.discovery.MODE",
       SIMULATED = "SIMULATED";
   private static final int CAMERA_REQUEST = 403;
+  private static final int SHAKE_TARGET = 5;
   private final Handler handler = new Handler(Looper.getMainLooper());
   private DiscoveryController controller;
   private DiscoveryHost host;
   private boolean simulated, active;
+  private boolean softwareDesign, methodsExpanded;
   private final ExecutorService integrationWorker = Executors.newSingleThreadExecutor();
   private IntegrationIntentCodec.Request integrationRequest;
   private IntegrationResult completedIntegration;
@@ -63,7 +65,27 @@ public final class DiscoveryActivity extends AppCompatActivity
   @Override
   public void onCreate(Bundle state) {
     super.onCreate(state);
-    setContentView(R.layout.game_discovery);
+    if (IntegrationIntentCodec.hasIntegrationContext(getIntent()) && BuildConfig.DEBUG) {
+      integrationRequest = IntegrationIntentCodec.readRequest(getIntent());
+      softwareDesign = integrationRequest != null
+          && IntegrationContext.SOFTWARE_DATASET.equals(integrationRequest.context.datasetId);
+    }
+    setContentView(softwareDesign ? R.layout.game_software_discovery : R.layout.game_discovery);
+    if (softwareDesign) {
+      methodsExpanded = state != null && state.getBoolean("discovery_methods_expanded");
+      PreviewView preview = findViewById(R.id.game_discovery_preview);
+      preview.setImplementationMode(PreviewView.ImplementationMode.COMPATIBLE);
+      findViewById(R.id.game_discovery_back).setOnClickListener(v -> finish());
+      TextView methods = findViewById(R.id.game_discovery_method_toggle);
+      updateMethodsArrow(methods);
+      methods.setOnClickListener(v -> {
+        if (controller == null) return;
+        methodsExpanded = !methodsExpanded;
+        updateMethodsArrow(methods);
+        onState(controller.snapshot());
+      });
+      renderSoftwareSteps(0, false);
+    }
     View root = findViewById(R.id.game_discovery_scroll);
     int left = root.getPaddingLeft(),
         top = root.getPaddingTop(),
@@ -81,8 +103,6 @@ public final class DiscoveryActivity extends AppCompatActivity
     setResult(RESULT_CANCELED);
     findViewById(R.id.game_discovery_exit).setOnClickListener(v -> finish());
     if (IntegrationIntentCodec.hasIntegrationContext(getIntent())) {
-      integrationRequest =
-          BuildConfig.DEBUG ? IntegrationIntentCodec.readRequest(getIntent()) : null;
       if (integrationRequest == null) {
         integrationError();
         return;
@@ -135,7 +155,7 @@ public final class DiscoveryActivity extends AppCompatActivity
           IntegrationContext.SOFTWARE_DATASET.equals(integrationRequest.context.datasetId);
       if (softwareDemo) {
         ((TextView) findViewById(R.id.game_integration_discovery_context))
-            .setText(R.string.game_software_demo_discovery_disclosure);
+            .setText(softwareDesign ? R.string.game_discovery_demo_local : R.string.game_software_demo_discovery_disclosure);
       } else {
         ((TextView) findViewById(R.id.game_integration_discovery_context))
             .setText(
@@ -263,7 +283,7 @@ public final class DiscoveryActivity extends AppCompatActivity
 
   @Override
   public void onState(DiscoveryState s) {
-    ((TextView) findViewById(R.id.game_discovery_disclosure))
+    if (!softwareDesign) ((TextView) findViewById(R.id.game_discovery_disclosure))
         .setText(
             s.method == DiscoveryResult.Method.LIGHT
                 ? R.string.game_discovery_disclosure_light
@@ -307,7 +327,7 @@ public final class DiscoveryActivity extends AppCompatActivity
             : getString(R.string.game_discovery_shake_count, s.shakeCount);
     if (!s.motionAvailable && s.method == DiscoveryResult.Method.SHAKE)
       detail = getString(R.string.game_discovery_motion_missing);
-    status.setText(
+    if (!softwareDesign) status.setText(
         getString(
             R.string.game_discovery_status_format, mode, getString(cameraText), selected, detail));
     int h;
@@ -333,7 +353,8 @@ public final class DiscoveryActivity extends AppCompatActivity
       default:
         h = R.string.game_discovery_heading_waiting;
     }
-    ((TextView) findViewById(R.id.game_discovery_heading)).setText(h);
+    if (softwareDesign) renderSoftwareDiscovery(s, cameraText, h);
+    else ((TextView) findViewById(R.id.game_discovery_heading)).setText(h);
     TextView result = findViewById(R.id.game_discovery_result);
     if (s.result == null) result.setText("");
     else {
@@ -353,6 +374,85 @@ public final class DiscoveryActivity extends AppCompatActivity
     }
   }
 
+  private void renderSoftwareDiscovery(DiscoveryState s, int cameraText, int headingText) {
+    boolean done = s.completed;
+    boolean aligned = s.heading == DiscoveryState.HeadingStatus.ALIGNED || s.headingFallback;
+    boolean cameraReady = s.camera == DiscoveryState.CameraStatus.READY && !s.simulated;
+    boolean ready = s.camera == DiscoveryState.CameraStatus.READY || s.cameraFallback;
+    boolean showDiscovery = s.arrived && aligned && ready;
+    boolean showCamera = s.arrived && cameraReady && !done;
+    int current = done || (s.arrived && aligned) ? 2 : s.arrived ? 1 : 0;
+    renderSoftwareSteps(current, done);
+
+    show(R.id.game_discovery_arrival_title, !s.arrived);
+    show(R.id.game_integration_discovery_context, !s.arrived);
+    View stage = findViewById(R.id.game_discovery_stage_card);
+    stage.setBackgroundResource(s.arrived ? 0 : R.drawable.game_reskin_card);
+    findViewById(R.id.game_discovery_preview).setAlpha(showCamera ? 1f : 0f);
+    TextView cameraLabel = findViewById(R.id.game_discovery_camera_label);
+    cameraLabel.setText(s.cameraFallback ? R.string.game_discovery_demo_camera_off
+        : R.string.game_discovery_demo_camera_on);
+    show(R.id.game_discovery_camera_label, s.arrived && (s.cameraFallback || showCamera));
+
+    TextView status = findViewById(R.id.game_discovery_status);
+    boolean cameraNeedsChoice = s.arrived && !ready && !done;
+    status.setText(cameraNeedsChoice ? getString(cameraText)
+        : showDiscovery && !done && !s.motionAvailable ? getString(R.string.game_discovery_motion_missing) : "");
+    TextView heading = findViewById(R.id.game_discovery_heading);
+    heading.setText(headingText);
+    show(R.id.game_discovery_heading, s.arrived && !aligned && !done);
+    show(R.id.game_discovery_arrival, !s.arrived && !done);
+    findViewById(R.id.game_discovery_arrival).setEnabled(s.active && !done);
+    show(R.id.game_discovery_align_fallback, s.arrived && !s.headingFallback && !done
+        && (!aligned || methodsExpanded));
+    show(R.id.game_discovery_camera_fallback, cameraNeedsChoice);
+    show(R.id.game_discovery_retry, s.arrived && !done && (!cameraReady || methodsExpanded));
+    show(R.id.game_discovery_method_card, s.arrived && !done);
+    show(R.id.game_discovery_method_options, methodsExpanded);
+    show(R.id.game_discovery_hold, showDiscovery && !done);
+    show(R.id.game_discovery_hold_hint, showDiscovery && !done);
+    show(R.id.game_discovery_shake_panel, showDiscovery && !done);
+    if (showDiscovery) {
+      TextView count = findViewById(R.id.game_discovery_shake_progress);
+      String label = getString(R.string.game_discovery_demo_count, s.shakeCount, SHAKE_TARGET);
+      if (!label.contentEquals(count.getText())) count.setText(label);
+      android.widget.LinearLayout segments = findViewById(R.id.game_discovery_shake_segments);
+      for (int i = 0; i < segments.getChildCount(); i++) {
+        segments.getChildAt(i).setBackgroundResource(i < s.shakeCount
+            ? R.drawable.game_discovery_step_active : R.drawable.game_discovery_step_idle);
+      }
+    }
+  }
+
+  private void renderSoftwareSteps(int current, boolean done) {
+    int[] views = {R.id.game_discovery_step_arrival, R.id.game_discovery_step_align,
+        R.id.game_discovery_step_find};
+    int[] titles = {R.string.game_discovery_step_arrival, R.string.game_discovery_step_align,
+        R.string.game_discovery_step_find};
+    for (int i = 0; i < views.length; i++) {
+      TextView chip = findViewById(views[i]);
+      boolean selected = i == current;
+      String title = getString(titles[i]);
+      chip.setText(i < current || done ? getString(R.string.game_discovery_step_checked, title) : title);
+      chip.setBackgroundResource(selected ? R.drawable.game_discovery_step_active : R.drawable.game_discovery_step_idle);
+      chip.setTextColor(getColor(selected ? R.color.game_color_on_action : R.color.game_color_text));
+      ViewCompat.setStateDescription(chip, selected ? getString(R.string.game_discovery_step_current) : null);
+    }
+  }
+
+  private void show(int id, boolean visible) {
+    View view = findViewById(id);
+    int visibility = visible ? View.VISIBLE : View.GONE;
+    if (view.getVisibility() != visibility) view.setVisibility(visibility);
+  }
+
+  private void updateMethodsArrow(TextView methods) {
+    methods.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.game_discovery_method_icon,
+        0, methodsExpanded ? R.drawable.game_guide_icon_up : R.drawable.game_guide_icon_down, 0);
+    ViewCompat.setStateDescription(methods, getString(methodsExpanded
+        ? R.string.game_guide_expanded : R.string.game_guide_collapsed));
+  }
+
   private void integrationError() {
     if (isDestroyed() || isFinishing()) return;
     ((TextView) findViewById(R.id.game_discovery_status)).setText(R.string.game_integration_error);
@@ -367,11 +467,18 @@ public final class DiscoveryActivity extends AppCompatActivity
           R.id.game_discovery_method_light,
           R.id.game_integration_discovery_continue
         }) findViewById(id).setVisibility(View.GONE);
+    if (softwareDesign) show(R.id.game_discovery_method_card, false);
     if (host != null) host.pause();
   }
 
   private void renderCompletedIntegration() {
     if (completedIntegration == null) return;
+    if (softwareDesign) {
+      renderSoftwareSteps(2, true);
+      show(R.id.game_discovery_arrival, false);
+      show(R.id.game_discovery_arrival_title, false);
+      show(R.id.game_integration_discovery_context, false);
+    }
     ((TextView) findViewById(R.id.game_discovery_result))
         .setText(R.string.game_integration_discovery_ready);
     findViewById(R.id.game_integration_discovery_continue).setVisibility(View.VISIBLE);
@@ -399,6 +506,7 @@ public final class DiscoveryActivity extends AppCompatActivity
   @Override
   protected void onSaveInstanceState(Bundle out) {
     super.onSaveInstanceState(out);
+    out.putBoolean("discovery_methods_expanded", methodsExpanded);
     if (completedIntegration != null) {
       Intent retained = new Intent();
       IntegrationIntentCodec.writeResult(retained, completedIntegration);

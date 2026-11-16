@@ -346,6 +346,13 @@ public final class IntroQuizController {
     if (stage == Stage.INTRO) speech.speak(sentence);
   }
 
+  public void previous() {
+    if (!active || stage != Stage.INTRO || sentence == 0) return;
+    speech.stop();
+    sentence--;
+    render();
+  }
+
   public void next() {
     if (!active) return;
     if (stage == Stage.INTRO) {

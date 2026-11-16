@@ -33,6 +33,8 @@ public final class IntroQuizActivity extends AppCompatActivity {
   private String[] sentences;
   private NarrationContent softwareNarration;
   private GuideBundle softwareGuide;
+  private boolean startQuizAfterBooklet;
+  private int tourQuestionIndex;
   private final ExecutorService integrationWorker = Executors.newSingleThreadExecutor();
   private IntegrationContext integrationContext;
   private boolean integrationRoute, routeReady;
@@ -118,6 +120,11 @@ public final class IntroQuizActivity extends AppCompatActivity {
     super.onCreate(state);
     setContentView(R.layout.game_intro_activity);
     restored = state;
+    startQuizAfterBooklet = state != null && state.getBoolean("start_quiz_after_booklet");
+    bindBooklet();
+    bindTourQuiz();
+    bindTourResult();
+    tourQuestionIndex = state == null ? 0 : state.getInt("tour_question_index");
     View scroll = findViewById(R.id.game_intro_scroll);
     androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(
         scroll,
@@ -266,7 +273,10 @@ public final class IntroQuizActivity extends AppCompatActivity {
     });
     findViewById(R.id.game_quiz_start).setOnClickListener(v -> controller.start());
     findViewById(R.id.game_quiz_submit).setOnClickListener(v -> controller.submit());
-    findViewById(R.id.game_quiz_retry).setOnClickListener(v -> controller.retry());
+    findViewById(R.id.game_quiz_retry).setOnClickListener(v -> {
+      tourQuestionIndex = 0;
+      controller.retry();
+    });
     findViewById(R.id.game_intro_reminder).setOnClickListener(v -> reminder());
     host.start(
         sentences,
@@ -353,6 +363,8 @@ public final class IntroQuizActivity extends AppCompatActivity {
       out.putString("pending_version", controller.pendingVersion());
       out.putBundle("pending", bundle(controller.pendingAnswers()));
     }
+    out.putBoolean("start_quiz_after_booklet", startQuizAfterBooklet);
+    out.putInt("tour_question_index", tourQuestionIndex);
     super.onSaveInstanceState(out);
   }
 
@@ -471,14 +483,38 @@ public final class IntroQuizActivity extends AppCompatActivity {
         new int[] {
           R.id.game_intro_replay, R.id.game_intro_next, R.id.game_intro_finish, R.id.game_intro_skip
         }) visible(id, intro);
-    if (software) {
-      visible(R.id.game_intro_next, intro && s.sentence + 1 < sentences.length);
-      visible(R.id.game_intro_finish, intro && s.sentence + 1 == sentences.length);
-      visible(R.id.game_intro_skip, false);
-      renderSoftwareCaption(intro, s.sentence);
+    boolean booklet = software && intro;
+    boolean tourQuiz = software && quiz && s.progress != null && s.progress.active != null;
+    boolean tourResult = software && result && s.result != null;
+    boolean standardHeader = !booklet && !tourQuiz && !tourResult;
+    visible(R.id.game_tour_result, tourResult);
+    if (tourResult) renderTourResult(s);
+    visible(R.id.game_tour_quiz, tourQuiz);
+    visible(R.id.game_intro_booklet, booklet);
+    visible(R.id.game_intro_title, standardHeader);
+    visible(R.id.game_intro_target, standardHeader);
+    visible(R.id.game_intro_disclosure, standardHeader);
+    visible(R.id.game_intro_status, standardHeader);
+    visible(R.id.game_intro_back, standardHeader);
+    visible(R.id.game_quiz_questions, quiz && !tourQuiz);
+    if (booklet) {
+      for (int id : new int[] {R.id.game_intro_replay, R.id.game_intro_next,
+          R.id.game_intro_finish, R.id.game_intro_skip}) visible(id, false);
+      renderBooklet(s.sentence);
     }
-    visible(R.id.game_intro_show_again, wait || result);
-    visible(R.id.game_intro_caption, intro);
+    if (software && startQuizAfterBooklet && wait && s.eligible) {
+      findViewById(R.id.game_intro_scroll).post(() -> {
+        if (!resumed || !routeReady || !startQuizAfterBooklet || controller == null) return;
+        IntroQuizController.Snapshot current = controller.snapshot();
+        if (current.stage != IntroQuizController.Stage.WAITING || !current.eligible) return;
+        startQuizAfterBooklet = false;
+        controller.start();
+      });
+    } else if (quiz || result || s.stage == IntroQuizController.Stage.ERROR) {
+      startQuizAfterBooklet = false;
+    }
+    visible(R.id.game_intro_show_again, wait || (result && !tourResult));
+    visible(R.id.game_intro_caption, intro && !booklet);
     visible(
         R.id.game_intro_reminder,
         wait
@@ -486,12 +522,12 @@ public final class IntroQuizActivity extends AppCompatActivity {
             && !fake
             && !(BuildConfig.DEBUG && getIntent().hasExtra("game_intro_debug_run")));
     visible(R.id.game_quiz_start, wait);
-    visible(R.id.game_quiz_submit, quiz);
+    visible(R.id.game_quiz_submit, quiz && !tourQuiz);
     visible(
         R.id.game_quiz_retry,
-        (result && s.result != null && !s.result.passed)
+        (result && !tourResult && s.result != null && !s.result.passed)
             || s.stage == IntroQuizController.Stage.ERROR);
-    visible(R.id.game_quiz_result, result);
+    visible(R.id.game_quiz_result, result && !tourResult);
     String label =
         software ? getString(R.string.game_software_demo_mode)
         : "DEMO".equals(modeName)
@@ -533,7 +569,8 @@ public final class IntroQuizActivity extends AppCompatActivity {
     findViewById(R.id.game_quiz_submit).setEnabled(quiz && s.complete());
     LinearLayout list = findViewById(R.id.game_quiz_questions);
     list.removeAllViews();
-    if (quiz && s.progress.active != null)
+    if (tourQuiz) renderTourQuiz(s);
+    else if (quiz && s.progress.active != null)
       for (GameContent.Question q : s.progress.active.questions) {
         TextView title = new TextView(this);
         title.setText(q.text);
@@ -544,17 +581,6 @@ public final class IntroQuizActivity extends AppCompatActivity {
             getResources().getDimension(R.dimen.game_text_body));
         title.setTag(q.id);
         list.addView(title);
-        if (software) {
-          GuideBundle.Question approved = approvedQuestion(q.id);
-          if (approved != null) {
-            TextView source = new TextView(this);
-            source.setTextColor(getColor(R.color.game_color_text));
-            source.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX,
-                getResources().getDimension(R.dimen.game_text_body));
-            bindSource(source, approved.getClaimId());
-            list.addView(source);
-          }
-        }
         RadioGroup group = new RadioGroup(this);
         group.setTag(q.id);
         for (GameContent.Option o : q.options) {
@@ -584,22 +610,206 @@ public final class IntroQuizActivity extends AppCompatActivity {
                 : "");
   }
 
-  private void renderSoftwareCaption(boolean intro, int index) {
-    visible(R.id.game_software_demo_intro_art, intro);
-    visible(R.id.game_software_demo_caption_position, intro);
-    visible(R.id.game_software_demo_caption_origin, intro);
-    if (!intro) return;
-    ((TextView) findViewById(R.id.game_software_demo_caption_position))
-        .setText(getString(R.string.game_narration_position, index + 1, sentences.length));
-    TextView origin = findViewById(R.id.game_software_demo_caption_origin);
-    origin.setOnClickListener(null);
-    origin.setClickable(false);
+  private void bindTourResult() {
+    findViewById(R.id.game_tour_result_back).setOnClickListener(v -> finish());
+    findViewById(R.id.game_tour_result_home).setOnClickListener(v -> finish());
+    findViewById(R.id.game_tour_result_home_secondary).setOnClickListener(v -> finish());
+    findViewById(R.id.game_tour_result_review).setOnClickListener(v -> controller.showIntro());
+    findViewById(R.id.game_tour_result_retry).setOnClickListener(v -> {
+      tourQuestionIndex = 0;
+      controller.retry();
+    });
+  }
+
+  private void renderTourResult(IntroQuizController.Snapshot state) {
+    boolean passed = state.result.passed;
+    ((ImageView) findViewById(R.id.game_tour_result_icon)).setImageResource(
+        passed ? R.drawable.game_tour_result_seal : R.drawable.game_booklet_checklist_icon);
+    ((TextView) findViewById(R.id.game_tour_result_heading)).setText(passed
+        ? R.string.game_tour_result_complete : R.string.game_tour_result_try_again);
+    ((TextView) findViewById(R.id.game_tour_result_score)).setText(getString(
+        R.string.game_narration_position, state.result.correct, softwareGuide.getQuestions().size()));
+    ((TextView) findViewById(R.id.game_tour_result_stamp)).setText(getString(
+        R.string.game_tour_result_stamp_count, state.progress != null && state.progress.stamp ? 1 : 0));
+    TextView quizStep = findViewById(R.id.game_tour_result_quiz_step);
+    quizStep.setCompoundDrawablesRelativeWithIntrinsicBounds(
+        passed ? R.drawable.game_demo_hub_check_icon : R.drawable.game_booklet_checklist_icon, 0, 0, 0);
+    androidx.core.view.ViewCompat.setStateDescription(
+        quizStep, passed ? getString(R.string.game_demo_hub_step_done) : null);
+    visible(R.id.game_tour_result_hint, !passed);
+    visible(R.id.game_tour_result_retry, !passed);
+    visible(R.id.game_tour_result_home, passed);
+    visible(R.id.game_tour_result_home_secondary, !passed);
+  }
+
+  private void bindTourQuiz() {
+    findViewById(R.id.game_tour_quiz_back).setOnClickListener(v -> finish());
+    findViewById(R.id.game_tour_quiz_home).setOnClickListener(v -> finish());
+    findViewById(R.id.game_tour_quiz_previous)
+        .setOnClickListener(v -> moveTourQuestion(tourQuestionIndex - 1));
+    findViewById(R.id.game_tour_quiz_next).setOnClickListener(v -> {
+      IntroQuizController.Snapshot current = controller.snapshot();
+      if (current.stage != IntroQuizController.Stage.QUIZ || current.progress.active == null) return;
+      List<GameContent.Question> questions = current.progress.active.questions;
+      if (tourQuestionIndex == questions.size() - 1) {
+        if (current.complete()) controller.submit();
+      } else if (current.answers.containsKey(questions.get(tourQuestionIndex).id)) {
+        moveTourQuestion(tourQuestionIndex + 1);
+      }
+    });
+  }
+
+  private void moveTourQuestion(int index) {
+    IntroQuizController.Snapshot current = controller.snapshot();
+    if (current.stage != IntroQuizController.Stage.QUIZ || current.progress.active == null
+        || index < 0 || index >= current.progress.active.questions.size()) return;
+    tourQuestionIndex = index;
+    renderTourQuiz(current);
+    android.widget.ScrollView scroll = findViewById(R.id.game_intro_scroll);
+    scroll.scrollTo(0, 0);
+  }
+
+  private void renderTourQuiz(IntroQuizController.Snapshot s) {
+    List<GameContent.Question> questions = s.progress.active.questions;
+    tourQuestionIndex = Math.max(0, Math.min(tourQuestionIndex, questions.size() - 1));
+    GameContent.Question question = questions.get(tourQuestionIndex);
+    boolean last = tourQuestionIndex == questions.size() - 1;
+    renderTourQuizTabs(questions, s.answers);
+    ((TextView) findViewById(R.id.game_tour_quiz_page)).setText(getString(
+        R.string.game_narration_position, tourQuestionIndex + 1, questions.size()));
+
+    RadioGroup options = findViewById(R.id.game_tour_quiz_options);
+    if (options.getTag() != question) {
+      options.setTag(question);
+      options.removeAllViews();
+      TextView prompt = findViewById(R.id.game_tour_quiz_prompt);
+      prompt.setText(question.text);
+      prompt.setCompoundDrawablesRelativeWithIntrinsicBounds(
+          last ? R.drawable.game_booklet_checklist_icon : R.drawable.game_guide_icon_book, 0, 0, 0);
+      for (GameContent.Option option : question.options) {
+        RadioButton row = (RadioButton) getLayoutInflater()
+            .inflate(R.layout.game_guide_quiz_option, options, false);
+        row.setId(View.generateViewId());
+        row.setText(option.text);
+        row.setTag(option.id);
+        row.setOnClickListener(v -> controller.choose(question.id, option.id));
+        options.addView(row);
+      }
+      GuideBundle.Question approved = approvedQuestion(question.id);
+      TextView source = findViewById(R.id.game_tour_quiz_source);
+      source.setOnClickListener(null);
+      source.setContentDescription(null);
+      visible(R.id.game_tour_quiz_source, approved != null);
+      visible(R.id.game_tour_quiz_source_divider, approved != null);
+      if (approved != null) bindSource(source, approved.getClaimId());
+    }
+    String answer = s.answers.get(question.id);
+    options.clearCheck();
+    for (int i = 0; i < options.getChildCount(); i++) {
+      View row = options.getChildAt(i);
+      if (row.getTag().equals(answer)) {
+        options.check(row.getId());
+        break;
+      }
+    }
+
+    TextView note = findViewById(R.id.game_tour_quiz_note);
+    note.setText(last ? getString(R.string.game_tour_quiz_answer_count,
+        s.answers.size(), questions.size()) : getString(R.string.game_tour_quiz_stamp_hint));
+    visible(R.id.game_tour_quiz_previous, tourQuestionIndex > 0);
+    Button next = findViewById(R.id.game_tour_quiz_next);
+    next.setText(last ? R.string.game_intro_submit : R.string.game_tour_quiz_next);
+    next.setEnabled(last ? s.complete() : answer != null);
+  }
+
+  private void renderTourQuizTabs(List<GameContent.Question> questions, Map<String, String> answers) {
+    LinearLayout tabs = findViewById(R.id.game_tour_quiz_tabs);
+    if (tabs.getChildCount() != questions.size()) {
+      tabs.removeAllViews();
+      for (int i = 0; i < questions.size(); i++) {
+        final int index = i;
+        Button tab = (Button) getLayoutInflater().inflate(R.layout.game_tour_quiz_tab, tabs, false);
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) tab.getLayoutParams();
+        if (i != 0) params.setMarginStart(
+            getResources().getDimensionPixelSize(R.dimen.game_reskin_control_space));
+        tab.setOnClickListener(v -> moveTourQuestion(index));
+        tabs.addView(tab);
+      }
+    }
+    for (int i = 0; i < questions.size(); i++) {
+      Button tab = (Button) tabs.getChildAt(i);
+      boolean active = i == tourQuestionIndex;
+      boolean answered = answers.containsKey(questions.get(i).id);
+      tab.setText(getString(answered && !active ? R.string.game_tour_quiz_checked_number
+          : R.string.game_tour_quiz_number, i + 1));
+      tab.setContentDescription(getString(R.string.game_tour_quiz_number_description, i + 1));
+      tab.setBackgroundResource(R.drawable.game_discovery_step_idle);
+      tab.setBackgroundTintList(android.content.res.ColorStateList.valueOf(getColor(
+          active ? R.color.game_color_action : R.color.game_reskin_tinted)));
+      tab.setTextColor(getColor(active ? R.color.game_color_on_action : R.color.game_color_text));
+      androidx.core.view.ViewCompat.setStateDescription(tab, active
+          ? getString(answered ? R.string.game_tour_quiz_current_answered : R.string.game_tour_quiz_current)
+          : answered ? getString(R.string.game_tour_quiz_answered) : null);
+    }
+  }
+
+  private void bindBooklet() {
+    findViewById(R.id.game_booklet_back).setOnClickListener(v -> finish());
+    findViewById(R.id.game_booklet_home).setOnClickListener(v -> finish());
+    findViewById(R.id.game_booklet_previous).setOnClickListener(v -> {
+      speechStatus = "";
+      controller.previous();
+    });
+    findViewById(R.id.game_booklet_replay).setOnClickListener(v -> controller.replay());
+    findViewById(R.id.game_booklet_next).setOnClickListener(v -> {
+      IntroQuizController.Snapshot state = controller.snapshot();
+      if (state.stage != IntroQuizController.Stage.INTRO) return;
+      speechStatus = "";
+      if (state.sentence + 1 < sentences.length) {
+        controller.next();
+      } else {
+        startQuizAfterBooklet = true;
+        controller.finish();
+      }
+    });
+  }
+
+  private void renderBooklet(int index) {
     NarrationContent.Sentence sentence = softwareNarration.sentences().get(index);
-    if (sentence.provenance == NarrationContent.Provenance.CLAIM) {
-      bindSource(origin, sentence.claimId);
-    } else {
-      origin.setText(sentence.provenance == NarrationContent.Provenance.FICTIONAL
-          ? R.string.game_narration_fictional : R.string.game_narration_editorial);
+    boolean last = index + 1 == sentences.length;
+    ((TextView) findViewById(R.id.game_booklet_page)).setText(
+        getString(R.string.game_narration_position, index + 1, sentences.length));
+    TextView title = findViewById(R.id.game_booklet_title);
+    title.setText(bookletTitle(sentence.id));
+    title.setCompoundDrawablesRelativeWithIntrinsicBounds(
+        last ? R.drawable.game_booklet_checklist_icon : R.drawable.game_guide_icon_book, 0, 0, 0);
+    ((TextView) findViewById(R.id.game_booklet_caption)).setText(last
+        ? getString(R.string.game_booklet_final_caption, sentence.text) : sentence.text);
+    visible(R.id.game_booklet_checklist, last);
+    visible(R.id.game_booklet_tools, !last);
+    visible(R.id.game_booklet_previous, !last);
+    findViewById(R.id.game_booklet_previous).setEnabled(index > 0);
+    ((TextView) findViewById(R.id.game_booklet_next)).setText(
+        last ? R.string.game_booklet_quiz : R.string.game_booklet_next_page);
+    TextView speech = findViewById(R.id.game_booklet_speech_status);
+    speech.setText(speechStatus);
+    visible(R.id.game_booklet_speech_status, !last && !speechStatus.isEmpty());
+    TextView source = findViewById(R.id.game_booklet_source);
+    source.setOnClickListener(null);
+    source.setContentDescription(null);
+    boolean official = sentence.provenance == NarrationContent.Provenance.CLAIM;
+    visible(R.id.game_booklet_source, official);
+    if (official) bindSource(source, sentence.claimId);
+  }
+
+  private static int bookletTitle(String id) {
+    switch (id) {
+      case "greeting": return R.string.game_booklet_title_greeting;
+      case "visit": return R.string.game_guide_section_visit;
+      case "values": return R.string.game_booklet_title_values;
+      case "resources": return R.string.game_guide_section_life;
+      case "freshness": return R.string.game_booklet_title_done;
+      default: return R.string.game_booklet_title_membership;
     }
   }
 
@@ -626,8 +836,9 @@ public final class IntroQuizActivity extends AppCompatActivity {
       return;
     }
     GuideBundle.Source official = source;
-    text.setText(getString(R.string.game_narration_source, official.getLabel(),
-        official.getCheckedDate(), official.getUrl()));
+    text.setText(R.string.game_guide_review_source);
+    text.setContentDescription(getString(R.string.game_narration_source_accessibility,
+        official.getLabel(), official.getCheckedDate()));
     text.setOnClickListener(v -> {
       if (!GuideAdapters.openOfficialSource(this, official))
         Toast.makeText(this, R.string.game_guide_source_failed, Toast.LENGTH_LONG).show();

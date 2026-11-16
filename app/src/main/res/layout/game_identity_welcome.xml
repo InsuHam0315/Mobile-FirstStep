@@ -13,12 +13,6 @@
         android:scaleType="centerCrop"
         android:src="@drawable/game_reskin_artwork" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/game_welcome_scrim"
-        android:importantForAccessibility="no" />
-
     <ScrollView
         android:id="@+id/game_identity_welcome_scroll"
         android:layout_width="match_parent"
@@ -30,16 +24,18 @@
             android:layout_height="wrap_content"
             android:gravity="bottom"
             android:orientation="vertical"
-            android:paddingTop="64dp">
+            android:paddingHorizontal="18dp"
+            android:paddingTop="56dp"
+            android:paddingBottom="20dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/game_welcome_panel"
                 android:orientation="vertical"
-                android:paddingHorizontal="24dp"
-                android:paddingTop="24dp"
-                android:paddingBottom="24dp">
+                android:paddingHorizontal="20dp"
+                android:paddingTop="18dp"
+                android:paddingBottom="20dp">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -62,24 +58,20 @@
                     android:textSize="44sp"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:gravity="start"
-                    android:text="@string/game_welcome_tagline"
-                    android:textColor="@color/game_color_text"
-                    android:textSize="16sp" />
+                <View android:layout_width="match_parent" android:layout_height="1dp"
+                    android:layout_marginTop="12dp" android:background="@color/game_reskin_line"
+                    android:importantForAccessibility="no" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/game_identity_welcome_login"
                     style="@style/GameWelcomeButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
+                    android:layout_marginTop="14dp"
                     android:text="@string/game_welcome_login"
-                    android:textColor="@color/game_welcome_ink"
-                    app:backgroundTint="@color/game_welcome_pink" />
+                    android:textColor="@color/game_color_on_action"
+                    app:backgroundTint="@color/game_color_action"
+                    app:iconTint="@color/game_color_on_action" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/game_identity_welcome_guest"
@@ -87,19 +79,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
+                    android:minHeight="72dp"
+                    android:paddingVertical="10dp"
                     android:text="@string/game_welcome_guest"
                     android:textColor="@color/game_color_text"
-                    app:backgroundTint="@color/game_reskin_tinted" />
-
-                <TextView
-                    android:id="@+id/game_identity_welcome_guest_note"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:gravity="start"
-                    android:text="@string/game_welcome_guest_note"
-                    android:textColor="@color/game_reskin_muted"
-                    android:textSize="12sp" />
+                    app:backgroundTint="@color/game_reskin_tinted"
+                    app:iconTint="@color/game_color_text" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

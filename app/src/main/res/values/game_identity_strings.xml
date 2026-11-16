@@ -11,7 +11,7 @@
  <string name="game_identity_fake">모의 인증·프로필 시험 · 실제 Google 연결이 아닙니다</string>
  <string name="game_identity_emulator">로컬 Firebase 에뮬레이터 시험 · 실제 Google 로그인은 확인하지 않았습니다</string>
  <string name="game_identity_notice">계정별 프로필만 확인합니다. 기존·예시 탐방 기록은 이 계정으로 가져오거나 업로드하지 않습니다. 입력 정보는 대학 재학 여부를 증명하지 않습니다.</string>
- <string name="game_identity_unconfigured">Firebase 설정이 없어 로그인할 수 없습니다. 설정 파일과 Google 사용 설정을 확인한 뒤 앱을 다시 빌드해 주세요.</string>
+ <string name="game_identity_unconfigured">앱에 로그인 설정이 필요해요.</string>
  <string name="game_identity_logged_out">Google 계정을 선택해 로그인해 주세요.</string>
  <string name="game_identity_auth_busy">계정 요청을 처리하고 있습니다. 로그아웃으로 취소할 수 있습니다.</string>
  <string name="game_identity_loading">이 계정의 프로필을 서버에서 확인하고 있습니다.</string>
@@ -35,4 +35,7 @@
  <string name="game_identity_department">학과 (필수, 최대 120자)</string>
  <string name="game_identity_profile">이름: %1$s\n학번: %2$s\n학과: %3$s\n탐방 기록 동기화는 아직 연결하지 않았습니다.</string>
  <string name="game_identity_back">닫기</string>
+ <string name="game_identity_login_heading">로그인</string>
+ <string name="game_identity_login_info">로그인 정보 안내</string>
+ <string name="game_identity_login_unavailable_heading">로그인을 사용할 수 없어요</string>
 </resources>

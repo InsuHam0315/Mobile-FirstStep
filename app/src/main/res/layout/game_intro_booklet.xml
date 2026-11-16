@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/game_intro_booklet"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:orientation="vertical" android:visibility="gone">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:gravity="center_vertical" android:orientation="horizontal">
+        <Button android:id="@+id/game_booklet_back" style="@style/GameNarrationTextButton"
+            android:layout_width="48dp" android:layout_height="48dp" android:padding="0dp"
+            android:text="@string/game_guide_back_arrow" android:textSize="24sp"
+            android:contentDescription="@string/game_software_demo_back" />
+        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:text="@string/game_guide_section_department" android:textColor="@color/game_color_text"
+            android:accessibilityHeading="true" android:textSize="24sp" android:textStyle="bold" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:background="@drawable/game_discovery_step_idle" android:paddingHorizontal="12dp"
+            android:paddingVertical="6dp" android:text="@string/game_discovery_demo_mode"
+            android:textColor="@color/game_color_text" android:textStyle="bold" />
+    </LinearLayout>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="10dp" android:background="@drawable/game_reskin_tinted_card"
+        android:paddingStart="14dp" android:paddingEnd="4dp" android:gravity="center_vertical">
+        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+            android:layout_weight="1" android:orientation="vertical">
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="@string/game_booklet_hero_label" android:textColor="@color/game_color_text"
+                android:textSize="16sp" android:textStyle="bold" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="@string/game_booklet_hero_title" android:textColor="@color/game_color_action"
+                android:textSize="19sp" android:textStyle="bold" />
+        </LinearLayout>
+        <ImageView android:layout_width="96dp" android:layout_height="96dp" android:scaleType="fitCenter"
+            android:src="@drawable/game_narration_kangrin" android:contentDescription="@string/game_narration_kangrin_art" />
+    </LinearLayout>
+    <TextView android:id="@+id/game_booklet_page" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_marginTop="16dp" android:layout_marginStart="5dp"
+        android:background="@drawable/game_booklet_tab" android:paddingHorizontal="17dp" android:paddingVertical="6dp"
+        android:textColor="@color/game_color_on_action" android:textStyle="bold" android:textSize="16sp" />
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:background="@drawable/game_reskin_card" android:orientation="vertical" android:padding="15dp">
+        <TextView android:id="@+id/game_booklet_title" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:gravity="center_vertical" android:accessibilityHeading="true"
+            android:drawablePadding="8dp" android:textColor="@color/game_color_text" android:textSize="23sp"
+            android:textStyle="bold" />
+        <TextView android:id="@+id/game_booklet_caption" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="12dp" android:lineSpacingExtra="4dp" android:textColor="@color/game_color_text"
+            android:textSize="17sp" android:accessibilityLiveRegion="polite" />
+        <TextView android:id="@+id/game_booklet_checklist" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="10dp" android:visibility="gone" android:background="@drawable/game_reskin_tinted_card"
+            android:padding="12dp" android:lineSpacingExtra="5dp" android:text="@string/game_booklet_checklist"
+            android:textColor="@color/game_color_text" android:textSize="16sp" />
+        <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginVertical="9dp"
+            android:background="@color/game_reskin_line" />
+        <LinearLayout android:id="@+id/game_booklet_tools" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:gravity="center_vertical" android:orientation="horizontal">
+            <com.google.android.material.button.MaterialButton android:id="@+id/game_booklet_replay" style="@style/GameSecondaryButton"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="@string/game_narration_replay_short" app:icon="@drawable/game_narration_speaker"
+                app:iconGravity="textStart" app:iconTint="@color/game_reskin_secondary_text" />
+            <Button android:id="@+id/game_booklet_source" style="@style/GameNarrationTextButton"
+                android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                android:textColor="@color/game_color_action" android:text="@string/game_guide_review_source" />
+        </LinearLayout>
+        <TextView android:id="@+id/game_booklet_speech_status" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:textColor="@color/game_reskin_muted" android:accessibilityLiveRegion="polite" android:visibility="gone" />
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="5dp" android:orientation="horizontal">
+            <Button android:id="@+id/game_booklet_previous" style="@style/GameSecondaryButton"
+                android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                android:layout_marginEnd="8dp" android:text="@string/game_guide_previous" />
+            <Button android:id="@+id/game_booklet_next" style="@style/GameActionButton"
+                android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                android:text="@string/game_booklet_next_page" />
+        </LinearLayout>
+    </LinearLayout>
+    <Button android:id="@+id/game_booklet_home" style="@style/GameNarrationTextButton"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:textColor="@color/game_color_action" android:text="@string/game_software_demo_back" />
+</LinearLayout>

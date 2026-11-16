@@ -1,0 +1,10 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_checked="true">
+        <vector android:width="22dp" android:height="22dp" android:viewportWidth="24" android:viewportHeight="24">
+            <path android:fillColor="@color/game_reskin_link" android:pathData="M12,1a11,11 0,1 0,0 22a11,11 0,1 0,0 -22" />
+            <path android:strokeColor="#FFFFFF" android:strokeWidth="2" android:strokeLineCap="round" android:strokeLineJoin="round"
+                android:pathData="M7,12l3,3l7,-7" />
+        </vector>
+    </item>
+    <item><shape><size android:width="22dp" android:height="22dp" /><solid android:color="@android:color/transparent" /></shape></item>
+</selector>

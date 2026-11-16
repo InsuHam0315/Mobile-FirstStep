@@ -29,7 +29,9 @@ public final class GuideActivity extends AppCompatActivity {
   private TextView title, status;
   private Object renderedKey;
   private int restoredScroll = -1;
+  private int questionIndex;
   private boolean binding;
+  private final Set<String> expandedSections = new LinkedHashSet<>();
   private boolean pendingPreviewPractice;
   private final Map<RadioButton, String[]> choices = new LinkedHashMap<>();
 
@@ -56,6 +58,11 @@ public final class GuideActivity extends AppCompatActivity {
     GuideViewModel.Saved restored = readSaved(saved);
     pendingPreviewPractice = saved != null && saved.getBoolean("guide_pending_preview_practice", false);
     if (saved != null) restoredScroll = Math.max(0, saved.getInt("guide_scroll", 0));
+    if (saved != null) {
+      questionIndex = saved.getInt("guide_question_index", 0);
+      ArrayList<String> sections = saved.getStringArrayList("guide_expanded_sections");
+      if (sections != null) expandedSections.addAll(sections);
+    }
     model =
         new ViewModelProvider(
                 this,
@@ -75,7 +82,7 @@ public final class GuideActivity extends AppCompatActivity {
     readAgain = findViewById(R.id.game_guide_read_again);
     ViewCompat.setAccessibilityHeading(title, true);
     ViewCompat.setOnApplyWindowInsetsListener(
-        scroll,
+        findViewById(R.id.game_guide_root),
         (view, insets) -> {
           androidx.core.graphics.Insets bars =
               insets.getInsets(
@@ -88,8 +95,22 @@ public final class GuideActivity extends AppCompatActivity {
         v -> {
           if (model.unavailable) model.reload(true);
           else if (model.panel == GuideViewModel.Panel.GUIDE) model.startPractice();
-          else if (model.panel == GuideViewModel.Panel.PRACTICE) model.submit();
-          else model.retry();
+          else if (model.panel == GuideViewModel.Panel.PRACTICE) {
+            if (lastQuestion()) model.submit();
+            else moveQuestion(1);
+          } else {
+            questionIndex = 0;
+            model.retry();
+          }
+        });
+    findViewById(R.id.game_guide_previous).setOnClickListener(v -> moveQuestion(-1));
+    findViewById(R.id.game_guide_quiz_back).setOnClickListener(v -> model.showGuide());
+    getOnBackPressedDispatcher().addCallback(this,
+        new androidx.activity.OnBackPressedCallback(true) {
+          @Override public void handleOnBackPressed() {
+            if (model.panel == GuideViewModel.Panel.GUIDE || model.guide == null) finish();
+            else model.showGuide();
+          }
         });
     readAgain.setOnClickListener(v -> model.showGuide());
     findViewById(R.id.game_guide_close).setOnClickListener(v -> finish());
@@ -171,55 +192,86 @@ public final class GuideActivity extends AppCompatActivity {
                 : model.sourceUnavailable
                     ? R.string.game_guide_source_failed
                     : R.string.game_guide_offline);
+    boolean introduction = available && model.panel == GuideViewModel.Panel.GUIDE;
+    boolean quiz = available && model.panel == GuideViewModel.Panel.PRACTICE;
+    boolean result = available && model.panel == GuideViewModel.Panel.RESULT;
+    boolean quizFlow = quiz || result;
+    if (quiz) questionIndex = Math.max(0, Math.min(questionIndex, model.guide.getQuestions().size() - 1));
+    placeControls(quizFlow);
+    findViewById(R.id.game_guide_fixed_controls).setVisibility(quizFlow ? View.VISIBLE : View.GONE);
+    findViewById(R.id.game_guide_backdrop).setVisibility(introduction ? View.VISIBLE : View.GONE);
+    androidx.core.view.WindowInsetsControllerCompat bars =
+        androidx.core.view.WindowCompat.getInsetsController(getWindow(), scroll);
+    bars.setAppearanceLightStatusBars(!introduction);
+    bars.setAppearanceLightNavigationBars(!introduction);
+    TextView arrivalNotice = findViewById(R.id.game_guide_unverified_notice);
+    arrivalNotice.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, introduction ? 14 : 16);
+    findViewById(R.id.game_guide_masthead).setVisibility(introduction ? View.VISIBLE : View.GONE);
+    View panel = findViewById(R.id.game_guide_panel);
+    panel.setBackgroundResource(introduction ? R.drawable.game_guide_translucent_panel : 0);
+    LinearLayout.LayoutParams panelSize = (LinearLayout.LayoutParams) panel.getLayoutParams();
+    int margin = introduction ? getResources().getDimensionPixelSize(R.dimen.game_space_large) : 0;
+    if (panelSize.getMarginStart() != margin) {
+      panelSize.setMarginStart(margin);
+      panelSize.setMarginEnd(margin);
+      panelSize.bottomMargin = margin;
+      panel.setLayoutParams(panelSize);
+    }
+    title.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, introduction
+        ? android.util.TypedValue.applyDimension(android.util.TypedValue.COMPLEX_UNIT_SP, 22,
+            getResources().getDisplayMetrics())
+        : getResources().getDimension(R.dimen.game_text_title));
+    findViewById(R.id.game_guide_no_progress_notice)
+        .setVisibility(available ? View.GONE : View.VISIBLE);
+    findViewById(R.id.game_guide_unverified_notice).setVisibility(quizFlow ? View.GONE : View.VISIBLE);
+    findViewById(R.id.game_guide_quiz_back).setVisibility(quizFlow ? View.VISIBLE : View.GONE);
+    findViewById(R.id.game_guide_previous).setVisibility(quiz && questionIndex > 0 ? View.VISIBLE : View.GONE);
+    findViewById(R.id.game_guide_quiz_notice).setVisibility(quiz && questionIndex == 0 ? View.VISIBLE : View.GONE);
+    findViewById(R.id.game_guide_close).setVisibility(quizFlow ? View.GONE : View.VISIBLE);
+    status.setVisibility(available && !model.sourceUnavailable ? View.GONE : View.VISIBLE);
     TextView environment = findViewById(R.id.game_guide_environment);
     environment.setVisibility(model.environment.simulatedInputs ? View.VISIBLE : View.GONE);
     environment.setText(R.string.game_guide_test_environment);
-    Object key = available ? model.panel : model.loading ? "loading" : "unavailable";
+    Object key = !available ? (model.loading ? "loading" : "unavailable")
+        : quiz ? Integer.valueOf(questionIndex) : model.panel;
     if (!Objects.equals(renderedKey, key)) {
       renderedKey = key;
       content.removeAllViews();
       choices.clear();
       if (available) {
-        if (model.panel == GuideViewModel.Panel.GUIDE) showIntroduction();
-        else if (model.panel == GuideViewModel.Panel.PRACTICE) showQuestions();
+        if (introduction) showIntroduction();
+        else if (quiz) showQuestions();
         else showResult();
-      }
-      if (available) {
         int y = restoredScroll >= 0 ? restoredScroll : 0;
         restoredScroll = -1;
         scroll.post(() -> scroll.scrollTo(0, y));
       }
     }
     binding = true;
-    if (model.practice != null)
+    if (model.practice != null) {
       for (Map.Entry<RadioButton, String[]> entry : choices.entrySet()) {
         String[] ids = entry.getValue();
         entry.getKey().setChecked(ids[1].equals(model.practice.getAnswers().get(ids[0])));
       }
+    }
     binding = false;
     primary.setVisibility(model.loading ? View.GONE : View.VISIBLE);
-    primary.setEnabled(
-        !model.loading
-            && (model.unavailable
-                || model.panel != GuideViewModel.Panel.PRACTICE
-                || model.practice.getAnswers().size() == model.guide.getQuestions().size()));
-    primary.setText(
-        model.unavailable
-            ? R.string.game_guide_reload
-            : model.panel == GuideViewModel.Panel.GUIDE
-                ? R.string.game_guide_start
-                : model.panel == GuideViewModel.Panel.PRACTICE
-                    ? R.string.game_guide_submit
-                    : R.string.game_guide_retry);
-    readAgain.setVisibility(
-        available && model.panel != GuideViewModel.Panel.GUIDE ? View.VISIBLE : View.GONE);
-    title.setText(
-        available && model.panel == GuideViewModel.Panel.PRACTICE
-            ? R.string.game_guide_practice_title
-            : R.string.game_guide_entry);
+    primary.setEnabled(!model.loading && (!quiz || (lastQuestion()
+        ? model.practice.getAnswers().size() == model.guide.getQuestions().size()
+        : model.practice.getAnswers().containsKey(model.guide.getQuestions().get(questionIndex).getId()))));
+    primary.setText(model.unavailable ? R.string.game_guide_reload
+        : quiz ? (lastQuestion() ? R.string.game_guide_submit : R.string.game_guide_next)
+        : result ? R.string.game_guide_retry : R.string.game_guide_start);
+    readAgain.setVisibility(result ? View.VISIBLE : View.GONE);
+    title.setText(quiz ? R.string.game_guide_practice_title
+        : result ? R.string.game_guide_result_title : R.string.game_guide_entry);
   }
 
   private TextView text(String value, boolean heading) {
+    return text(content, value, heading);
+  }
+
+  private TextView text(LinearLayout parent, String value, boolean heading) {
     TextView view = new TextView(this);
     view.setText(value);
     view.setTextColor(getColor(R.color.game_color_text));
@@ -232,7 +284,7 @@ public final class GuideActivity extends AppCompatActivity {
       view.setTypeface(null, android.graphics.Typeface.BOLD);
       ViewCompat.setAccessibilityHeading(view, true);
     }
-    content.addView(view, new LinearLayout.LayoutParams(-1, -2));
+    parent.addView(view, new LinearLayout.LayoutParams(-1, -2));
     return view;
   }
 
@@ -249,13 +301,17 @@ public final class GuideActivity extends AppCompatActivity {
   }
 
   private void sourceButton(GuideBundle.Source source) {
+    sourceButton(content, source, getString(R.string.game_guide_source_open, source.getLabel()));
+  }
+
+  private void sourceButton(LinearLayout parent, GuideBundle.Source source, String label) {
     Button button =
-        (Button) getLayoutInflater().inflate(R.layout.game_guide_source_button, content, false);
-    button.setText(getString(R.string.game_guide_source_open, source.getLabel()));
+        (Button) getLayoutInflater().inflate(R.layout.game_guide_source_button, parent, false);
+    button.setText(label);
     button.setTag("guide_source:" + source.getId());
     button.setMinHeight(getResources().getDimensionPixelSize(R.dimen.game_touch_min));
     button.setOnClickListener(v -> model.openSource(source));
-    content.addView(button, new LinearLayout.LayoutParams(-1, -2));
+    parent.addView(button, new LinearLayout.LayoutParams(-1, -2));
   }
 
   @Override
@@ -271,59 +327,136 @@ public final class GuideActivity extends AppCompatActivity {
   }
 
   private void showIntroduction() {
-    Button preview = (Button) getLayoutInflater().inflate(R.layout.game_guide_source_button, content, false);
-    preview.setId(R.id.game_narration_entry);
-    preview.setText(R.string.game_narration_title);
-    preview.setOnClickListener(v -> startActivityForResult(new Intent(this, NarrationActivity.class), 101));
-    content.addView(preview, new LinearLayout.LayoutParams(-1, -2));
-    if (BuildConfig.DEBUG) {
-      Button demo = (Button) getLayoutInflater().inflate(R.layout.game_guide_source_button, content, false);
-      demo.setId(R.id.game_guide_demo_entry);
-      demo.setText(R.string.game_guide_demo_entry);
-      demo.setOnClickListener(v -> openSoftwareDemo());
-      content.addView(demo, new LinearLayout.LayoutParams(-1, -2));
-    }
-    text(getString(R.string.game_guide_sequence), true);
+    View hero = getLayoutInflater().inflate(R.layout.game_guide_hero, content, false);
+    View preview = hero.findViewById(R.id.game_narration_entry);
+    preview.setOnClickListener(
+        v -> startActivityForResult(new Intent(this, NarrationActivity.class), 101));
+    View demo = hero.findViewById(R.id.game_guide_demo_entry);
+    demo.setVisibility(BuildConfig.DEBUG ? View.VISIBLE : View.GONE);
+    demo.setOnClickListener(v -> openSoftwareDemo());
+    content.addView(hero);
+    text(getString(R.string.game_guide_sections), true);
     for (GuideBundle.Claim claim : model.guide.getClaims()) {
-      text(claim.getText(), false);
-      GuideBundle.Source source = source(claim.getSourceId());
-      text(
-          getString(R.string.game_guide_source, source.getLabel())
-              + "\n"
-              + getString(R.string.game_guide_checked, source.getCheckedDate()),
-          false);
-      text(source.getUrl(), false);
-      sourceButton(source);
+      addGuideSection(claim);
+    }
+    text(getString(R.string.game_guide_no_progress), false);
+    text(getString(R.string.game_guide_offline), false)
+        .setTextColor(getColor(R.color.game_reskin_muted));
+  }
+
+  private void addGuideSection(GuideBundle.Claim claim) {
+    View card = getLayoutInflater().inflate(R.layout.game_guide_section, content, false);
+    Button toggle = card.findViewById(R.id.game_guide_section_toggle);
+    LinearLayout detail = card.findViewById(R.id.game_guide_section_detail);
+    int label = sectionLabel(claim.getId());
+    toggle.setText(label);
+    GuideBundle.Source source = source(claim.getSourceId());
+    text(detail, claim.getText(), false);
+    text(detail, getString(R.string.game_guide_source, source.getLabel())
+        + "\n" + getString(R.string.game_guide_checked, source.getCheckedDate()), false)
+        .setTextColor(getColor(R.color.game_reskin_muted));
+    sourceButton(detail, source, getString(R.string.game_guide_open_official));
+    toggle.setTag("guide_section:" + claim.getId());
+    int icon = sectionIcon(label);
+    boolean expanded = expandedSections.contains(claim.getId());
+    updateSection(toggle, detail, icon, expanded);
+    toggle.setOnClickListener(v -> {
+      boolean opening = detail.getVisibility() != View.VISIBLE;
+      if (opening) expandedSections.add(claim.getId());
+      else expandedSections.remove(claim.getId());
+      updateSection(toggle, detail, icon, opening);
+    });
+    content.addView(card);
+  }
+
+  private static int sectionLabel(String claimId) {
+    switch (claimId) {
+      case "college_membership": return R.string.game_guide_section_college;
+      case "office_guidance": return R.string.game_guide_section_visit;
+      case "learning_values": return R.string.game_guide_section_department;
+      case "help_resources": return R.string.game_guide_section_life;
+      default: return R.string.game_guide_sections;
     }
   }
 
+  private static int sectionIcon(int label) {
+    if (label == R.string.game_guide_section_college) return R.drawable.game_guide_icon_college;
+    if (label == R.string.game_guide_section_visit) return R.drawable.game_guide_icon_visit;
+    if (label == R.string.game_guide_section_department) return R.drawable.game_guide_icon_book;
+    if (label == R.string.game_guide_section_life) return R.drawable.game_guide_icon_people;
+    return 0;
+  }
+
+  private void updateSection(Button toggle, View detail, int icon, boolean expanded) {
+    toggle.setCompoundDrawablesRelativeWithIntrinsicBounds(
+        icon, 0, expanded ? R.drawable.game_guide_icon_up : R.drawable.game_guide_icon_down, 0);
+    ViewCompat.setStateDescription(toggle, getString(
+        expanded ? R.string.game_guide_expanded : R.string.game_guide_collapsed));
+    detail.setVisibility(expanded ? View.VISIBLE : View.GONE);
+  }
+
+  private boolean lastQuestion() {
+    return questionIndex == model.guide.getQuestions().size() - 1;
+  }
+
+  private void moveQuestion(int delta) {
+    questionIndex += delta;
+    render();
+  }
+
+  private void placeControls(boolean fixed) {
+    LinearLayout host = findViewById(
+        fixed ? R.id.game_guide_fixed_controls : R.id.game_guide_inline_controls);
+    View controls = findViewById(R.id.game_guide_controls);
+    if (controls.getParent() == host) return;
+    ((LinearLayout) controls.getParent()).removeView(controls);
+    host.addView(controls);
+  }
+
   private void showQuestions() {
-    text(getString(R.string.game_guide_practice_help), false);
-    int i = 0;
-    for (GuideBundle.Question question : model.guide.getQuestions()) {
-      text(getString(R.string.game_guide_question, ++i, question.getText()), true);
-      RadioGroup group = new RadioGroup(this);
-      group.setOrientation(LinearLayout.VERTICAL);
-      group.setSaveEnabled(false);
-      content.addView(group, new LinearLayout.LayoutParams(-1, -2));
-      for (GuideBundle.Option option : question.getOptions()) {
-        RadioButton button = new RadioButton(this);
-        button.setId(View.generateViewId());
-        button.setText(option.getText());
-        button.setTag("guide_option:" + question.getId() + ":" + option.getId());
-        button.setTextColor(getColor(R.color.game_color_text));
-        button.setSaveEnabled(false);
-        button.setMinHeight(getResources().getDimensionPixelSize(R.dimen.game_touch_min));
-        button.setTextSize(
-            android.util.TypedValue.COMPLEX_UNIT_PX,
-            getResources().getDimension(R.dimen.game_text_body));
-        choices.put(button, new String[] {question.getId(), option.getId()});
-        group.addView(button, new RadioGroup.LayoutParams(-1, -2));
-        button.setOnCheckedChangeListener(
-            (v, checked) -> {
-              if (checked && !binding) model.select(question.getId(), option.getId());
-            });
-      }
+    List<GuideBundle.Question> questions = model.guide.getQuestions();
+    TextView count = text(getString(R.string.game_narration_position,
+        questionIndex + 1, questions.size()), true);
+    count.setGravity(android.view.Gravity.CENTER);
+    LinearLayout progress = new LinearLayout(this);
+    int gap = getResources().getDimensionPixelSize(R.dimen.game_reskin_control_space);
+    for (int i = 0; i < questions.size(); i++) {
+      View segment = new View(this);
+      android.graphics.drawable.GradientDrawable shape = new android.graphics.drawable.GradientDrawable();
+      shape.setCornerRadius(gap);
+      shape.setColor(getColor(i <= questionIndex ? R.color.game_color_action : R.color.game_reskin_line));
+      segment.setBackground(shape);
+      LinearLayout.LayoutParams size = new LinearLayout.LayoutParams(0, gap, 1);
+      size.setMargins(i == 0 ? 0 : gap, 0, 0, 0);
+      progress.addView(segment, size);
+    }
+    LinearLayout.LayoutParams progressSize = new LinearLayout.LayoutParams(-1, -2);
+    progressSize.setMargins(gap * 5, 0, gap * 5, gap * 3);
+    content.addView(progress, progressSize);
+
+    GuideBundle.Question question = questions.get(questionIndex);
+    LinearLayout card = new LinearLayout(this);
+    card.setOrientation(LinearLayout.VERTICAL);
+    card.setPadding(gap * 2, gap * 2, gap * 2, gap * 2);
+    card.setBackgroundResource(R.drawable.game_reskin_card);
+    content.addView(card, new LinearLayout.LayoutParams(-1, -2));
+    TextView prompt = text(card, question.getText(), true);
+    prompt.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 21);
+    RadioGroup group = new RadioGroup(this);
+    group.setOrientation(LinearLayout.VERTICAL);
+    group.setSaveEnabled(false);
+    card.addView(group, new LinearLayout.LayoutParams(-1, -2));
+    for (GuideBundle.Option option : question.getOptions()) {
+      RadioButton button = (RadioButton) getLayoutInflater()
+          .inflate(R.layout.game_guide_quiz_option, group, false);
+      button.setId(View.generateViewId());
+      button.setText(option.getText());
+      button.setTag("guide_option:" + question.getId() + ":" + option.getId());
+      choices.put(button, new String[] {question.getId(), option.getId()});
+      group.addView(button);
+      button.setOnCheckedChangeListener((v, checked) -> {
+        if (checked && !binding) model.select(question.getId(), option.getId());
+      });
     }
   }
 
@@ -334,39 +467,40 @@ public final class GuideActivity extends AppCompatActivity {
   }
 
   private void showResult() {
-    text(
-            getString(
-                R.string.game_guide_score,
-                model.practice.getScore(),
-                model.guide.getQuestions().size()),
-            true)
-        .setTag("guide_score");
-    text(getString(R.string.game_guide_no_progress), false);
+    TextView score = text(getString(R.string.game_guide_score,
+        model.practice.getScore(), model.guide.getQuestions().size()), true);
+    score.setTag("guide_score");
+    score.setGravity(android.view.Gravity.CENTER);
+    score.setBackgroundResource(R.drawable.game_reskin_tinted_card);
+    score.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 30);
+    int space = getResources().getDimensionPixelSize(R.dimen.game_space_medium);
+    score.setPadding(space, space, space, space);
+    text(getString(R.string.game_guide_explanations), true);
     int i = 0;
     for (GuideBundle.Question question : model.guide.getQuestions()) {
-      text(getString(R.string.game_guide_question, ++i, question.getText()), true);
-      text(
-          getString(
-              model.practice.isCorrect(question.getId())
-                  ? R.string.game_guide_correct
-                  : R.string.game_guide_incorrect),
-          false);
-      text(
-          getString(
-              R.string.game_guide_chosen,
-              optionLabel(question, model.practice.getAnswers().get(question.getId()))),
-          false);
-      text(
-          getString(R.string.game_guide_answer, optionLabel(question, question.getAnswerId())),
-          false);
-      text(question.getExplanation(), false);
+      View card = getLayoutInflater().inflate(R.layout.game_guide_section, content, false);
+      Button toggle = card.findViewById(R.id.game_guide_section_toggle);
+      LinearLayout detail = card.findViewById(R.id.game_guide_section_detail);
+      int label = sectionLabel(question.getClaimId());
+      if ("office_guidance".equals(question.getClaimId())) label = R.string.game_guide_review_location;
+      if ("learning_values".equals(question.getClaimId())) label = R.string.game_guide_review_values;
+      if ("help_resources".equals(question.getClaimId())) label = R.string.game_guide_review_notice;
+      toggle.setText(getString(R.string.game_guide_question, ++i, getString(label)));
+      updateSection(toggle, detail, 0, i == 1);
+      toggle.setOnClickListener(v ->
+          updateSection(toggle, detail, 0, detail.getVisibility() != View.VISIBLE));
+      text(detail, getString(model.practice.isCorrect(question.getId())
+          ? R.string.game_guide_correct : R.string.game_guide_incorrect), true);
+      text(detail, getString(R.string.game_guide_chosen,
+          optionLabel(question, model.practice.getAnswers().get(question.getId()))), false);
+      text(detail, getString(R.string.game_guide_answer,
+          optionLabel(question, question.getAnswerId())), false);
+      text(detail, question.getExplanation(), false);
       GuideBundle.Source source = source(claim(question.getClaimId()).getSourceId());
-      text(
-          getString(R.string.game_guide_source, source.getLabel())
-              + "\n"
-              + getString(R.string.game_guide_checked, source.getCheckedDate()),
-          false);
-      sourceButton(source);
+      text(detail, getString(R.string.game_guide_source, source.getLabel()) + "\n"
+          + getString(R.string.game_guide_checked, source.getCheckedDate()), false);
+      sourceButton(detail, source, getString(R.string.game_guide_review_source));
+      content.addView(card);
     }
   }
 
@@ -409,6 +543,8 @@ public final class GuideActivity extends AppCompatActivity {
       state.putStringArrayList("guide_options", new ArrayList<>(saved.answers.values()));
     }
     state.putBoolean("guide_pending_preview_practice", pendingPreviewPractice);
+    state.putStringArrayList("guide_expanded_sections", new ArrayList<>(expandedSections));
+    state.putInt("guide_question_index", questionIndex);
     state.putInt("guide_scroll", scroll.getScrollY());
     super.onSaveInstanceState(state);
   }

@@ -1,22 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/game_guide_scroll" android:layout_width="match_parent" android:layout_height="match_parent"
-    android:fillViewport="true" android:saveEnabled="false" android:clipToPadding="true">
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:orientation="vertical" android:padding="@dimen/game_space_medium">
-        <TextView android:id="@+id/game_guide_title" android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:text="@string/game_guide_entry" android:textSize="@dimen/game_text_title" android:textStyle="bold" android:accessibilityHeading="true" android:textColor="@color/game_color_text"/>
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:text="@string/game_guide_no_progress" android:textSize="@dimen/game_text_body" android:textColor="@color/game_color_text"/>
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:text="@string/game_guide_unverified" android:textSize="@dimen/game_text_body" android:textColor="@color/game_color_text"/>
-        <TextView android:id="@+id/game_guide_environment" android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:textSize="@dimen/game_text_body" android:textColor="@color/game_color_text" android:visibility="gone"/>
-        <TextView android:id="@+id/game_guide_status" android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:textSize="@dimen/game_text_body" android:textColor="@color/game_color_text" android:accessibilityLiveRegion="polite"/>
-        <LinearLayout android:id="@+id/game_guide_content" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="@dimen/game_space_medium" android:background="@drawable/game_reskin_card" android:layout_marginTop="12dp" android:layout_marginBottom="12dp" />
-        <Button android:id="@+id/game_guide_primary" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_guide_start"/>
-        <Button android:id="@+id/game_guide_read_again" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_guide_read_again"/>
-        <Button android:id="@+id/game_guide_close" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_guide_close"/>
-    </LinearLayout>
-</ScrollView>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+    <ImageView android:id="@+id/game_guide_backdrop" android:layout_width="match_parent"
+        android:layout_height="match_parent" android:scaleType="centerCrop"
+        android:src="@drawable/game_reskin_artwork" android:importantForAccessibility="no"
+        android:visibility="gone" />
+    <LinearLayout
+    android:id="@+id/game_guide_root"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical">
+    <ScrollView android:id="@+id/game_guide_scroll"
+        android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
+        android:fillViewport="true" android:saveEnabled="false" android:clipToPadding="true">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <LinearLayout android:id="@+id/game_guide_masthead"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginStart="30dp" android:layout_marginEnd="24dp"
+                android:layout_marginTop="20dp" android:layout_marginBottom="68dp"
+                android:orientation="vertical" android:visibility="gone">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="@string/game_welcome_brand" android:textColor="@android:color/white"
+                    android:textSize="13sp" android:shadowColor="#CC160D16" android:shadowRadius="4"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="@string/app_name" android:textColor="@android:color/white" android:textSize="29sp"
+                    android:textStyle="bold" android:shadowColor="#CC160D16" android:shadowRadius="4"/>
+                <View android:layout_width="82dp" android:layout_height="3dp" android:layout_marginTop="4dp"
+                    android:background="#BEA1ED" android:importantForAccessibility="no"/>
+            </LinearLayout>
+            <LinearLayout android:id="@+id/game_guide_panel"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:padding="@dimen/game_space_medium">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:gravity="center_vertical" android:orientation="horizontal">
+                    <Button android:id="@+id/game_guide_quiz_back" style="?android:attr/borderlessButtonStyle"
+                        android:layout_width="@dimen/game_touch_min" android:layout_height="@dimen/game_touch_min"
+                        android:contentDescription="@string/game_guide_read_again"
+                        android:text="@string/game_guide_back_arrow" android:textSize="24sp"
+                        android:textColor="@color/game_color_text" android:padding="0dp" android:visibility="gone"/>
+                    <TextView android:id="@+id/game_guide_title" android:layout_width="0dp" android:layout_weight="1"
+                        android:layout_height="wrap_content" android:text="@string/game_guide_entry"
+                        android:textSize="@dimen/game_text_title" android:textStyle="bold" android:accessibilityHeading="true"
+                        android:textColor="@color/game_color_text"/>
+                </LinearLayout>
+                <TextView android:id="@+id/game_guide_no_progress_notice" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="@string/game_guide_no_progress" android:textSize="@dimen/game_text_body" android:textColor="@color/game_color_text"/>
+                <TextView android:id="@+id/game_guide_unverified_notice" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="@string/game_guide_unverified" android:textSize="@dimen/game_text_body" android:textColor="@color/game_color_text"/>
+                <TextView android:id="@+id/game_guide_environment" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:textSize="@dimen/game_text_body" android:textColor="@color/game_color_text" android:visibility="gone"/>
+                <TextView android:id="@+id/game_guide_status" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:textSize="@dimen/game_text_body" android:textColor="@color/game_color_text" android:accessibilityLiveRegion="polite"/>
+                <LinearLayout android:id="@+id/game_guide_content" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:layout_marginTop="12dp" android:layout_marginBottom="12dp"/>
+                <LinearLayout android:id="@+id/game_guide_inline_controls" android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:orientation="vertical">
+                    <LinearLayout android:id="@+id/game_guide_controls" android:layout_width="match_parent"
+                        android:layout_height="wrap_content" android:orientation="vertical">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                            <Button android:id="@+id/game_guide_previous" style="@style/GameSecondaryButton" android:layout_width="0dp"
+                                android:layout_height="wrap_content" android:layout_weight="1" android:visibility="gone"
+                                android:layout_marginEnd="@dimen/game_reskin_control_space" android:text="@string/game_guide_previous"/>
+                            <Button android:id="@+id/game_guide_primary" style="@style/GameActionButton" android:layout_width="0dp"
+                                android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/game_guide_start"/>
+                        </LinearLayout>
+                        <TextView android:id="@+id/game_guide_quiz_notice" android:layout_width="match_parent" android:layout_height="wrap_content"
+                            android:gravity="center" android:paddingVertical="@dimen/game_reskin_control_space" android:visibility="gone"
+                            android:textColor="@color/game_color_text" android:text="@string/game_guide_quiz_notice"/>
+                        <Button android:id="@+id/game_guide_read_again" style="@style/GameSecondaryButton" android:layout_width="match_parent"
+                            android:layout_height="wrap_content" android:text="@string/game_guide_read_again"/>
+                        <Button android:id="@+id/game_guide_close" style="@style/GameSecondaryButton" android:layout_width="match_parent"
+                            android:layout_height="wrap_content" android:text="@string/game_guide_close"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+    <LinearLayout android:id="@+id/game_guide_fixed_controls" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical" android:paddingHorizontal="@dimen/game_space_medium" android:paddingBottom="@dimen/game_reskin_control_space"
+        android:visibility="gone"/>
+</LinearLayout>
+</FrameLayout>

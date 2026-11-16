@@ -1,0 +1,11 @@
+<RadioButton xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/game_reskin_control_space"
+    android:background="@drawable/game_guide_quiz_option_background"
+    android:buttonTint="@color/game_reskin_link"
+    android:drawableEnd="@drawable/game_guide_quiz_check"
+    android:drawablePadding="@dimen/game_reskin_control_space"
+    android:minHeight="62dp"
+    android:paddingStart="12dp" android:paddingEnd="12dp"
+    android:saveEnabled="false" android:textColor="@color/game_color_text"
+    android:textSize="@dimen/game_text_body" />

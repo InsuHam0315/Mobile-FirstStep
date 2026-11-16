@@ -11,6 +11,7 @@ import com.example.firststep.BuildConfig;
 import com.example.firststep.R;
 import com.example.firststep.game.content.*;
 import com.example.firststep.game.speech.IntroSpeech;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -21,14 +22,15 @@ public final class NarrationActivity extends AppCompatActivity {
   private NarrationState state;
   private IntroSpeech speech;
   private TextView caption, position, source, status;
-  private Button previous, next;
+  private Button previous, next, replay, finishButton;
+  private LinearProgressIndicator progress;
   private final ExecutorService loader = Executors.newSingleThreadExecutor();
   private boolean destroyed;
   private int restoredPosition;
   @Override protected void onCreate(Bundle saved) {
     super.onCreate(saved);
     setContentView(R.layout.game_narration_activity);
-    ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.narration_scroll), (view, insets) -> {
+    ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.narration_root), (view, insets) -> {
       androidx.core.graphics.Insets bars = insets.getInsets(
           WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
       view.setPadding(bars.left, bars.top, bars.right, bars.bottom);
@@ -40,11 +42,20 @@ public final class NarrationActivity extends AppCompatActivity {
     status = findViewById(R.id.narration_status);
     previous = findViewById(R.id.narration_previous);
     next = findViewById(R.id.narration_next);
+    replay = findViewById(R.id.narration_replay);
+    finishButton = findViewById(R.id.narration_finish);
+    progress = findViewById(R.id.narration_progress);
+    findViewById(R.id.narration_back).setOnClickListener(v -> finish());
+    findViewById(R.id.narration_info).setOnClickListener(v ->
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle(R.string.game_narration_info_title)
+            .setMessage(R.string.game_narration_limit)
+            .setPositiveButton(R.string.game_narration_info_confirm, null)
+            .show());
     findViewById(R.id.narration_skip).setOnClickListener(v -> finishToPractice());
-    findViewById(R.id.narration_finish).setOnClickListener(v -> finishToPractice());
+    finishButton.setOnClickListener(v -> finishToPractice());
     restoredPosition = saved == null ? 0 : saved.getInt("narration_position", 0);
     findViewById(R.id.narration_controls).setVisibility(View.GONE);
-    findViewById(R.id.narration_finish).setVisibility(View.GONE);
     caption.setText(R.string.game_guide_loading);
     android.content.Context app = getApplicationContext();
     loader.execute(() -> {
@@ -57,6 +68,8 @@ public final class NarrationActivity extends AppCompatActivity {
           guide = loadedGuide;
           state = new NarrationState(content.sentences().size(), restoredPosition);
           findViewById(R.id.narration_controls).setVisibility(View.VISIBLE);
+          progress.setMax(content.sentences().size());
+          replay.setEnabled(true);
           render();
         });
       } catch (Exception failure) {
@@ -67,9 +80,9 @@ public final class NarrationActivity extends AppCompatActivity {
     });
     previous.setOnClickListener(v -> { stopSpeech(); state.previous(); render(); });
     next.setOnClickListener(v -> { stopSpeech(); state.next(); render(); });
-    findViewById(R.id.narration_replay).setOnClickListener(v -> {
+    replay.setOnClickListener(v -> {
       status.setText("");
-      if (speech != null) speech.speak(content.sentences().get(state.position()).text);
+      if (speech != null && state != null) speech.speak(content.sentences().get(state.position()).text);
     });
   }
   @Override protected void onStart() {
@@ -99,23 +112,40 @@ public final class NarrationActivity extends AppCompatActivity {
     NarrationContent.Sentence sentence = content.sentences().get(state.position());
     caption.setText(sentence.text);
     position.setText(getString(R.string.game_narration_position, state.position() + 1, content.sentences().size()));
+    progress.setProgressCompat(state.position() + 1, false);
     previous.setEnabled(state.position() > 0);
-    next.setEnabled(state.position() + 1 < content.sentences().size());
-    findViewById(R.id.narration_finish).setVisibility(state.position() + 1 == content.sentences().size() ? View.VISIBLE : View.GONE);
+    boolean last = state.position() + 1 == content.sentences().size();
+    next.setVisibility(last ? View.GONE : View.VISIBLE);
+    next.setEnabled(!last);
+    finishButton.setVisibility(last ? View.VISIBLE : View.GONE);
+    source.setVisibility(View.GONE);
     source.setOnClickListener(null);
-    source.setClickable(false);
-    if (sentence.provenance == NarrationContent.Provenance.CLAIM) {
-      GuideBundle.Claim match = null;
-      for (GuideBundle.Claim claim : guide.getClaims()) if (claim.getId().equals(sentence.claimId)) match = claim;
-      GuideBundle.Source origin = null;
-      if (match != null) for (GuideBundle.Source item : guide.getSources()) if (item.getId().equals(match.getSourceId())) origin = item;
-      if (origin != null) {
-        final GuideBundle.Source selected = origin;
-        source.setText(getString(R.string.game_narration_source, selected.getLabel(), selected.getCheckedDate(), selected.getUrl()));
-        source.setOnClickListener(v -> {
-          if (!GuideAdapters.openOfficialSource(this, selected)) status.setText(R.string.game_guide_source_failed);
-        });
-      } else source.setText(R.string.game_narration_source_unavailable);
-    } else source.setText(sentence.provenance == NarrationContent.Provenance.FICTIONAL ? R.string.game_narration_fictional : R.string.game_narration_editorial);
+    source.setContentDescription(null);
+    if (sentence.provenance != NarrationContent.Provenance.CLAIM) return;
+    GuideBundle.Source origin = findSource(sentence.claimId);
+    if (origin == null) {
+      status.setText(R.string.game_narration_source_unavailable);
+      return;
+    }
+    source.setText(R.string.game_guide_review_source);
+    source.setContentDescription(getString(R.string.game_narration_source_accessibility,
+        origin.getLabel(), origin.getCheckedDate()));
+    source.setVisibility(View.VISIBLE);
+    source.setOnClickListener(v -> {
+      if (!GuideAdapters.openOfficialSource(this, origin)) {
+        status.setText(R.string.game_guide_source_failed);
+      }
+    });
+  }
+
+  private GuideBundle.Source findSource(String claimId) {
+    for (GuideBundle.Claim claim : guide.getClaims()) {
+      if (!claim.getId().equals(claimId)) continue;
+      for (GuideBundle.Source source : guide.getSources()) {
+        if (source.getId().equals(claim.getSourceId())) return source;
+      }
+      break;
+    }
+    return null;
   }
 }

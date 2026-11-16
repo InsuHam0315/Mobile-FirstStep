@@ -1,19 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView android:id="@+id/narration_scroll" xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true">
-  <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="@dimen/game_space_medium">
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_narration_title" android:textSize="@dimen/game_text_title" android:textColor="@color/game_color_text" android:accessibilityHeading="true" />
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_narration_limit" android:textSize="@dimen/game_text_body" android:textColor="@color/game_color_text" />
-    <ImageView android:layout_width="96dp" android:layout_height="96dp" android:layout_gravity="center" android:src="@drawable/game_discovery_placeholder" android:contentDescription="@string/game_narration_art" />
-    <TextView android:id="@+id/narration_position" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="@dimen/game_text_body" android:textColor="@color/game_color_text" />
-    <TextView android:id="@+id/narration_caption" android:background="@drawable/game_reskin_tinted_card" android:padding="@dimen/game_space_medium" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="@dimen/game_text_title" android:textColor="@color/game_color_text" android:accessibilityLiveRegion="polite" />
-    <TextView android:id="@+id/narration_source" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="@dimen/game_text_body" android:textColor="@color/game_color_text" />
-    <TextView android:id="@+id/narration_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="@dimen/game_text_body" android:textColor="@color/game_color_text" android:accessibilityLiveRegion="polite" />
-    <LinearLayout android:id="@+id/narration_controls" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
-      <Button android:id="@+id/narration_previous" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_narration_previous" />
-      <Button android:id="@+id/narration_next" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_narration_next" />
-      <Button android:id="@+id/narration_replay" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_narration_replay" />
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/narration_root"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:gravity="center_vertical"
+        android:paddingEnd="@dimen/game_space_medium">
+        <Button android:id="@+id/narration_back" style="@style/GameNarrationTextButton"
+            android:layout_width="@dimen/game_touch_min" android:layout_height="@dimen/game_touch_min"
+            android:contentDescription="@string/game_narration_back"
+            android:padding="0dp" android:text="@string/game_guide_back_arrow" android:textSize="24sp" />
+        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:accessibilityHeading="true" android:text="@string/game_narration_heading"
+            android:textColor="@color/game_color_text" android:textSize="22sp" android:textStyle="bold" />
+        <Button android:id="@+id/narration_info" style="@style/GameNarrationTextButton"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="@string/game_narration_info_button" android:textColor="@color/game_reskin_muted" />
     </LinearLayout>
-    <Button android:id="@+id/narration_skip" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_narration_skip" />
-    <Button android:id="@+id/narration_finish" style="@style/GameActionButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_narration_finish" />
-  </LinearLayout>
-</ScrollView>
+    <ScrollView android:id="@+id/narration_scroll"
+        android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
+        android:fillViewport="true">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical" android:paddingHorizontal="@dimen/game_space_medium">
+            <TextView android:id="@+id/narration_position"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:gravity="center" android:paddingVertical="8dp"
+                android:textSize="@dimen/game_text_body" android:textStyle="bold"
+                android:textColor="@color/game_color_text" />
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/narration_progress" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:layout_marginHorizontal="6dp"
+                android:importantForAccessibility="no" app:indicatorColor="@color/game_color_action"
+                app:trackColor="@color/game_reskin_tinted" app:trackThickness="8dp" app:trackCornerRadius="4dp" />
+            <ImageView android:layout_width="match_parent" android:layout_height="248dp"
+                android:layout_gravity="center" android:scaleType="fitCenter"
+                android:src="@drawable/game_narration_kangrin"
+                android:contentDescription="@string/game_narration_kangrin_art" />
+            <ImageView android:layout_width="24dp" android:layout_height="12dp"
+                android:layout_gravity="center" android:importantForAccessibility="no"
+                android:src="@drawable/game_narration_bubble_tail" />
+            <TextView android:id="@+id/narration_caption"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:minHeight="92dp" android:gravity="center_vertical"
+                android:background="@drawable/game_narration_bubble" android:padding="@dimen/game_space_medium"
+                android:textSize="18sp" android:lineSpacingExtra="3dp" android:textColor="@color/game_color_text"
+                android:accessibilityLiveRegion="polite" />
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:gravity="center" android:orientation="horizontal">
+                <com.google.android.material.button.MaterialButton android:id="@+id/narration_replay" style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    app:icon="@drawable/game_narration_speaker" app:iconSize="22dp" app:iconPadding="6dp" app:iconGravity="textStart" app:iconTint="@color/game_color_text"
+                    android:textAllCaps="false" android:textColor="@color/game_color_text"
+                    android:text="@string/game_narration_replay_short" android:enabled="false" />
+                <Button android:id="@+id/narration_source" style="@style/GameNarrationTextButton"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:textColor="@color/game_color_action" android:visibility="gone" />
+            </LinearLayout>
+            <TextView android:id="@+id/narration_status" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:textSize="@dimen/game_text_body"
+                android:textColor="@color/game_color_text" android:accessibilityLiveRegion="polite" />
+        </LinearLayout>
+    </ScrollView>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical" android:paddingHorizontal="@dimen/game_space_medium"
+        android:paddingBottom="8dp">
+        <LinearLayout android:id="@+id/narration_controls"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:visibility="gone">
+            <Button android:id="@+id/narration_previous" style="@style/GameSecondaryButton"
+                android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                android:layout_marginEnd="8dp" android:text="@string/game_guide_previous" />
+            <Button android:id="@+id/narration_next" style="@style/GameActionButton"
+                android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                android:text="@string/game_narration_next" />
+            <Button android:id="@+id/narration_finish" style="@style/GameActionButton"
+                android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                android:text="@string/game_narration_start_practice" android:visibility="gone" />
+        </LinearLayout>
+        <Button android:id="@+id/narration_skip" style="@style/GameNarrationTextButton"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="@string/game_narration_skip" android:textColor="@color/game_color_action" />
+    </LinearLayout>
+</LinearLayout>

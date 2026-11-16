@@ -424,6 +424,7 @@ public final class GameHomeActivity extends AppCompatActivity {
     integrationFailed = true;
     ((TextView) findViewById(R.id.game_home_status)).setText(R.string.game_integration_error);
     show(R.id.game_home_panel, false);
+    show(R.id.game_home_status, true);
     show(R.id.game_home_retry, false);
     if (!softwareDemo())
       for (int id :
@@ -451,48 +452,61 @@ public final class GameHomeActivity extends AppCompatActivity {
   }
 
   private void renderSoftwareDemoHome(HomeState state) {
-    show(R.id.game_home_panel, true);
+    show(R.id.game_home_panel, !state.loading && state.error == null);
     show(R.id.game_home_retry, state.error != null);
-    ((TextView) findViewById(R.id.game_home_context)).setText(R.string.game_software_demo_mode);
-    ((TextView) findViewById(R.id.game_home_status))
-        .setText(
-            state.loading
-                ? R.string.game_home_loading
-                : state.error == null ? R.string.game_software_demo_ready : R.string.game_home_error);
-    Progress progress = state.progress;
-    ((TextView) findViewById(R.id.game_home_progress))
-        .setText(
-            progress == null
-                ? R.string.game_home_loading
-                : progress.stamp
-                    ? R.string.game_software_demo_stamp
-                    : progress.introDoneAt == null
-                        ? R.string.game_software_demo_not_started
-                        : R.string.game_home_progress_ready);
+    TextView status = findViewById(R.id.game_home_status);
+    status.setText(state.error == null ? R.string.game_home_loading : R.string.game_home_error);
+    show(R.id.game_home_status, state.loading || state.error != null);
     renderIntegrationStatus();
+  }
+
+  private void renderSoftwareDemoStatus() {
+    HomeState state = snapshot();
+    Progress progress = state == null ? null : state.progress;
+    boolean stamped = progress != null && progress.stamp;
+    boolean introduced = stamped || (progress != null && progress.introDoneAt != null);
+    boolean discovered = introduced || (integrationState != null
+        && (integrationState.phase == NavigationPolicy.Phase.ACCEPTED
+            || integrationState.phase == NavigationPolicy.Phase.CONSUMED));
+
+    bindDemoStep(R.id.game_demo_step_discovery, R.string.game_discovery_step_find,
+        R.drawable.game_demo_hub_search_icon, discovered);
+    bindDemoStep(R.id.game_demo_step_intro, R.string.game_guide_section_department,
+        R.drawable.game_guide_icon_book, introduced);
+    bindDemoStep(R.id.game_demo_step_quiz, R.string.game_demo_hub_quiz,
+        R.drawable.game_booklet_checklist_icon, stamped);
+    show(R.id.game_demo_hub_complete_card, discovered);
+    ((TextView) findViewById(R.id.game_demo_hub_complete_title)).setText(stamped
+        ? R.string.game_demo_hub_tour_done : introduced ? R.string.game_demo_hub_intro_done
+        : R.string.game_demo_hub_found);
+    ((TextView) findViewById(R.id.game_demo_hub_complete_body)).setText(stamped
+        ? R.string.game_demo_hub_tour_body : introduced ? R.string.game_demo_hub_intro_body
+        : R.string.game_demo_hub_found_body);
+    ((TextView) findViewById(R.id.game_home_progress))
+        .setText(getString(R.string.game_demo_hub_stamp_count, stamped ? 1 : 0));
+    ((TextView) findViewById(R.id.game_integration_home_context)).setText(discovered
+        ? R.string.game_demo_hub_note : R.string.game_demo_hub_start_note);
+    ((TextView) findViewById(R.id.game_demo_hub_message)).setText(discovered ? "" : integrationMessage);
+    show(R.id.game_demo_hub_message, !discovered && !integrationMessage.isEmpty());
+    Button action = findViewById(R.id.game_home_prototype);
+    action.setText(stamped ? R.string.game_software_demo_review_result : discovered
+        ? R.string.game_software_demo_resume : R.string.game_demo_hub_start);
+    action.setEnabled(!integrationBusy && state != null && !state.loading && state.error == null);
+  }
+
+  private void bindDemoStep(int id, int label, int icon, boolean complete) {
+    TextView step = findViewById(id);
+    step.setText(label);
+    step.setCompoundDrawablesRelativeWithIntrinsicBounds(
+        complete ? R.drawable.game_demo_hub_check_icon : icon, 0, 0, 0);
+    androidx.core.view.ViewCompat.setStateDescription(step,
+        complete ? getString(R.string.game_demo_hub_step_done) : null);
   }
 
   private void renderIntegrationStatus() {
     if (integrationContext == null) return;
     if (softwareDemo()) {
-      String text = getString(R.string.game_software_demo_disclosure);
-      if (!integrationMessage.isEmpty()) text += "\n" + integrationMessage;
-      ((TextView) findViewById(R.id.game_integration_home_context)).setText(text);
-      show(R.id.game_integration_home_context, true);
-      HomeState state = snapshot();
-      boolean discovered = integrationState != null
-          && (integrationState.phase == NavigationPolicy.Phase.ACCEPTED
-              || integrationState.phase == NavigationPolicy.Phase.CONSUMED);
-      Progress progress = state == null ? null : state.progress;
-      ((Button) findViewById(R.id.game_home_prototype))
-          .setText(
-              progress != null && progress.stamp
-                  ? R.string.game_software_demo_review_result
-                  : discovered || (progress != null && progress.introDoneAt != null)
-                      ? R.string.game_software_demo_resume
-                      : R.string.game_software_demo_discover);
-      findViewById(R.id.game_home_prototype)
-          .setEnabled(!integrationBusy && state != null && !state.loading && state.error == null);
+      renderSoftwareDemoStatus();
       return;
     }
     String clock =

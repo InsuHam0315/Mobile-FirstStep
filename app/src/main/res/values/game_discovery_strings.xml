@@ -10,4 +10,22 @@
 <string name="game_discovery_result_real">소환 완료 · 실제 센서</string><string name="game_discovery_result_simulated">소환 완료 · 시뮬레이션 센서</string><string name="game_discovery_result_hold">소환 완료 · 길게 누르기 대체</string><string name="game_discovery_fallback_camera_suffix"> · 카메라 대체</string><string name="game_discovery_fallback_heading_suffix"> · 수동 방향 대체</string><string name="game_discovery_shake_count">흔들기 %1$d / 5</string><string name="game_discovery_selected_shake">선택: 흔들기</string><string name="game_discovery_selected_light">선택: 빛 가리기</string>
 <string name="game_discovery_status_format">%1$s\n%2$s\n%3$s · %4$s</string>
 <string name="game_discovery_result_format">%1$s\n%2$s%3$s%4$s</string>
+    <string name="game_discovery_demo_place">디지털정보관 · 소프트웨어학과</string>
+    <string name="game_discovery_demo_mode">시연 모드</string>
+    <string name="game_discovery_step_arrival">도착</string>
+    <string name="game_discovery_step_align">방향 맞추기</string>
+    <string name="game_discovery_step_find">발견</string>
+    <string name="game_discovery_step_arrow">→</string>
+    <string name="game_discovery_step_checked">✓ %1$s</string>
+    <string name="game_discovery_step_current">현재 단계</string>
+    <string name="game_discovery_demo_arrival_title">도착을 먼저 확인해요</string>
+    <string name="game_discovery_demo_local">시연은 이 기기에만 저장돼요.</string>
+    <string name="game_discovery_demo_camera_off">카메라 없이 체험 중</string>
+    <string name="game_discovery_demo_camera_on">카메라 위 2D 그림 · 위치 추적 없음</string>
+    <string name="game_discovery_demo_shake_title">흔들어 강린을 발견해요</string>
+    <string name="game_discovery_demo_count">%1$d / %2$d</string>
+    <string name="game_discovery_demo_methods">체험 방법 바꾸기</string>
+    <string name="game_discovery_demo_hold">1.5초 길게 누르기</string>
+    <string name="game_discovery_demo_hold_hint">흔들기 대신 사용할 수 있어요.</string>
+    <string name="game_discovery_demo_disclosure">도착은 시뮬레이션이며 방향 기준은 현장 보정 전 임시값이에요. 카메라에 표시되는 2D 그림은 위치를 추적하지 않아요.</string>
 </resources>

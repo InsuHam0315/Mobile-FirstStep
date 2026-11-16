@@ -23,9 +23,9 @@
     <string name="game_guide_reload">자료 다시 불러오기</string>
     <string name="game_guide_read_again">안내 다시 보기</string>
     <string name="game_guide_close">닫기</string>
-    <string name="game_guide_practice_title">출처를 확인하는 연습 · 3문제</string>
+    <string name="game_guide_practice_title">퀴즈</string>
     <string name="game_guide_practice_help">세 문제의 답을 모두 고른 뒤 채점해 주세요. 결과는 탐방 진행과 무관합니다.</string>
-    <string name="game_guide_score">연습 정답: %1$d / %2$d</string>
+    <string name="game_guide_score">%1$d / %2$d 정답</string>
     <string name="game_guide_question">%1$d. %2$s</string>
     <string name="game_guide_correct">맞았습니다.</string>
     <string name="game_guide_incorrect">해설을 확인하고 다시 연습해 보세요.</string>
@@ -45,4 +45,40 @@
     <string name="game_narration_replay">소리로 다시 듣기</string>
     <string name="game_narration_skip">건너뛰고 연습하기</string>
     <string name="game_narration_finish">소개를 마치고 연습하기</string>
+    <string name="game_narration_kangrin_art">강린 캐릭터</string>
+    <string name="game_guide_eyebrow">캠퍼스 탐방</string>
+    <string name="game_guide_hero">강린과 함께 둘러봐요</string>
+    <string name="game_guide_demo_start">탐방 시연 시작</string>
+    <string name="game_guide_sections">학과 안내</string>
+    <string name="game_guide_section_college">학과 알아보기</string>
+    <string name="game_guide_section_visit">방문 정보</string>
+    <string name="game_guide_section_department">학과 소개</string>
+    <string name="game_guide_section_life">학교생활 정보</string>
+    <string name="game_guide_expanded">펼쳐짐</string>
+    <string name="game_guide_collapsed">접힘</string>
+    <string name="game_guide_open_official">공식 원문 열기 ↗</string>
+    <string name="game_guide_back_arrow">←</string>
+    <string name="game_guide_previous">이전</string>
+    <string name="game_guide_next">다음 문제</string>
+    <string name="game_guide_result_title">퀴즈 결과</string>
+    <string name="game_guide_quiz_notice">탐방 기록과 보상에 반영되지 않아요.</string>
+    <string name="game_guide_explanations">문제별 해설</string>
+    <string name="game_guide_review_location">학과 위치</string>
+    <string name="game_guide_review_values">학과의 세 가지 가치</string>
+    <string name="game_guide_review_notice">최신 공지와 학사 안내</string>
+    <string name="game_guide_review_source">공식 출처 보기 ↗</string>
+    <string name="game_narration_heading">요정 소개</string>
+    <string name="game_narration_back">뒤로가기</string>
+    <string name="game_narration_info_button">ⓘ 미리보기 안내</string>
+    <string name="game_narration_info_title">미리보기 안내</string>
+    <string name="game_narration_info_confirm">확인</string>
+    <string name="game_narration_replay_short">다시 듣기</string>
+    <string name="game_narration_start_practice">연습 시작</string>
+    <string name="game_narration_source_accessibility">공식 출처 보기. %1$s. 공식 페이지 확인: %2$s</string>
+    <style name="GameNarrationTextButton" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:minHeight">@dimen/game_touch_min</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/game_color_text</item>
+        <item name="android:textSize">14sp</item>
+    </style>
 </resources>

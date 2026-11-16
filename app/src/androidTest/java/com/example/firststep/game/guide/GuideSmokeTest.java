@@ -296,9 +296,11 @@ public final class GuideSmokeTest {
       onView(withText("현장 도착 위치·반경은 아직 검증하지 않았습니다."))
           .perform(reveal())
           .check(matches(isDisplayed()));
+      onView(withTagValue(is("guide_section:college_membership"))).perform(reveal(), click());
       onView(withText("소프트웨어학과는 컴퓨터소프트웨어특성화대학의 학과 목록에서 확인할 수 있어요."))
           .perform(reveal())
           .check(matches(isDisplayed()));
+      onView(withTagValue(is("guide_section:office_guidance"))).perform(reveal(), click());
       onView(withTagValue(is("guide_source:sw_location")))
           .perform(reveal())
           .check(matches(isCompletelyDisplayed()));
@@ -323,13 +325,15 @@ public final class GuideSmokeTest {
       s.recreate();
       panel(s, "PRACTICE");
       s.onActivity(a -> assertEquals("library", a.answersForTest().get("location")));
+      tap(R.id.game_guide_primary);
       choose("values", "communicate");
+      tap(R.id.game_guide_primary);
       choose("notice", "official");
       tap(R.id.game_guide_primary);
       panel(s, "RESULT");
       onView(withTagValue(is("guide_score")))
           .perform(reveal())
-          .check(matches(withText("연습 정답: 2 / 3")));
+          .check(matches(withText("2 / 3 정답")));
       // Explicitly simulate loss of the retained model, then exercise the saved Bundle/new loader.
       // This is not a real operating-system process-death demonstration.
       GuideBundle[] previous = {null};
@@ -343,14 +347,14 @@ public final class GuideSmokeTest {
       s.onActivity(a -> assertNotSame(previous[0], a.guideForTest()));
       onView(withTagValue(is("guide_score")))
           .perform(reveal())
-          .check(matches(withText("연습 정답: 2 / 3")));
+          .check(matches(withText("2 / 3 정답")));
       evidence("practice-restored-new-model-simulation");
       evidence("practice-wrong-no-reward");
       s.recreate();
       panel(s, "RESULT");
       onView(withTagValue(is("guide_score")))
           .perform(reveal())
-          .check(matches(withText("연습 정답: 2 / 3")));
+          .check(matches(withText("2 / 3 정답")));
       tap(R.id.game_guide_read_again);
       panel(s, "GUIDE");
       tap(R.id.game_guide_primary);
@@ -359,13 +363,15 @@ public final class GuideSmokeTest {
       panel(s, "PRACTICE");
       s.onActivity(a -> assertTrue(a.answersForTest().isEmpty()));
       choose("location", "digital_first");
+      tap(R.id.game_guide_primary);
       choose("values", "communicate");
+      tap(R.id.game_guide_primary);
       choose("notice", "official");
       tap(R.id.game_guide_primary);
       panel(s, "RESULT");
       onView(withTagValue(is("guide_score")))
           .perform(reveal())
-          .check(matches(withText("연습 정답: 3 / 3")));
+          .check(matches(withText("3 / 3 정답")));
       evidence("practice-correct-no-reward");
     }
     assertEquals("Practice must not change/create database files", before, databaseHashes());
@@ -447,8 +453,9 @@ public final class GuideSmokeTest {
       panel(s, "GUIDE");
       tap(R.id.game_guide_primary);
       choose("location", "digital_first");
-      tap(R.id.game_guide_read_again);
+      tap(R.id.game_guide_quiz_back);
       panel(s, "GUIDE");
+      onView(withTagValue(is("guide_section:office_guidance"))).perform(reveal(), click());
       onView(withTagValue(is("guide_source:sw_location"))).perform(reveal(), click());
       assertNotNull(captured.get());
       assertEquals(

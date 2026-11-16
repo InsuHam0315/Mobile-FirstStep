@@ -133,7 +133,9 @@ public final class ReskinVisualSmokeTest {
       ready(GuideActivity.class, activity -> "PRACTICE".equals(activity.panelForTest()));
       choose("location", "digital_first");
       capture(GuideActivity.class, "software-practice-transient");
+      tap(R.id.game_guide_primary);
       choose("values", "communicate");
+      tap(R.id.game_guide_primary);
       choose("notice", "official");
       tap(R.id.game_guide_primary);
       ready(GuideActivity.class, activity -> "RESULT".equals(activity.panelForTest()));
@@ -155,24 +157,19 @@ public final class ReskinVisualSmokeTest {
     IntegrationIntentCodec.writeContext(launch, run);
     try (ActivityScenario<GameHomeActivity> screen = ActivityScenario.launch(launch)) {
       ready(GameHomeActivity.class, activity -> activity.findViewById(R.id.game_home_prototype).isEnabled()
-          && showsText(activity, R.id.game_home_status, R.string.game_software_demo_ready));
+          && showsText(activity, R.id.game_home_prototype, R.string.game_demo_hub_start));
       onView(withId(R.id.game_integration_home_context)).perform(reveal())
-          .check(matches(withText(R.string.game_software_demo_disclosure)));
+          .check(matches(withText(R.string.game_demo_hub_start_note)));
       capture(GameHomeActivity.class, "software-local-demo-isolated");
       tap(R.id.game_home_prototype);
       ready(DiscoveryActivity.class, activity -> activity.snapshot() != null
           && activity.findViewById(R.id.game_discovery_arrival).isEnabled());
       capture(DiscoveryActivity.class, "software-local-demo-simulated-arrival-entry");
-      if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-        onView(withId(R.id.game_discovery_arrival)).check(matches(
-            allOf(isDisplayingAtLeast(90), isEnabled())));
-        onView(withId(R.id.game_discovery_camera_fallback)).check(matches(
-            allOf(isDisplayingAtLeast(90), isEnabled())));
-      }
       onView(withId(R.id.game_integration_discovery_context)).perform(reveal())
-          .check(matches(withText(R.string.game_software_demo_discovery_disclosure)));
+          .check(matches(withText(R.string.game_discovery_demo_local)));
       onView(withId(R.id.game_discovery_arrival)).perform(reveal()).check(matches(isEnabled()));
-      onView(withId(R.id.game_discovery_camera_fallback)).perform(reveal())
+      tap(R.id.game_discovery_arrival);
+      onView(withId(R.id.game_discovery_method_toggle)).perform(reveal())
           .check(matches(isEnabled()));
       tap(R.id.game_discovery_exit);
       ready(GameHomeActivity.class, activity -> activity.findViewById(R.id.game_home_back).isShown());

@@ -1,4 +1,4 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/game_identity_host"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -9,6 +9,17 @@
  <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="@dimen/game_space_medium">
   <LinearLayout android:id="@+id/game_identity_entry" android:layout_width="match_parent"
       android:layout_height="wrap_content" android:orientation="vertical">
+   <FrameLayout android:id="@+id/game_identity_login_header" android:layout_width="match_parent"
+       android:layout_height="wrap_content" android:minHeight="48dp" android:layout_marginBottom="12dp" android:visibility="gone">
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_gravity="center" android:gravity="center" android:paddingHorizontal="48dp"
+        android:text="@string/game_identity_login_heading" android:textColor="@color/game_color_text"
+        android:textSize="22sp" android:textStyle="bold" android:accessibilityHeading="true" />
+    <Button android:id="@+id/game_identity_login_back" style="@style/GameNarrationTextButton"
+        android:layout_width="48dp" android:layout_height="48dp" android:layout_gravity="start|center_vertical"
+        android:padding="0dp" android:text="@string/game_guide_back_arrow" android:textSize="24sp"
+        android:contentDescription="@string/game_narration_back" />
+   </FrameLayout>
   <FrameLayout android:layout_width="match_parent" android:layout_height="@dimen/game_reskin_identity_hero_height"
       android:layout_marginBottom="@dimen/game_space_medium"
       android:background="@drawable/game_reskin_card" android:clipToOutline="true">
@@ -19,7 +30,7 @@
        android:background="@drawable/game_reskin_hero_scrim" android:importantForAccessibility="no" />
   </FrameLayout>
   <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-      android:gravity="center" android:text="@string/app_name" android:textColor="@color/game_color_text"
+      android:gravity="center" android:text="@string/app_name" android:textColor="@color/game_color_action"
       android:textSize="@dimen/game_text_title" android:textStyle="bold" />
   <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
       android:gravity="center" android:text="@string/game_identity_tagline"
@@ -41,9 +52,16 @@
        android:saveEnabled="false" android:textColor="@color/game_color_text"
        android:textSize="@dimen/game_text_body" />
   </LinearLayout>
-  <TextView android:id="@+id/game_identity_status" android:layout_width="match_parent"
-      android:layout_height="wrap_content" android:layout_marginTop="@dimen/game_space_medium"
-      android:textColor="@color/game_color_text" android:textSize="@dimen/game_text_body" />
+  <LinearLayout android:id="@+id/game_identity_status_panel" android:layout_width="match_parent"
+      android:layout_height="wrap_content" android:layout_marginTop="@dimen/game_space_medium" android:orientation="vertical">
+   <TextView android:id="@+id/game_identity_status_heading" android:layout_width="match_parent"
+       android:layout_height="wrap_content" android:drawableStart="@drawable/game_demo_hub_info_icon" android:drawablePadding="8dp"
+       android:text="@string/game_identity_login_unavailable_heading" android:textColor="@color/game_color_text"
+       android:textSize="16sp" android:textStyle="bold" android:visibility="gone" />
+   <TextView android:id="@+id/game_identity_status" android:layout_width="match_parent"
+       android:layout_height="wrap_content" android:textColor="@color/game_color_text"
+       android:textSize="@dimen/game_text_body" android:accessibilityLiveRegion="polite" />
+  </LinearLayout>
   <LinearLayout android:id="@+id/game_identity_form"
       android:layout_width="match_parent" android:layout_height="wrap_content"
       android:orientation="vertical" android:visibility="gone"
@@ -63,12 +81,20 @@
   <Button android:id="@+id/game_identity_retry" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_identity_retry" />
   <Button android:id="@+id/game_identity_reselect" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_identity_reselect" />
   <Button android:id="@+id/game_identity_logout" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_identity_logout" />
-  <TextView android:id="@+id/game_identity_environment" android:layout_width="match_parent"
-      android:layout_height="wrap_content" android:layout_marginTop="@dimen/game_space_medium"
-      android:textColor="@color/game_color_text" android:textSize="14sp" android:textStyle="bold" />
-  <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-      android:text="@string/game_identity_notice" android:textColor="@color/game_color_text"
-      android:textSize="14sp" />
+  <com.google.android.material.button.MaterialButton android:id="@+id/game_identity_info_toggle" style="@style/GameSecondaryButton"
+      android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp"
+      app:backgroundTint="@color/game_reskin_paper" app:cornerRadius="12dp" android:gravity="start|center_vertical" android:paddingHorizontal="14dp"
+      android:text="@string/game_identity_login_info" android:textStyle="bold" android:visibility="gone" />
+  <LinearLayout android:id="@+id/game_identity_info_detail" android:layout_width="match_parent"
+      android:layout_height="wrap_content" android:orientation="vertical">
+   <TextView android:id="@+id/game_identity_environment" android:layout_width="match_parent"
+       android:layout_height="wrap_content" android:layout_marginTop="@dimen/game_space_medium"
+       android:textColor="@color/game_color_text" android:textSize="14sp" android:textStyle="bold" />
+   <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+       android:text="@string/game_identity_notice" android:textColor="@color/game_color_text" android:textSize="14sp" />
+  </LinearLayout>
+  <Space android:id="@+id/game_identity_login_spacer" android:layout_width="1dp"
+      android:layout_height="0dp" android:layout_weight="1" android:visibility="gone" />
   <Button android:id="@+id/game_identity_back" style="@style/GameSecondaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_identity_back" />
  </LinearLayout>
  </ScrollView>
