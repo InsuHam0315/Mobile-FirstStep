@@ -11,18 +11,18 @@
      android:paddingHorizontal="16dp"
      android:textColor="@color/game_color_text"
      android:visibility="gone" />
- <com.example.firststep.map.CampusMapView android:id="@+id/campus_map" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:layout_marginTop="12dp" />
+ <com.example.firststep.map.CampusMapView android:id="@+id/campus_map" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:layout_marginHorizontal="@dimen/game_space_medium" android:background="@drawable/game_reskin_card" android:clipToOutline="true" />
  <TextView android:id="@+id/map_attribution" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="© OpenStreetMap contributors · 지도 출처/이용 조건" android:textSize="12sp" android:textColor="@color/game_reskin_link" android:padding="8dp" android:minHeight="@dimen/game_touch_min" android:gravity="center" />
- <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+ <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginHorizontal="@dimen/game_space_medium">
   <Button style="@style/GameMapButton" android:id="@+id/map_zoom_in" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="확대" />
   <Button style="@style/GameMapButton" android:id="@+id/map_zoom_out" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="축소" />
   <Button style="@style/GameMapButton" android:id="@+id/map_campus" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="학교" />
  </LinearLayout>
- <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+ <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginHorizontal="@dimen/game_space_medium">
   <Button style="@style/GameActionButton" android:id="@+id/map_location" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="내 위치" />
   <Button style="@style/GameMapButton" android:id="@+id/map_retry" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="다시 불러오기" />
  </LinearLayout>
- <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+ <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginHorizontal="@dimen/game_space_medium">
   <Button style="@style/GameMapButton" android:id="@+id/map_route" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="탐방 순서도" />
   <Button
       style="@style/GameMapButton"

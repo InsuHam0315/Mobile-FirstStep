@@ -15,6 +15,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/game_software_demo_title"
+            android:accessibilityHeading="true"
+            android:textStyle="bold"
             android:textColor="@color/game_color_text"
             android:textSize="@dimen/game_text_title" />
         <TextView
@@ -32,7 +34,8 @@
             android:textSize="@dimen/game_text_body" />
         <Button
             android:id="@id/game_home_back"
-            style="@style/GameActionButton"
+            style="@style/GameSecondaryButton"
+            android:layout_marginTop="@dimen/game_reskin_control_space"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/game_home_back" />
@@ -53,6 +56,9 @@
             android:visibility="gone" />
         <LinearLayout
             android:id="@id/game_home_panel"
+            android:layout_marginTop="@dimen/game_space_medium"
+            android:background="@drawable/game_reskin_card"
+            android:padding="@dimen/game_space_medium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"

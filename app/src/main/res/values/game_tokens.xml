@@ -22,6 +22,8 @@
         <item name="backgroundTint">@color/game_reskin_primary_tint</item>
         <item name="android:textColor">@color/game_reskin_primary_text</item>
         <item name="android:textAllCaps">false</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:stateListAnimator">@null</item>
         <item name="android:letterSpacing">0</item>
         <item name="android:minHeight">@dimen/game_touch_min</item>
     </style>
