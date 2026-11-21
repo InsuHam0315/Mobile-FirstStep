@@ -20,4 +20,12 @@ Management supplied pre-fix runtime evidence of hidden result Close and fixed-fo
 
 The Terra specialist `/root/narration_design_fix` (`gpt-6.1-terra`) implemented the scoped Narration repair. The root implemented the booklet, fallback and guide regression changes and ran builds. Independent reviewer `/root/h07_exact_review_pm` (`gpt-6.1-sol`, high) reported PASS on the nine-file source/test/catalog patch with no actionable findings. The full-index binary patch SHA256 is `47302E98FAAF2BB320DAA46B9F4B21E9DBE55F1470E70135E92DDCBE23FAD776`. The reviewer performed source review only.
 
+## Design v5 fallback test repair
+
+The v4 test incorrectly assumed that every software DEMO launch installed `DiscoveryTestDriver`. Management's unconfigured portrait run passed 13 of 14 tests and failed the driver assertion. The landscape Reskin run passed 3 of 4 and failed the same assertion. Logs are `%TEMP%/firststep-design-v4-o1.txt` and `firststep-design-v4-o2.txt`. The actual Home-to-Discovery route supplies a nonce-bound request but no SIMULATED input-mode extra. It uses real device adapters with simulated arrival.
+
+The v5 test follows that actual route and requires a prepared denied, unavailable or failed camera state after arrival. It clicks the visible no-camera action through Espresso, checks the camera-off label, expands the methods panel and clicks the manual direction fallback. It then checks that the hold control is visible and enabled, while the flow remains incomplete. Permission is checked before and after the test. A camera-ready device fails this scenario's precondition. Management prepared a separate camera-less AVD for its rerun.
+
+The test-only patch starts at `e98c70a67467465144027300c668feb83d2e24c3`. With Studio JBR, `gradlew.bat :app:assembleDebugAndroidTest --console=plain` compiled and packaged the test APK with 4 executed and 47 up-to-date tasks. Harness and whitespace checks passed. The test APK SHA256 is `6834B84C4AB655173B1088B1B4339C95D60CD0A9A55547E58B4D8AB97B0C995D`. Independent Sol reviewer `/root/h07_exact_review_pm` reported source PASS on `10768ED7497D10FA3F3A70768348EC23A2E4673BCA8B9450B1D65E859809A51A`. Evidence is under `.local/harness/DESIGN/v5/`. Actual orientation-specific execution remains with management.
+
 Journal update: pending management review.

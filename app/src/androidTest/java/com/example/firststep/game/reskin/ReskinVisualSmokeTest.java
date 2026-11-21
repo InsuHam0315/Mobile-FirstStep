@@ -35,7 +35,6 @@ import com.example.firststep.BuildConfig;
 import com.example.firststep.R;
 import com.example.firststep.RouteMapActivity;
 import com.example.firststep.game.auth.SessionState;
-import com.example.firststep.game.composition.discovery.DiscoveryTestDriver;
 import com.example.firststep.game.composition.home.CampusHomeRoute;
 import com.example.firststep.game.composition.integration.IntegrationContext;
 import com.example.firststep.game.composition.integration.IntegrationIntentCodec;
@@ -154,6 +153,7 @@ public final class ReskinVisualSmokeTest {
 
   @Test public void isolatedLocalDemoReachesDisclosureAndDiscoveryWithoutCompleting() throws Exception {
     assertTrue("DEMO route belongs to debug APK", BuildConfig.DEBUG);
+    int initialCameraPermission = context.checkSelfPermission(android.Manifest.permission.CAMERA);
     IntegrationContext run = IntegrationContext.create(IntegrationContext.SOFTWARE_DATASET,
         UUID.randomUUID().toString(), IntegrationContext.TARGET, Progress.Mode.DEMO,
         IntegrationContext.Clock.REAL, null);
@@ -173,13 +173,13 @@ public final class ReskinVisualSmokeTest {
           .check(matches(withText(R.string.game_discovery_demo_local)));
       onView(withId(R.id.game_discovery_arrival)).perform(reveal()).check(matches(isEnabled()));
       tap(R.id.game_discovery_arrival);
-      instrumentation.runOnMainSync(() -> {
-        DiscoveryTestDriver input = DiscoveryTestDriver.current();
-        assertNotNull("Software DEMO must use its simulated input driver", input);
-        input.cameraState(DiscoveryState.CameraStatus.UNAVAILABLE);
-      });
+      // Home opens the real adapter graph. Prepare a denied or camera-less device externally.
       ready(DiscoveryActivity.class, activity -> activity.snapshot().arrived
-          && activity.snapshot().camera == DiscoveryState.CameraStatus.UNAVAILABLE);
+          && !activity.snapshot().simulated
+          && (activity.snapshot().camera == DiscoveryState.CameraStatus.DENIED
+              || activity.snapshot().camera == DiscoveryState.CameraStatus.PERMISSION_REQUIRED
+              || activity.snapshot().camera == DiscoveryState.CameraStatus.UNAVAILABLE
+              || activity.snapshot().camera == DiscoveryState.CameraStatus.ERROR));
       onView(withId(R.id.game_discovery_camera_fallback)).perform(reveal())
           .check(matches(allOf(isDisplayingAtLeast(90), isEnabled())));
       capture(DiscoveryActivity.class, "software-local-demo-no-camera-after-arrival");
@@ -187,11 +187,14 @@ public final class ReskinVisualSmokeTest {
       ready(DiscoveryActivity.class, activity -> activity.snapshot().cameraFallback);
       onView(withId(R.id.game_discovery_camera_label)).perform(reveal())
           .check(matches(withText(R.string.game_discovery_demo_camera_off)));
-      instrumentation.runOnMainSync(() -> {
-        DiscoveryTestDriver input = DiscoveryTestDriver.current();
-        assertNotNull(input);
-        input.heading(0, true);
-      });
+      // Expand methods so the manual heading action is reachable even with an aligned sensor.
+      tap(R.id.game_discovery_method_toggle);
+      onView(withId(R.id.game_discovery_align_fallback)).perform(reveal())
+          .check(matches(allOf(isDisplayingAtLeast(90), isEnabled())));
+      tap(R.id.game_discovery_align_fallback);
+      ready(DiscoveryActivity.class, activity -> activity.snapshot().cameraFallback
+          && activity.snapshot().headingFallback && activity.snapshot().arrived
+          && !activity.snapshot().completed);
       onView(withId(R.id.game_discovery_hold)).perform(reveal())
           .check(matches(allOf(isDisplayingAtLeast(90), isEnabled())));
       ready(DiscoveryActivity.class, activity -> !activity.snapshot().completed);
@@ -202,6 +205,8 @@ public final class ReskinVisualSmokeTest {
       ready(GameHomeActivity.class, activity -> activity.findViewById(R.id.game_home_back).isShown());
       tap(R.id.game_home_back);
     }
+    assertEquals("Preserve the externally prepared camera permission", initialCameraPermission,
+        context.checkSelfPermission(android.Manifest.permission.CAMERA));
   }
 
   @Test public void selectedFacilityMapShowsRealCanvasAndAttribution() throws Exception {
