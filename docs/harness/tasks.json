@@ -1,5 +1,11 @@
 {
   "schemaVersion": 1,
+  "koreanGuideIntegration": {
+    "branch": "korean-guide",
+    "integratedSha": "dab8fdcb8d10db21726d34990bc98179fa91973d",
+    "status": "verified",
+    "checks": "234 JVM tests; 13 Android API 35 portrait checks across Korean, software guide, narration and design routes; 2 Korean entry checks in landscape. Offline guide and practice only; field configuration remains closed."
+  },
   "teamDesignIntegration": {
     "branch": "design",
     "integratedSha": "fa3f505514dd82e20cc302dee8a54bf429e9ca55",
