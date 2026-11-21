@@ -42,6 +42,25 @@ public final class NarrationContentTest {
     m = valid(); ((List<?>)m.get("sentences")).remove(0); reject(NarrationContent.DATASET_ID, m);
     try { content.sentences().clear(); fail(); } catch (UnsupportedOperationException expected) { }
   }
+  @Test public void koreanRegistrationAndClaimsAreIsolated() {
+    assertTrue(NarrationContent.isRegistered(NarrationContent.DATASET_ID));
+    assertTrue(NarrationContent.isRegistered(NarrationContent.KOREAN_DATASET_ID));
+    assertFalse(NarrationContent.isRegistered(null));
+    assertFalse(NarrationContent.isRegistered("other"));
+    Map<String,Object> korean = valid();
+    korean.put("datasetId", NarrationContent.KOREAN_DATASET_ID);
+    String[] claims = {"ko_college_claim", "ko_office_claim", "ko_study_claim", "ko_info_claim"};
+    for (int i = 0; i < claims.length; i++) row(korean, i + 2).put("claimId", claims[i]);
+    NarrationContent content = NarrationContent.decode(NarrationContent.KOREAN_DATASET_ID, korean);
+    assertEquals(7, content.sentences().size());
+    assertEquals("ko_office_claim", content.sentences().get(3).claimId);
+    reject(NarrationContent.DATASET_ID, korean);
+    reject(NarrationContent.KOREAN_DATASET_ID, valid());
+    row(korean, 3).put("claimId", "office_guidance");
+    reject(NarrationContent.KOREAN_DATASET_ID, korean);
+    korean.put("datasetId", NarrationContent.DATASET_ID);
+    reject(NarrationContent.DATASET_ID, korean);
+  }
   @Test public void navigationBoundariesAndRestorationAreTransient() {
     NarrationState state = new NarrationState(7, 0);
     state.previous(); assertEquals(0, state.position());

@@ -1,5 +1,7 @@
 package com.example.firststep.game.ui.guide;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -17,6 +19,12 @@ import java.util.concurrent.Executors;
 
 /** Transient preview. Rendering and speech callbacks never advance the narration. */
 public final class NarrationActivity extends AppCompatActivity {
+  private static final String KOREAN_ACTION = "com.example.firststep.narration.KOREAN";
+
+  public static Intent koreanIntent(Context context) {
+    return new Intent(context, NarrationActivity.class).setAction(KOREAN_ACTION);
+  }
+
   private NarrationContent content;
   private GuideBundle guide;
   private NarrationState state;
@@ -30,6 +38,9 @@ public final class NarrationActivity extends AppCompatActivity {
   @Override protected void onCreate(Bundle saved) {
     super.onCreate(saved);
     setContentView(R.layout.game_narration_activity);
+    boolean korean = KOREAN_ACTION.equals(getIntent().getAction());
+    ((TextView) findViewById(R.id.narration_heading)).setText(korean
+        ? R.string.game_korean_narration_heading : R.string.game_narration_heading);
     ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.narration_root), (view, insets) -> {
       androidx.core.graphics.Insets bars = insets.getInsets(
           WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
@@ -62,8 +73,10 @@ public final class NarrationActivity extends AppCompatActivity {
     android.content.Context app = getApplicationContext();
     loader.execute(() -> {
       try {
-        NarrationContent loadedContent = NarrationAsset.load(app);
-        GuideBundle loadedGuide = new AssetGuideRepository(app).load();
+        NarrationContent loadedContent = NarrationAsset.load(app, korean
+            ? NarrationContent.KOREAN_DATASET_ID : NarrationContent.DATASET_ID);
+        GuideBundle loadedGuide = new AssetGuideRepository(app, korean
+            ? GuideDecoder.KOREAN_DATASET_ID : GuideDecoder.DATASET_ID).load();
         runOnUiThread(() -> {
           if (destroyed || isFinishing()) return;
           content = loadedContent;

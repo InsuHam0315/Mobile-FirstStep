@@ -11,16 +11,22 @@ import java.util.Map;
 public final class NarrationAsset {
   private NarrationAsset() {}
   public static NarrationContent load(Context context) throws IOException {
-    try (InputStream in = context.getAssets().open("campus_content/software_narration_v1.json");
+    return load(context, NarrationContent.DATASET_ID);
+  }
+  public static NarrationContent load(Context context, String narrationId) throws IOException {
+    if (!NarrationContent.isRegistered(narrationId)) throw new IOException("Unregistered narration");
+    String path = NarrationContent.KOREAN_DATASET_ID.equals(narrationId)
+        ? "campus_content/korean_narration_v1.json" : "campus_content/software_narration_v1.json";
+    try (InputStream in = context.getAssets().open(path);
          ByteArrayOutputStream out = new ByteArrayOutputStream()) {
       byte[] b = new byte[4096]; int n;
       while ((n = in.read(b)) != -1) { if (out.size() + n > 65536) throw new IOException("Narration too large"); out.write(b, 0, n); }
       String json = StandardCharsets.UTF_8.newDecoder().decode(java.nio.ByteBuffer.wrap(out.toByteArray())).toString();
-      return decodeJson(NarrationContent.DATASET_ID, json);
+      return decodeJson(narrationId, json);
     }
   }
   public static NarrationContent decodeJson(String id, String json) throws IOException {
-    if (!NarrationContent.DATASET_ID.equals(id) || json == null || json.length() > 65536) throw new IOException("Unregistered narration");
+    if (!NarrationContent.isRegistered(id) || json == null || json.length() > 65536) throw new IOException("Unregistered narration");
     try (JsonReader reader = new JsonReader(new StringReader(json))) {
       reader.setLenient(false);
       Object root = AssetGuideRepository.value(reader, 0);

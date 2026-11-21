@@ -5,6 +5,10 @@ import java.util.*;
 /** Registered narration: sentence identity and provenance are independent of presentation. */
 public final class NarrationContent {
   public static final String DATASET_ID = "software_narration_v1";
+  public static final String KOREAN_DATASET_ID = "korean_narration_v1";
+  public static boolean isRegistered(String id) {
+    return DATASET_ID.equals(id) || KOREAN_DATASET_ID.equals(id);
+  }
   public enum Provenance { FICTIONAL, EDITORIAL, CLAIM }
   public static final class Sentence {
     public final String id, text, claimId;
@@ -17,10 +21,12 @@ public final class NarrationContent {
   private NarrationContent(List<Sentence> sentences) { this.sentences = Collections.unmodifiableList(sentences); }
   public List<Sentence> sentences() { return sentences; }
   public static NarrationContent decode(String registeredId, Map<String, Object> root) {
-    if (!DATASET_ID.equals(registeredId) || root == null || !root.keySet().equals(new HashSet<>(Arrays.asList("datasetId", "version", "sentences"))) || !DATASET_ID.equals(root.get("datasetId")) || !Integer.valueOf(1).equals(root.get("version"))) throw new IllegalArgumentException("Invalid narration registration");
+    if (!isRegistered(registeredId) || root == null || !root.keySet().equals(new HashSet<>(Arrays.asList("datasetId", "version", "sentences"))) || !registeredId.equals(root.get("datasetId")) || !Integer.valueOf(1).equals(root.get("version"))) throw new IllegalArgumentException("Invalid narration registration");
     String[] ids = {"greeting", "invitation", "college", "visit", "values", "resources", "freshness"};
     String[] types = {"fictional", "editorial", "claim", "claim", "claim", "claim", "editorial"};
-    String[] claims = {"", "", "college_membership", "office_guidance", "learning_values", "help_resources", ""};
+    String[] claims = KOREAN_DATASET_ID.equals(registeredId)
+        ? new String[] {"", "", "ko_college_claim", "ko_office_claim", "ko_study_claim", "ko_info_claim", ""}
+        : new String[] {"", "", "college_membership", "office_guidance", "learning_values", "help_resources", ""};
     Object data = root.get("sentences");
     if (!(data instanceof List) || ((List<?>) data).size() != ids.length) throw new IllegalArgumentException("Invalid narration sentences");
     List<Sentence> result = new ArrayList<>();

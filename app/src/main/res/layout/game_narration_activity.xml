@@ -11,7 +11,8 @@
             android:layout_width="@dimen/game_touch_min" android:layout_height="@dimen/game_touch_min"
             android:contentDescription="@string/game_narration_back"
             android:padding="0dp" android:text="@string/game_guide_back_arrow" android:textSize="24sp" />
-        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+        <TextView android:id="@+id/narration_heading"
+            android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
             android:accessibilityHeading="true" android:text="@string/game_narration_heading"
             android:textColor="@color/game_color_text" android:textSize="22sp" android:textStyle="bold" />
         <Button android:id="@+id/narration_info" style="@style/GameNarrationTextButton"

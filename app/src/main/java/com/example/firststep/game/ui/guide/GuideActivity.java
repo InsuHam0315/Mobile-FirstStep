@@ -339,7 +339,7 @@ public final class GuideActivity extends AppCompatActivity {
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
-    if (!korean && requestCode == 101 && resultCode == RESULT_OK) {
+    if (requestCode == 101 && resultCode == RESULT_OK) {
       pendingPreviewPractice = true;
       if (!model.loading && !model.unavailable && model.guide != null) {
         pendingPreviewPractice = false;
@@ -349,18 +349,17 @@ public final class GuideActivity extends AppCompatActivity {
   }
 
   private void showIntroduction() {
+    View hero = getLayoutInflater().inflate(R.layout.game_guide_hero, content, false);
+    hero.findViewById(R.id.game_narration_entry).setOnClickListener(v ->
+        startActivityForResult(korean ? NarrationActivity.koreanIntent(this)
+            : new Intent(this, NarrationActivity.class), 101));
+    View demo = hero.findViewById(R.id.game_guide_demo_entry);
+    demo.setVisibility(!korean && BuildConfig.DEBUG ? View.VISIBLE : View.GONE);
+    demo.setOnClickListener(v -> openSoftwareDemo());
+    content.addView(hero);
     if (korean) {
       text(getString(R.string.game_korean_guide_intro), true);
       text(getString(R.string.game_korean_guide_office_notice), false);
-    } else {
-      View hero = getLayoutInflater().inflate(R.layout.game_guide_hero, content, false);
-      View preview = hero.findViewById(R.id.game_narration_entry);
-      preview.setOnClickListener(
-          v -> startActivityForResult(new Intent(this, NarrationActivity.class), 101));
-      View demo = hero.findViewById(R.id.game_guide_demo_entry);
-      demo.setVisibility(BuildConfig.DEBUG ? View.VISIBLE : View.GONE);
-      demo.setOnClickListener(v -> openSoftwareDemo());
-      content.addView(hero);
     }
     text(getString(R.string.game_guide_sections), true);
     for (GuideBundle.Claim claim : model.guide.getClaims()) {

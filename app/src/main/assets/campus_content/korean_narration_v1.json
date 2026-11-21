@@ -1,0 +1,48 @@
+{
+  "datasetId": "korean_narration_v1",
+  "version": 1,
+  "sentences": [
+    {
+      "id": "greeting",
+      "provenance": "fictional",
+      "claimId": "",
+      "text": "안녕하세요. 국어국문학과를 함께 둘러볼 안내 요정 강린이에요."
+    },
+    {
+      "id": "invitation",
+      "provenance": "editorial",
+      "claimId": "",
+      "text": "국어국문학과를 함께 알아볼까요?"
+    },
+    {
+      "id": "college",
+      "provenance": "claim",
+      "claimId": "ko_college_claim",
+      "text": "국어국문학과는 인문콘텐츠융합대학의 학과 목록에서 확인할 수 있어요."
+    },
+    {
+      "id": "visit",
+      "provenance": "claim",
+      "claimId": "ko_office_claim",
+      "text": "학과 사무실 위치 안내에는 인문관 3층 1326호가 나와 있어요."
+    },
+    {
+      "id": "values",
+      "provenance": "claim",
+      "claimId": "ko_study_claim",
+      "text": "학과 소개에서는 국어와 국문학을 비롯해 영상문학과 웹라이팅을 소개해요."
+    },
+    {
+      "id": "resources",
+      "provenance": "claim",
+      "claimId": "ko_info_claim",
+      "text": "학과 홈페이지에서 학사정보와 공지사항을 확인할 수 있어요."
+    },
+    {
+      "id": "freshness",
+      "provenance": "editorial",
+      "claimId": "",
+      "text": "방문하기 전에는 최신 안내를 다시 확인해 주세요."
+    }
+  ]
+}

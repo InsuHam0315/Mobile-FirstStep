@@ -17,6 +17,7 @@ import android.os.SystemClock;
 import android.view.View;
 import android.view.ViewParent;
 import android.widget.ScrollView;
+import android.widget.TextView;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
@@ -37,6 +38,7 @@ import com.example.firststep.game.content.GuideDecoder;
 import com.example.firststep.game.presentation.home.account.AccountHomeController.Reading;
 import com.example.firststep.game.presentation.home.account.AccountHomeState;
 import com.example.firststep.game.ui.guide.GuideActivity;
+import com.example.firststep.game.ui.guide.NarrationActivity;
 import com.example.firststep.game.ui.home.CampusHomeActivity;
 import com.example.firststep.game.ui.identity.IdentityActivity;
 import java.io.File;
@@ -87,7 +89,7 @@ public final class KoreanGuideRouteTest {
           .perform(reveal()).check(matches(isDisplayed()));
       onView(withTagValue(is("guide_source:ko_office"))).perform(reveal())
           .check(matches(isEnabled()));
-      assertNoSoftwareEntry(guide(GuideDecoder.KOREAN_DATASET_ID, "GUIDE"));
+      assertKoreanGuideScope(guide(GuideDecoder.KOREAN_DATASET_ID, "GUIDE"));
       tap(R.id.game_guide_primary);
       guide(GuideDecoder.KOREAN_DATASET_ID, "PRACTICE");
       option("ko_office_question", "ko_office_wrong1");
@@ -156,7 +158,7 @@ public final class KoreanGuideRouteTest {
       guide(GuideDecoder.DATASET_ID, "GUIDE");
       tap(R.id.game_guide_department_switch);
       GuideActivity korean = guide(GuideDecoder.KOREAN_DATASET_ID, "GUIDE");
-      assertNoSoftwareEntry(korean);
+      assertKoreanGuideScope(korean);
       tap(R.id.game_guide_close);
       guide(GuideDecoder.DATASET_ID, "GUIDE");
       tap(R.id.game_guide_close);
@@ -165,10 +167,114 @@ public final class KoreanGuideRouteTest {
     assertEquals(before, databaseHashes());
   }
 
-  private void assertNoSoftwareEntry(GuideActivity activity) throws Exception {
+  @Test public void guestKoreanHeroNarrationBackSkipAndFinishStayInKoreanPractice() throws Exception {
+    Map<String, String> before = databaseHashes();
+    onMain(() -> { H07VariantFactory.setTestFactory(DisabledIdentity::new); return null; });
+    try (ActivityScenario<IdentityActivity> identity =
+             ActivityScenario.launch(new Intent(context, IdentityActivity.class));
+         AutoCloseable children = trackGuideChildren()) {
+      awaitActivity(IdentityActivity.class, a -> a.findViewById(R.id.game_identity_welcome).isShown());
+      tap(R.id.game_identity_welcome_guest);
+      guide(GuideDecoder.DATASET_ID, "GUIDE");
+      tap(R.id.game_guide_department_switch);
+      guide(GuideDecoder.KOREAN_DATASET_ID, "GUIDE");
+      onView(withText(R.string.game_guide_hero)).perform(reveal()).check(matches(isDisplayed()));
+      tap(R.id.game_narration_entry);
+      koreanNarrationAt(1);
+      onView(withId(R.id.narration_heading))
+          .check(matches(withText(R.string.game_korean_narration_heading)));
+      tap(R.id.narration_back);
+      guide(GuideDecoder.KOREAN_DATASET_ID, "GUIDE");
+
+      tap(R.id.game_narration_entry);
+      koreanNarrationAt(1);
+      tap(R.id.narration_replay);
+      koreanNarrationAt(1);
+      tap(R.id.narration_next);
+      tap(R.id.narration_next);
+      NarrationActivity first = koreanNarrationAt(3);
+      onView(withId(R.id.narration_source_details)).perform(reveal())
+          .check(matches(withSubstring("https://www.kunsan.ac.kr/index.kunsan?contentsSid=7359&sso=ok")));
+      onMain(() -> { first.recreate(); return null; });
+      awaitActivity(NarrationActivity.class, a -> a != first
+          && context.getString(R.string.game_narration_position, 3, 7)
+              .contentEquals(((TextView) a.findViewById(R.id.narration_position)).getText()));
+      koreanNarrationAt(3);
+      tap(R.id.narration_skip);
+      GuideActivity practice = guide(GuideDecoder.KOREAN_DATASET_ID, "PRACTICE");
+      onMain(() -> { practice.recreate(); return null; });
+      awaitActivity(GuideActivity.class, a -> a != practice && a.guideForTest() != null
+          && GuideDecoder.KOREAN_DATASET_ID.equals(a.guideForTest().getDatasetId())
+          && "PRACTICE".equals(a.panelForTest()));
+      option("ko_office_question", "ko_office_correct");
+      tap(R.id.game_guide_quiz_back);
+      guide(GuideDecoder.KOREAN_DATASET_ID, "GUIDE");
+      tap(R.id.game_narration_entry);
+      koreanNarrationAt(1);
+      for (int page = 2; page <= 7; page++) {
+        tap(R.id.narration_next);
+        koreanNarrationAt(page);
+      }
+      onView(withId(R.id.narration_next)).check(matches(withEffectiveVisibility(Visibility.GONE)));
+      tap(R.id.narration_finish);
+      GuideActivity resumed = guide(GuideDecoder.KOREAN_DATASET_ID, "PRACTICE");
+      assertEquals(Collections.singletonMap("ko_office_question", "ko_office_correct"),
+          onMain(resumed::answersForTest));
+      tap(R.id.game_guide_quiz_back);
+      guide(GuideDecoder.KOREAN_DATASET_ID, "GUIDE");
+      tap(R.id.game_guide_department_switch);
+      guide(GuideDecoder.DATASET_ID, "GUIDE");
+      tap(R.id.game_guide_close);
+      awaitActivity(IdentityActivity.class, a -> a.findViewById(R.id.game_identity_welcome).isShown());
+    } finally {
+      onMain(() -> { H07VariantFactory.setTestFactory(null); return null; });
+    }
+    assertEquals(before, databaseHashes());
+  }
+
+  @Test public void koreanSpeechUnavailableKeepsManualCaptionAndKoreanSource() throws Exception {
+    Intent intent = NarrationActivity.koreanIntent(context)
+        .putExtra("game_narration_debug_speech_mode", "absent");
+    try (ActivityScenario<NarrationActivity> screen = ActivityScenario.launch(intent)) {
+      koreanNarrationAt(1);
+      tap(R.id.narration_replay);
+      onView(withId(R.id.narration_status)).perform(reveal())
+          .check(matches(withText(R.string.game_intro_speech_1)));
+      koreanNarrationAt(1);
+      tap(R.id.narration_next);
+      tap(R.id.narration_next);
+      tap(R.id.narration_next);
+      koreanNarrationAt(4);
+      onView(withId(R.id.narration_source_details)).perform(reveal())
+          .check(matches(withSubstring("https://www.kunsan.ac.kr/korean/index.kunsan?menuCd=DOM_000001101004000000")));
+      screen.recreate();
+      koreanNarrationAt(4);
+    }
+  }
+
+  private NarrationActivity koreanNarrationAt(int page) throws Exception {
+    NarrationActivity activity = awaitActivity(NarrationActivity.class,
+        a -> context.getString(R.string.game_narration_position, page, 7)
+            .contentEquals(((TextView) a.findViewById(R.id.narration_position)).getText()));
     onMain(() -> {
-      assertNull(activity.findViewById(R.id.game_guide_demo_entry));
-      assertNull(activity.findViewById(R.id.game_narration_entry));
+      assertEquals(context.getString(R.string.game_korean_narration_heading),
+          ((TextView) activity.findViewById(R.id.narration_heading)).getText().toString());
+      String caption = ((TextView) activity.findViewById(R.id.narration_caption)).getText().toString();
+      assertFalse(caption.contains("소프트웨어"));
+      assertFalse(caption.contains("디지털정보관"));
+      if (page == 1) {
+        assertTrue(caption.contains("국어국문학과"));
+        assertTrue(caption.contains("강린"));
+      }
+      return null;
+    });
+    return activity;
+  }
+
+  private void assertKoreanGuideScope(GuideActivity activity) throws Exception {
+    onMain(() -> {
+      assertEquals(View.GONE, activity.findViewById(R.id.game_guide_demo_entry).getVisibility());
+      assertTrue(activity.findViewById(R.id.game_narration_entry).isEnabled());
       assertEquals("humanities_korean", activity.guideForTest().getTargetId());
       assertEquals("unverified", activity.guideForTest().getArrivalVerification());
       assertEquals(3, activity.guideForTest().getQuestions().size());
@@ -243,7 +349,7 @@ public final class KoreanGuideRouteTest {
   private AutoCloseable trackGuideChildren() throws Exception {
     Set<Activity> guides = new LinkedHashSet<>();
     ActivityLifecycleCallback observer = (activity, stage) -> {
-      if (!(activity instanceof GuideActivity)) return;
+      if (!(activity instanceof GuideActivity) && !(activity instanceof NarrationActivity)) return;
       if (stage == Stage.PRE_ON_CREATE) guides.add(activity);
       if (stage == Stage.DESTROYED) guides.remove(activity);
     };
