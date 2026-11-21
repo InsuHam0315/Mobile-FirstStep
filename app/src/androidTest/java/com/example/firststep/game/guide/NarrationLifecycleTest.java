@@ -35,14 +35,16 @@ public final class NarrationLifecycleTest {
       public void perform(UiController ui, View view) {
         ViewParent parent = view.getParent();
         while (parent != null && !(parent instanceof ScrollView)) parent = parent.getParent();
-        assertTrue(parent instanceof ScrollView);
-        ScrollView scroll = (ScrollView) parent;
-        Rect bounds = new Rect();
-        view.getDrawingRect(bounds);
-        scroll.offsetDescendantRectToMyCoords(view, bounds);
-        int height = scroll.getHeight() - scroll.getPaddingTop() - scroll.getPaddingBottom();
-        scroll.scrollTo(0, Math.max(0, bounds.centerY() - height / 2 - scroll.getPaddingTop()));
+        if (parent instanceof ScrollView) {
+          ScrollView scroll = (ScrollView) parent;
+          Rect bounds = new Rect();
+          view.getDrawingRect(bounds);
+          scroll.offsetDescendantRectToMyCoords(view, bounds);
+          int height = scroll.getHeight() - scroll.getPaddingTop() - scroll.getPaddingBottom();
+          scroll.scrollTo(0, Math.max(0, bounds.centerY() - height / 2 - scroll.getPaddingTop()));
+        }
         ui.loopMainThreadForAtLeast(200);
+        assertTrue("Narration control must be reachable", isDisplayingAtLeast(90).matches(view));
       }
     };
   }
@@ -64,12 +66,23 @@ public final class NarrationLifecycleTest {
     try (ActivityScenario<NarrationActivity> s = ActivityScenario.launch(intent)) {
       awaitCaption(s, "안녕하세요. 디지털정보관을 소개할 안내 요정이에요.");
       onView(withId(R.id.narration_previous)).check(matches(not(isEnabled())));
+      assertEquals(context.getString(R.string.game_narration_limit), text(s, R.id.narration_disclosure));
+      assertEquals(context.getString(R.string.game_narration_fictional), text(s, R.id.narration_provenance));
+      onView(withId(R.id.narration_disclosure)).perform(reveal()).check(matches(isDisplayed()));
+      onView(withId(R.id.narration_provenance)).perform(reveal()).check(matches(isDisplayed()));
       assertEquals("안녕하세요. 디지털정보관을 소개할 안내 요정이에요.", text(s, R.id.narration_caption));
       tap(R.id.narration_replay);
       onView(withId(R.id.narration_status)).check(matches(withText(R.string.game_intro_speech_1)));
-      tap(R.id.narration_next); tap(R.id.narration_next); tap(R.id.narration_next);
+      tap(R.id.narration_next);
+      assertEquals(context.getString(R.string.game_narration_editorial), text(s, R.id.narration_provenance));
+      tap(R.id.narration_next); tap(R.id.narration_next);
       assertEquals("학과 공식 위치 안내에는 디지털정보관 1층이 적혀 있어요.", text(s, R.id.narration_caption));
       onView(withId(R.id.narration_source)).check(matches(withText(R.string.game_guide_review_source)));
+      String details = text(s, R.id.narration_source_details);
+      assertTrue(details.contains("학과 위치 안내"));
+      assertTrue(details.contains("2026-11-08"));
+      assertTrue(details.contains("https://www.kunsan.ac.kr/sw/index.kunsan?menuCd=DOM_000009601004000000"));
+      onView(withId(R.id.narration_source_details)).perform(reveal()).check(matches(isDisplayed()));
       s.moveToState(Lifecycle.State.CREATED);
       s.moveToState(Lifecycle.State.RESUMED);
       assertEquals("학과 공식 위치 안내에는 디지털정보관 1층이 적혀 있어요.", text(s, R.id.narration_caption));
@@ -89,7 +102,7 @@ public final class NarrationLifecycleTest {
       onView(withId(R.id.narration_status)).check(matches(withText(R.string.game_intro_speech_4)));
       assertEquals("안녕하세요. 디지털정보관을 소개할 안내 요정이에요.", text(s, R.id.narration_caption));
       for (int i = 0; i < 6; i++) tap(R.id.narration_next);
-      onView(withId(R.id.narration_next)).check(matches(not(isEnabled())));
+      onView(withId(R.id.narration_next)).check(matches(withEffectiveVisibility(Visibility.GONE)));
       assertEquals("방문하기 전에는 최신 안내를 다시 확인해 주세요.", text(s, R.id.narration_caption));
       tap(R.id.narration_finish);
     }

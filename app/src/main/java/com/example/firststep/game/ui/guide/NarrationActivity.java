@@ -21,7 +21,7 @@ public final class NarrationActivity extends AppCompatActivity {
   private GuideBundle guide;
   private NarrationState state;
   private IntroSpeech speech;
-  private TextView caption, position, source, status;
+  private TextView caption, position, source, status, provenance, sourceDetails;
   private Button previous, next, replay, finishButton;
   private LinearProgressIndicator progress;
   private final ExecutorService loader = Executors.newSingleThreadExecutor();
@@ -40,6 +40,8 @@ public final class NarrationActivity extends AppCompatActivity {
     position = findViewById(R.id.narration_position);
     source = findViewById(R.id.narration_source);
     status = findViewById(R.id.narration_status);
+    provenance = findViewById(R.id.narration_provenance);
+    sourceDetails = findViewById(R.id.narration_source_details);
     previous = findViewById(R.id.narration_previous);
     next = findViewById(R.id.narration_next);
     replay = findViewById(R.id.narration_replay);
@@ -118,6 +120,15 @@ public final class NarrationActivity extends AppCompatActivity {
     next.setVisibility(last ? View.GONE : View.VISIBLE);
     next.setEnabled(!last);
     finishButton.setVisibility(last ? View.VISIBLE : View.GONE);
+    sourceDetails.setVisibility(View.GONE);
+    provenance.setVisibility(View.VISIBLE);
+    if (sentence.provenance == NarrationContent.Provenance.FICTIONAL) {
+      provenance.setText(R.string.game_narration_fictional);
+    } else if (sentence.provenance == NarrationContent.Provenance.EDITORIAL) {
+      provenance.setText(R.string.game_narration_editorial);
+    } else {
+      provenance.setVisibility(View.GONE);
+    }
     source.setVisibility(View.GONE);
     source.setOnClickListener(null);
     source.setContentDescription(null);
@@ -127,6 +138,9 @@ public final class NarrationActivity extends AppCompatActivity {
       status.setText(R.string.game_narration_source_unavailable);
       return;
     }
+    sourceDetails.setText(getString(R.string.game_narration_source_details,
+        origin.getLabel(), origin.getCheckedDate(), origin.getUrl()));
+    sourceDetails.setVisibility(View.VISIBLE);
     source.setText(R.string.game_guide_review_source);
     source.setContentDescription(getString(R.string.game_narration_source_accessibility,
         origin.getLabel(), origin.getCheckedDate()));

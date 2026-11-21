@@ -24,3 +24,7 @@ The welcome follow-up adapts identity and visual instrumentation for the new pre
 The welcome screen uses a larger left-aligned title and retains the campus desk artwork and both login routes. Campus Home and account Home use taller portrait artwork. Shared ivory surfaces, rose primary controls, sage secondary controls and rounded paper cards carry through directory, map, guide and game screens. Map headings and quiz grouping were adjusted in XML. View IDs, account gates, gameplay rules and storage are unchanged.
 
 Verified with the bundled Android Studio JDK using testDebugUnitTest, assembleDebug and lintDebug. A separate Pixel 4 API 35 emulator rendered the welcome, guest guide, demo home and discovery screens. Google sign-in was not exercised in the unconfigured build.
+
+## Design v4 review repairs
+
+The software booklet retains its Previous control through the last page. Narration shows the preview disclosure and per-sentence provenance with full source details while keeping the current artwork and navigation. The fallback smoke path now checks and clicks the no-camera action after simulated arrival. The guide and narration tests accommodate their fixed footer controls with visibility checks and Espresso clicks. AGP is restored to 9.4.1. The 233 JVM tests, APK assembly, lint and instrumentation compilation passed. Management owns portrait and landscape runtime verification. [Repair evidence](../../harness/handoffs/Design.md)

@@ -787,7 +787,7 @@ public final class IntroQuizActivity extends AppCompatActivity {
         ? getString(R.string.game_booklet_final_caption, sentence.text) : sentence.text);
     visible(R.id.game_booklet_checklist, last);
     visible(R.id.game_booklet_tools, !last);
-    visible(R.id.game_booklet_previous, !last);
+    visible(R.id.game_booklet_previous, true);
     findViewById(R.id.game_booklet_previous).setEnabled(index > 0);
     ((TextView) findViewById(R.id.game_booklet_next)).setText(
         last ? R.string.game_booklet_quiz : R.string.game_booklet_next_page);

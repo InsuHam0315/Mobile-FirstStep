@@ -127,13 +127,14 @@ public final class GuideSmokeTest {
       public void perform(UiController ui, View v) {
         ViewParent p = v.getParent();
         while (p != null && !(p instanceof ScrollView)) p = p.getParent();
-        assertTrue(p instanceof ScrollView);
-        ScrollView scroll = (ScrollView) p;
-        Rect bounds = new Rect();
-        v.getDrawingRect(bounds);
-        scroll.offsetDescendantRectToMyCoords(v, bounds);
-        int h = scroll.getHeight() - scroll.getPaddingTop() - scroll.getPaddingBottom();
-        scroll.scrollTo(0, Math.max(0, bounds.centerY() - h / 2 - scroll.getPaddingTop()));
+        if (p instanceof ScrollView) {
+          ScrollView scroll = (ScrollView) p;
+          Rect bounds = new Rect();
+          v.getDrawingRect(bounds);
+          scroll.offsetDescendantRectToMyCoords(v, bounds);
+          int h = scroll.getHeight() - scroll.getPaddingTop() - scroll.getPaddingBottom();
+          scroll.scrollTo(0, Math.max(0, bounds.centerY() - h / 2 - scroll.getPaddingTop()));
+        }
         ui.loopMainThreadForAtLeast(200);
         assertTrue(isDisplayingAtLeast(90).matches(v));
         if (v instanceof TextView) {
@@ -373,6 +374,9 @@ public final class GuideSmokeTest {
           .perform(reveal())
           .check(matches(withText("3 / 3 정답")));
       evidence("practice-correct-no-reward");
+      tap(R.id.game_guide_quiz_back);
+      panel(s, "GUIDE");
+      tap(R.id.game_guide_close);
     }
     assertEquals("Practice must not change/create database files", before, databaseHashes());
   }

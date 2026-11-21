@@ -35,10 +35,12 @@ import com.example.firststep.BuildConfig;
 import com.example.firststep.R;
 import com.example.firststep.RouteMapActivity;
 import com.example.firststep.game.auth.SessionState;
+import com.example.firststep.game.composition.discovery.DiscoveryTestDriver;
 import com.example.firststep.game.composition.home.CampusHomeRoute;
 import com.example.firststep.game.composition.integration.IntegrationContext;
 import com.example.firststep.game.composition.integration.IntegrationIntentCodec;
 import com.example.firststep.game.domain.Progress;
+import com.example.firststep.game.presentation.discovery.DiscoveryState;
 import com.example.firststep.game.ui.discovery.DiscoveryActivity;
 import com.example.firststep.game.ui.guide.GuideActivity;
 import com.example.firststep.game.ui.guide.NarrationActivity;
@@ -142,6 +144,8 @@ public final class ReskinVisualSmokeTest {
       onView(withTagValue(is("guide_score"))).perform(reveal()).check(matches(
           withText(context.getString(R.string.game_guide_score, 3, 3))));
       capture(GuideActivity.class, "software-practice-result-no-reward");
+      tap(R.id.game_guide_quiz_back);
+      ready(GuideActivity.class, activity -> "GUIDE".equals(activity.panelForTest()));
       tap(R.id.game_guide_close);
       ready(CampusHomeActivity.class, activity -> true);
       tap(R.id.game_campus_home_back);
@@ -169,6 +173,29 @@ public final class ReskinVisualSmokeTest {
           .check(matches(withText(R.string.game_discovery_demo_local)));
       onView(withId(R.id.game_discovery_arrival)).perform(reveal()).check(matches(isEnabled()));
       tap(R.id.game_discovery_arrival);
+      instrumentation.runOnMainSync(() -> {
+        DiscoveryTestDriver input = DiscoveryTestDriver.current();
+        assertNotNull("Software DEMO must use its simulated input driver", input);
+        input.cameraState(DiscoveryState.CameraStatus.UNAVAILABLE);
+      });
+      ready(DiscoveryActivity.class, activity -> activity.snapshot().arrived
+          && activity.snapshot().camera == DiscoveryState.CameraStatus.UNAVAILABLE);
+      onView(withId(R.id.game_discovery_camera_fallback)).perform(reveal())
+          .check(matches(allOf(isDisplayingAtLeast(90), isEnabled())));
+      capture(DiscoveryActivity.class, "software-local-demo-no-camera-after-arrival");
+      tap(R.id.game_discovery_camera_fallback);
+      ready(DiscoveryActivity.class, activity -> activity.snapshot().cameraFallback);
+      onView(withId(R.id.game_discovery_camera_label)).perform(reveal())
+          .check(matches(withText(R.string.game_discovery_demo_camera_off)));
+      instrumentation.runOnMainSync(() -> {
+        DiscoveryTestDriver input = DiscoveryTestDriver.current();
+        assertNotNull(input);
+        input.heading(0, true);
+      });
+      onView(withId(R.id.game_discovery_hold)).perform(reveal())
+          .check(matches(allOf(isDisplayingAtLeast(90), isEnabled())));
+      ready(DiscoveryActivity.class, activity -> !activity.snapshot().completed);
+      capture(DiscoveryActivity.class, "software-local-demo-no-camera-ready");
       onView(withId(R.id.game_discovery_method_toggle)).perform(reveal())
           .check(matches(isEnabled()));
       tap(R.id.game_discovery_exit);

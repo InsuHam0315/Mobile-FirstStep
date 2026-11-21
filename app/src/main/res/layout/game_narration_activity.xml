@@ -23,6 +23,10 @@
         android:fillViewport="true">
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
             android:orientation="vertical" android:paddingHorizontal="@dimen/game_space_medium">
+            <TextView android:id="@+id/narration_disclosure"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:paddingVertical="8dp" android:text="@string/game_narration_limit"
+                android:textColor="@color/game_color_text" android:textSize="@dimen/game_text_body" />
             <TextView android:id="@+id/narration_position"
                 android:layout_width="match_parent" android:layout_height="wrap_content"
                 android:gravity="center" android:paddingVertical="8dp"
@@ -46,6 +50,14 @@
                 android:background="@drawable/game_narration_bubble" android:padding="@dimen/game_space_medium"
                 android:textSize="18sp" android:lineSpacingExtra="3dp" android:textColor="@color/game_color_text"
                 android:accessibilityLiveRegion="polite" />
+            <TextView android:id="@+id/narration_provenance"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:paddingTop="8dp" android:textColor="@color/game_color_text"
+                android:textSize="@dimen/game_text_body" />
+            <TextView android:id="@+id/narration_source_details"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:textColor="@color/game_color_text" android:textSize="@dimen/game_text_body"
+                android:visibility="gone" />
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                 android:gravity="center" android:orientation="horizontal">
                 <com.google.android.material.button.MaterialButton android:id="@+id/narration_replay" style="@style/Widget.MaterialComponents.Button.TextButton"
