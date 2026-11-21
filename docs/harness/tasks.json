@@ -1,5 +1,11 @@
 {
   "schemaVersion": 1,
+  "teamDesignIntegration": {
+    "branch": "design",
+    "integratedSha": "fa3f505514dd82e20cc302dee8a54bf429e9ca55",
+    "status": "verified",
+    "checks": "233 JVM tests; API 35 isolated camera-less AVD: 14 portrait, 4 enlarged landscape; 9 additional synthetic account, authored journey and landscape booklet checks on identical v4 app code. Configured Google button enabled; live authentication and field arrival untested."
+  },
   "baselineSha": "a3b8f0f7589a501f8a086e1dc9cda11889ec452d",
   "baselineNote": "Combined V1 accepted and integrated at7cd25b9: final presentation + functional callers. 233 JVM,31 actualActivity/storage,4 visual cases in2 orientations,1 local Android Firebase SDK,2 reminder checks PASS. Production registry/target closed; live OAuth on new configured preview remains user check.",
   "coordinationScope": "docs/harness/IMPLEMENTATION_FIRST.md",
