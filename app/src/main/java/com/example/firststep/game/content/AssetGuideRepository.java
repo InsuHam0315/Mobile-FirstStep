@@ -11,14 +11,24 @@ import java.util.*;
 /** Reads exactly one registered, bounded, local asset. Never reads an intent path or database. */
 public final class AssetGuideRepository implements GuidePorts.BundleLoader {
   private final Context context;
+  private final String datasetId;
+  private final String assetPath;
 
   public AssetGuideRepository(Context context) {
+    this(context, GuideDecoder.DATASET_ID);
+  }
+
+  public AssetGuideRepository(Context context, String datasetId) {
+    if (!GuideDecoder.isRegistered(datasetId)) throw new IllegalArgumentException("Unregistered guide");
     this.context = context.getApplicationContext();
+    this.datasetId = datasetId;
+    this.assetPath = GuideDecoder.KOREAN_DATASET_ID.equals(datasetId)
+        ? "campus_content/korean_guide_v1.json" : "campus_content/software_guide_v1.json";
   }
 
   @Override
   public GuideBundle load() throws IOException {
-    try (InputStream in = context.getAssets().open("campus_content/software_guide_v1.json");
+    try (InputStream in = context.getAssets().open(assetPath);
         ByteArrayOutputStream out = new ByteArrayOutputStream()) {
       byte[] buffer = new byte[4096];
       int size;
@@ -33,7 +43,7 @@ public final class AssetGuideRepository implements GuidePorts.BundleLoader {
               .onUnmappableCharacter(CodingErrorAction.REPORT)
               .decode(ByteBuffer.wrap(out.toByteArray()))
               .toString();
-      return decodeJson(GuideDecoder.DATASET_ID, json);
+      return decodeJson(datasetId, json);
     }
   }
 
@@ -41,7 +51,7 @@ public final class AssetGuideRepository implements GuidePorts.BundleLoader {
    * Shared parser entry for actual Android parser regression tests; registration is still required.
    */
   public static GuideBundle decodeJson(String registeredId, String json) throws IOException {
-    if (!GuideDecoder.DATASET_ID.equals(registeredId) || json == null || json.length() > 65536)
+    if (!GuideDecoder.isRegistered(registeredId) || json == null || json.length() > 65536)
       throw new IOException("Unregistered/oversized guide");
     try (JsonReader reader = new JsonReader(new StringReader(json))) {
       reader.setLenient(false);

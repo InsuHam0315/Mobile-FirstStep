@@ -1,0 +1,120 @@
+{
+  "datasetId": "korean_guide_v1",
+  "targetId": "humanities_korean",
+  "version": 1,
+  "contentVerification": "official_pages_checked",
+  "arrivalVerification": "unverified",
+  "sources": [
+    {
+      "id": "ko_college",
+      "label": "단과대학 학과 안내",
+      "url": "https://www.kunsan.ac.kr/index.kunsan?contentsSid=7359&sso=ok",
+      "checkedDate": "2026-11-21"
+    },
+    {
+      "id": "ko_office",
+      "label": "학과 사무실 위치",
+      "url": "https://www.kunsan.ac.kr/korean/index.kunsan?menuCd=DOM_000001101004000000",
+      "checkedDate": "2026-11-21"
+    },
+    {
+      "id": "ko_overview",
+      "label": "학과 소개",
+      "url": "https://www.kunsan.ac.kr/korean/index.kunsan?menuCd=DOM_000001101002000000",
+      "checkedDate": "2026-11-21"
+    },
+    {
+      "id": "ko_home",
+      "label": "국어국문학과 홈페이지",
+      "url": "https://www.kunsan.ac.kr/korean/index.kunsan",
+      "checkedDate": "2026-11-21"
+    }
+  ],
+  "claims": [
+    {
+      "id": "ko_college_claim",
+      "sourceId": "ko_college",
+      "text": "국어국문학과는 인문콘텐츠융합대학의 학과 목록에서 확인할 수 있어요."
+    },
+    {
+      "id": "ko_office_claim",
+      "sourceId": "ko_office",
+      "text": "학과 사무실 위치 안내에는 인문관 3층 1326호가 나와 있어요. 방문 전 최신 안내를 확인해 주세요."
+    },
+    {
+      "id": "ko_study_claim",
+      "sourceId": "ko_overview",
+      "text": "학과 소개에서는 국어와 국문학을 비롯해 영상문학과 웹라이팅을 소개해요."
+    },
+    {
+      "id": "ko_info_claim",
+      "sourceId": "ko_home",
+      "text": "학과 홈페이지에서 학사정보와 공지사항을 확인할 수 있어요."
+    }
+  ],
+  "questions": [
+    {
+      "id": "ko_office_question",
+      "claimId": "ko_office_claim",
+      "text": "공식 안내에 나온 학과 사무실은 어디인가요?",
+      "options": [
+        {
+          "id": "ko_office_correct",
+          "text": "인문관 3층 1326호"
+        },
+        {
+          "id": "ko_office_wrong1",
+          "text": "도서관 1층"
+        },
+        {
+          "id": "ko_office_wrong2",
+          "text": "학생회관 2층"
+        }
+      ],
+      "answerId": "ko_office_correct",
+      "explanation": "사무실 위치는 인문관 3층 1326호로 안내되어 있어요. 방문 전 최신 정보를 확인해 주세요."
+    },
+    {
+      "id": "ko_study_question",
+      "claimId": "ko_study_claim",
+      "text": "학과 소개에서 확인할 수 있는 분야는 무엇인가요?",
+      "options": [
+        {
+          "id": "ko_study_correct",
+          "text": "국어·국문학, 영상문학과 웹라이팅"
+        },
+        {
+          "id": "ko_study_wrong1",
+          "text": "기계 설계와 자동차 정비"
+        },
+        {
+          "id": "ko_study_wrong2",
+          "text": "해양 항해와 선박 운항"
+        }
+      ],
+      "answerId": "ko_study_correct",
+      "explanation": "학과 소개에는 국어와 국문학, 영상문학과 웹라이팅이 나와 있어요."
+    },
+    {
+      "id": "ko_info_question",
+      "claimId": "ko_info_claim",
+      "text": "학과의 학사정보와 공지사항은 어디에서 확인할 수 있나요?",
+      "options": [
+        {
+          "id": "ko_info_correct",
+          "text": "국어국문학과 공식 홈페이지"
+        },
+        {
+          "id": "ko_info_wrong1",
+          "text": "출처 없는 소문"
+        },
+        {
+          "id": "ko_info_wrong2",
+          "text": "오래된 캡처만 확인"
+        }
+      ],
+      "answerId": "ko_info_correct",
+      "explanation": "학과 공식 홈페이지에서 학사정보와 공지사항을 확인할 수 있어요."
+    }
+  ]
+}

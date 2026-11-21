@@ -38,6 +38,7 @@ public final class GuideViewModel extends ViewModel {
   }
 
   final GuideAdapters.Environment environment;
+  private final String datasetId;
   private final ExecutorService worker = Executors.newSingleThreadExecutor();
   private final Handler main = new Handler(Looper.getMainLooper());
   GuideBundle guide;
@@ -50,6 +51,12 @@ public final class GuideViewModel extends ViewModel {
   private Saved saved;
 
   GuideViewModel(GuideAdapters.Environment environment, Saved saved) {
+    this(environment, saved, GuideDecoder.DATASET_ID);
+  }
+
+  GuideViewModel(GuideAdapters.Environment environment, Saved saved, String datasetId) {
+    if (!GuideDecoder.isRegistered(datasetId)) throw new IllegalArgumentException("Unregistered guide");
+    this.datasetId = datasetId;
     this.environment = environment;
     this.saved = saved;
     reload(false);
@@ -87,7 +94,7 @@ public final class GuideViewModel extends ViewModel {
               () -> {
                 if (closed || token != request) return;
                 try {
-                  if (loaded == null || !GuideDecoder.DATASET_ID.equals(loaded.getDatasetId()))
+                  if (loaded == null || !datasetId.equals(loaded.getDatasetId()))
                     throw new IllegalArgumentException("Unregistered guide");
                   PracticeSession restored;
                   Panel restoredPanel = Panel.GUIDE;

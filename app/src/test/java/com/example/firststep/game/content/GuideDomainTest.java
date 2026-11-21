@@ -103,6 +103,60 @@ public class GuideDomainTest {
     }
   }
 
+  private static Map<String, Object> koreanValid() {
+    Map<String, Object> x = valid();
+    x.put("datasetId", GuideDecoder.KOREAN_DATASET_ID);
+    x.put("targetId", "humanities_korean");
+    String[][] sourceRows = {
+      {"ko_college", "https://www.kunsan.ac.kr/index.kunsan?contentsSid=7359&sso=ok"},
+      {"ko_office", "https://www.kunsan.ac.kr/korean/index.kunsan?menuCd=DOM_000001101004000000"},
+      {"ko_overview", "https://www.kunsan.ac.kr/korean/index.kunsan?menuCd=DOM_000001101002000000"},
+      {"ko_home", "https://www.kunsan.ac.kr/korean/index.kunsan"}
+    };
+    for (int i = 0; i < sourceRows.length; i++) {
+      Map<String, Object> row = row(x, "sources", i);
+      row.put("id", sourceRows[i][0]); row.put("url", sourceRows[i][1]);
+      row.put("checkedDate", "2026-11-21");
+    }
+    x.put("claims", Arrays.asList(claim("ko_college_claim", "ko_college"),
+        claim("ko_office_claim", "ko_office"), claim("ko_study_claim", "ko_overview"),
+        claim("ko_info_claim", "ko_home")));
+    x.put("questions", Arrays.asList(
+        q("ko_office_question", "ko_office_claim", "ko_office_correct", "ko_office_correct", "ko_office_wrong1", "ko_office_wrong2"),
+        q("ko_study_question", "ko_study_claim", "ko_study_correct", "ko_study_correct", "ko_study_wrong1", "ko_study_wrong2"),
+        q("ko_info_question", "ko_info_claim", "ko_info_correct", "ko_info_correct", "ko_info_wrong1", "ko_info_wrong2")));
+    return x;
+  }
+
+  @Test
+  public void koreanGuideIsRegisteredAndIsolatedFromSoftware() {
+    assertTrue(GuideDecoder.isRegistered(GuideDecoder.KOREAN_DATASET_ID));
+    assertTrue(GuideDecoder.isRegistered(GuideDecoder.DATASET_ID));
+    assertFalse(GuideDecoder.isRegistered(null));
+    assertFalse(GuideDecoder.isRegistered("other"));
+    GuideBundle bundle = GuideDecoder.decode(GuideDecoder.KOREAN_DATASET_ID, koreanValid());
+    PracticeSession session = new PracticeSession(bundle);
+    session.select("ko_office_question", "ko_office_correct");
+    session.select("ko_study_question", "ko_study_correct");
+    session.select("ko_info_question", "ko_info_correct");
+    session.submit();
+    assertEquals(3, session.getScore());
+    try { GuideDecoder.decode(GuideDecoder.DATASET_ID, koreanValid()); fail(); }
+    catch (IllegalArgumentException expected) { }
+    try { GuideDecoder.decode(GuideDecoder.KOREAN_DATASET_ID, valid()); fail(); }
+    catch (IllegalArgumentException expected) { }
+    Map<String, Object> mixed = koreanValid();
+    row(mixed, "questions", 0).put("answerId", "digital_first");
+    try { GuideDecoder.decode(GuideDecoder.KOREAN_DATASET_ID, mixed); fail(); }
+    catch (IllegalArgumentException expected) { }
+    mixed = koreanValid();
+    row(mixed, "sources", 0).put("url", "https://www.kunsan.ac.kr/sw/index.kunsan");
+    try { GuideDecoder.decode(GuideDecoder.KOREAN_DATASET_ID, mixed); fail(); }
+    catch (IllegalArgumentException expected) { }
+    assertTrue(GuideDecoder.isOfficialUrl("https://www.kunsan.ac.kr/korean/index.kunsan"));
+    assertFalse(GuideDecoder.isOfficialUrl("https://www.kunsan.ac.kr/korean/index.kunsan#fragment"));
+  }
+
   @Test
   public void rejectsMalformedAndUnsupported() {
     for (Object v : Arrays.asList(1L, 1.0, "1", true, 2)) {

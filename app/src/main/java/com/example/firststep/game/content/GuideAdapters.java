@@ -37,10 +37,15 @@ public final class GuideAdapters {
   }
 
   public static Environment create(Context context) {
+    return create(context, GuideDecoder.DATASET_ID);
+  }
+
+  public static Environment create(Context context, String datasetId) {
+    if (!GuideDecoder.isRegistered(datasetId)) throw new IllegalArgumentException("Unregistered guide");
     Context app = context.getApplicationContext();
     if (BuildConfig.DEBUG && testFactory != null) return testFactory.create(app);
     return new Environment(
-        new AssetGuideRepository(app), source -> openOfficialSource(app, source), false);
+        new AssetGuideRepository(app, datasetId), source -> openOfficialSource(app, source), false);
   }
 
   public static boolean openOfficialSource(Context context, GuideBundle.Source source) {

@@ -17,9 +17,11 @@ import java.util.concurrent.Executors;
 import com.example.firststep.game.content.*;
 import java.util.*;
 
-/** Replaceable Java/XML binder. External intent extras never select content or storage. */
+/** Replaceable binder for the two registered offline guides. */
 public final class GuideActivity extends AppCompatActivity {
+  private static final String KOREAN_ACTION = "com.example.firststep.guide.KOREAN";
   private GuideViewModel model;
+  private boolean korean, openingKorean;
   private final ExecutorService demoWorker = Executors.newSingleThreadExecutor();
   private boolean demoResumed, demoBusy;
   private long demoGeneration;
@@ -55,6 +57,8 @@ public final class GuideActivity extends AppCompatActivity {
   protected void onCreate(Bundle saved) {
     super.onCreate(saved);
     setContentView(R.layout.game_guide_activity);
+    korean = KOREAN_ACTION.equals(getIntent().getAction());
+    String dataset = korean ? GuideDecoder.KOREAN_DATASET_ID : GuideDecoder.DATASET_ID;
     GuideViewModel.Saved restored = readSaved(saved);
     pendingPreviewPractice = saved != null && saved.getBoolean("guide_pending_preview_practice", false);
     if (saved != null) restoredScroll = Math.max(0, saved.getInt("guide_scroll", 0));
@@ -70,7 +74,8 @@ public final class GuideActivity extends AppCompatActivity {
                   @Override
                   public <T extends ViewModel> T create(Class<T> type) {
                     return type.cast(
-                        new GuideViewModel(GuideAdapters.create(GuideActivity.this), restored));
+                        new GuideViewModel(GuideAdapters.create(GuideActivity.this, dataset),
+                            restored, dataset));
                   }
                 })
             .get(GuideViewModel.class);
@@ -80,6 +85,17 @@ public final class GuideActivity extends AppCompatActivity {
     status = findViewById(R.id.game_guide_status);
     primary = findViewById(R.id.game_guide_primary);
     readAgain = findViewById(R.id.game_guide_read_again);
+    ((TextView) findViewById(R.id.game_guide_department)).setText(korean
+        ? R.string.game_korean_guide_department : R.string.game_software_guide_department);
+    Button department = findViewById(R.id.game_guide_department_switch);
+    department.setText(korean ? R.string.game_korean_guide_return : R.string.game_korean_guide_open);
+    department.setOnClickListener(v -> {
+      if (korean) finish();
+      else if (!openingKorean) {
+        openingKorean = true;
+        startActivity(new Intent(this, GuideActivity.class).setAction(KOREAN_ACTION));
+      }
+    });
     ViewCompat.setAccessibilityHeading(title, true);
     ViewCompat.setOnApplyWindowInsetsListener(
         findViewById(R.id.game_guide_root),
@@ -120,6 +136,7 @@ public final class GuideActivity extends AppCompatActivity {
   protected void onResume() {
     super.onResume();
     demoResumed = true;
+    openingKorean = false;
   }
 
   @Override
@@ -137,7 +154,7 @@ public final class GuideActivity extends AppCompatActivity {
   }
 
   private void openSoftwareDemo() {
-    if (!BuildConfig.DEBUG || !demoResumed || demoBusy) return;
+    if (korean || !BuildConfig.DEBUG || !demoResumed || demoBusy) return;
     demoBusy = true;
     final long token = ++demoGeneration;
     demoWorker.execute(() -> {
@@ -196,6 +213,8 @@ public final class GuideActivity extends AppCompatActivity {
     boolean quiz = available && model.panel == GuideViewModel.Panel.PRACTICE;
     boolean result = available && model.panel == GuideViewModel.Panel.RESULT;
     boolean quizFlow = quiz || result;
+    findViewById(R.id.game_guide_department_switch).setVisibility(
+        introduction ? View.VISIBLE : View.GONE);
     if (quiz) questionIndex = Math.max(0, Math.min(questionIndex, model.guide.getQuestions().size() - 1));
     placeControls(quizFlow);
     findViewById(R.id.game_guide_fixed_controls).setVisibility(quizFlow ? View.VISIBLE : View.GONE);
@@ -263,8 +282,11 @@ public final class GuideActivity extends AppCompatActivity {
         : quiz ? (lastQuestion() ? R.string.game_guide_submit : R.string.game_guide_next)
         : result ? R.string.game_guide_retry : R.string.game_guide_start);
     readAgain.setVisibility(result ? View.VISIBLE : View.GONE);
-    title.setText(quiz ? R.string.game_guide_practice_title
-        : result ? R.string.game_guide_result_title : R.string.game_guide_entry);
+    title.setText(korean
+        ? quiz ? R.string.game_korean_guide_practice
+            : result ? R.string.game_korean_guide_result : R.string.game_korean_guide_title
+        : quiz ? R.string.game_guide_practice_title
+            : result ? R.string.game_guide_result_title : R.string.game_guide_entry);
   }
 
   private TextView text(String value, boolean heading) {
@@ -317,7 +339,7 @@ public final class GuideActivity extends AppCompatActivity {
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
-    if (requestCode == 101 && resultCode == RESULT_OK) {
+    if (!korean && requestCode == 101 && resultCode == RESULT_OK) {
       pendingPreviewPractice = true;
       if (!model.loading && !model.unavailable && model.guide != null) {
         pendingPreviewPractice = false;
@@ -327,14 +349,19 @@ public final class GuideActivity extends AppCompatActivity {
   }
 
   private void showIntroduction() {
-    View hero = getLayoutInflater().inflate(R.layout.game_guide_hero, content, false);
-    View preview = hero.findViewById(R.id.game_narration_entry);
-    preview.setOnClickListener(
-        v -> startActivityForResult(new Intent(this, NarrationActivity.class), 101));
-    View demo = hero.findViewById(R.id.game_guide_demo_entry);
-    demo.setVisibility(BuildConfig.DEBUG ? View.VISIBLE : View.GONE);
-    demo.setOnClickListener(v -> openSoftwareDemo());
-    content.addView(hero);
+    if (korean) {
+      text(getString(R.string.game_korean_guide_intro), true);
+      text(getString(R.string.game_korean_guide_office_notice), false);
+    } else {
+      View hero = getLayoutInflater().inflate(R.layout.game_guide_hero, content, false);
+      View preview = hero.findViewById(R.id.game_narration_entry);
+      preview.setOnClickListener(
+          v -> startActivityForResult(new Intent(this, NarrationActivity.class), 101));
+      View demo = hero.findViewById(R.id.game_guide_demo_entry);
+      demo.setVisibility(BuildConfig.DEBUG ? View.VISIBLE : View.GONE);
+      demo.setOnClickListener(v -> openSoftwareDemo());
+      content.addView(hero);
+    }
     text(getString(R.string.game_guide_sections), true);
     for (GuideBundle.Claim claim : model.guide.getClaims()) {
       addGuideSection(claim);
@@ -372,17 +399,23 @@ public final class GuideActivity extends AppCompatActivity {
   private static int sectionLabel(String claimId) {
     switch (claimId) {
       case "college_membership": return R.string.game_guide_section_college;
+      case "ko_college_claim": return R.string.game_guide_section_college;
       case "office_guidance": return R.string.game_guide_section_visit;
+      case "ko_office_claim": return R.string.game_korean_guide_office;
       case "learning_values": return R.string.game_guide_section_department;
+      case "ko_study_claim": return R.string.game_korean_guide_studies;
       case "help_resources": return R.string.game_guide_section_life;
+      case "ko_info_claim": return R.string.game_guide_section_life;
       default: return R.string.game_guide_sections;
     }
   }
 
   private static int sectionIcon(int label) {
     if (label == R.string.game_guide_section_college) return R.drawable.game_guide_icon_college;
-    if (label == R.string.game_guide_section_visit) return R.drawable.game_guide_icon_visit;
-    if (label == R.string.game_guide_section_department) return R.drawable.game_guide_icon_book;
+    if (label == R.string.game_guide_section_visit
+        || label == R.string.game_korean_guide_office) return R.drawable.game_guide_icon_visit;
+    if (label == R.string.game_guide_section_department
+        || label == R.string.game_korean_guide_studies) return R.drawable.game_guide_icon_book;
     if (label == R.string.game_guide_section_life) return R.drawable.game_guide_icon_people;
     return 0;
   }

@@ -1,0 +1,13 @@
+<resources>
+    <string name="game_software_guide_department">소프트웨어학과</string>
+    <string name="game_korean_guide_department">국어국문학과 · 인문콘텐츠융합대학</string>
+    <string name="game_korean_guide_open">국어국문학과 안내 보기</string>
+    <string name="game_korean_guide_return">소프트웨어학과 안내로 돌아가기</string>
+    <string name="game_korean_guide_title">국어국문학과 안내</string>
+    <string name="game_korean_guide_practice">국어국문학과 연습</string>
+    <string name="game_korean_guide_result">국어국문학과 연습 결과</string>
+    <string name="game_korean_guide_intro">한국어와 문학, 영상문학과 웹라이팅을 알아보세요.</string>
+    <string name="game_korean_guide_office_notice">아래 위치는 학과 사무실 안내입니다. 현장 도착 지점은 아직 검증하지 않았습니다.</string>
+    <string name="game_korean_guide_office">학과 사무실 안내</string>
+    <string name="game_korean_guide_studies">무엇을 배우나요?</string>
+</resources>
