@@ -14,7 +14,7 @@ $null=Adb @('shell','settings','put','system','accelerometer_rotation','0')
 $null=Adb @('shell','settings','put','system','user_rotation',$rotation)
 $null=Adb @('shell','settings','put','system','font_scale',$scale)
 $classes='com.example.firststep.game.identity.IdentityFakeSmokeTest,com.example.firststep.game.identity.IdentityConfigurationSmokeTest#cleanUnconfiguredRouteNeverStartsMockLogin'
-$names=@('missingProfileNeedsServerConfirmedSave','returningAndIncompleteProfilesRouteCorrectly','canceledLoginAndFailedSaveRetainDraftForRetry','logoutAndSwitchRejectLateCallbacks','recreationPreservesSameAccountDraftAndClearsOnSwitch','recreatedHomeRequiresCurrentAccountServerConfirmation','cleanUnconfiguredRouteNeverStartsMockLogin')
+$names=@('optionalLoginAndMatchingServerConfirmation','cacheAndReadFailureNeverConfirmButBrowsingRemainsAvailable','canceledLoginAndFailedSaveCanRetry','staleUidAndLogoutCallbacksCannotRestoreOldProfile','draftSurvivesRecreationAndClearsOnSwitch','recreatedShellBrowsesDuringNewAccountConfirmation','guestChoiceRoutesToGuideAndTabsReturn','cleanUnconfiguredRouteNeverStartsMockLogin')
 function Run-Instrumentation([string]$ClassFilter,[string[]]$ExpectedNames,[string]$LogName){
  $idle=Adb @('shell','dumpsys','activity','processes')
  if($idle -notmatch 'mForceBackgroundCheck=' -or $idle -match '(?im)^\s*(Active instrumentation:|Instrumentation #)'){throw 'Instrumentation not proven idle'}
@@ -43,7 +43,7 @@ if($LocalSDK){
  # No app-data reset; every named method still executes and is counted explicitly.
  $outage='sdkUnavailableTransportCannotCompleteAndRetryConfirmsServer'
  Run-Instrumentation "com.example.firststep.game.identity.IdentityEmulatorSmokeTest#$outage" @($outage) 'transport.log'
- $sdkNames=@('sdkServerProfileSurvivesFreshControllerAndRejectsOtherUid','sdkMalformedProfileCannotBeEditedOrOverwritten','sdkConcurrentCompleteProfileIsCanonicalWithoutOverwrite','heldSdkCompletionCannotResurrectLoggedOutAccount')
+ $sdkNames=@('sdkServerProfileSurvivesFreshControllerAndRejectsOtherUid','sdkMalformedProfileCannotBeEditedOrOverwritten','sdkConcurrentExistingProfileIsUpdatedAndPreservesCreationTime','heldSdkCompletionCannotResurrectLoggedOutAccount')
  foreach($name in $sdkNames){$classes+=",com.example.firststep.game.identity.IdentityEmulatorSmokeTest#$name"}
  $names+=$sdkNames
 }

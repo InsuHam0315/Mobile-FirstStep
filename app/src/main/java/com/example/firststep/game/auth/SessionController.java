@@ -183,6 +183,16 @@ public final class SessionController {
         });
   }
 
+  /** Starts an explicit edit only from a server-confirmed profile. */
+  public void beginEdit() {
+    if (!active || uid == null || !Objects.equals(uid, auth.currentUid())
+        || state.getStage() != SessionState.Stage.COMPLETE || draft == null || !draft.isComplete()) return;
+    dirty = true;
+    retry = null;
+    awaitingConfirmation = null;
+    publish(SessionState.Stage.FORM, null, false);
+  }
+
   public void edit(String name, String studentNumber, String department) {
     if (!active || uid == null || !Objects.equals(uid, auth.currentUid())) return;
     if (state.getStage() != SessionState.Stage.FORM
@@ -297,7 +307,7 @@ public final class SessionController {
           ++nonce;
           cachedDraft = false;
           if (submitted != null) {
-            if (profile == null || !profile.isComplete()) {
+            if (profile == null || !profile.isComplete() || !submitted.equals(profile)) {
               retry = Retry.SAVE;
               publish(SessionState.Stage.PENDING_FAILURE, Failure.UNAVAILABLE, false);
               return;

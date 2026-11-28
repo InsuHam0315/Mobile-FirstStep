@@ -1,0 +1,28 @@
+<resources>
+    <string name="game_main_brand">국립군산대학교</string>
+    <string name="game_main_heading">캠퍼스 탐방\n첫발자국</string>
+    <string name="game_main_start">탐방 시작하기</string>
+    <string name="game_main_optional">로그인 없이도 캠퍼스를 둘러볼 수 있어요.</string>
+    <string name="game_main_home">홈</string>
+    <string name="game_main_map">지도</string>
+    <string name="game_main_my">마이페이지</string>
+    <string name="game_main_greeting">오늘의 캠퍼스, 함께 걸어볼까요?</string>
+    <string name="game_main_choose">단과대학·학과 선택하기</string>
+    <string name="game_main_choice_empty">마이페이지에서 단과대학과 학과를 선택해 주세요.</string>
+    <string name="game_main_choice">%1$s\n%2$s</string>
+    <string name="game_main_guide">선택한 학과 안내·연습</string>
+    <string name="game_main_unsupported">이 조합의 학과 안내는 아직 준비되지 않았어요. 다른 학과로 이동하지 않습니다.</string>
+    <string name="game_main_browse">캠퍼스 둘러보기</string>
+    <string name="game_main_college">단과대학</string>
+    <string name="game_main_profile_optional">프로필은 나중에 입력해도 돼요. 학번의 앞자리 0도 그대로 저장해요.</string>
+    <string name="game_main_local_note">단과대학·학과 선택은 이 기기에 저장돼요. 로그인 전 프로필과 계정 프로필은 따로 보관해요.</string>
+    <string name="game_main_guest_note">로그인 전 프로필은 이 기기에만 저장돼요.</string>
+    <string name="game_main_account_note">계정의 이름·학번·학과는 저장을 누르면 서버 확인 후 반영돼요.</string>
+    <string name="game_main_edit">프로필 수정하기</string>
+    <string name="game_main_save">프로필·학과 선택 저장</string>
+    <string name="game_main_local_saving">이 기기에 선택을 저장하고 있어요.</string>
+    <string name="game_main_local_saved">이 기기에 선택을 저장했어요.</string>
+    <string name="game_main_local_failed">이 기기에 저장하지 못했어요. 다시 시도해 주세요.</string>
+    <string name="game_main_profile_help">이름·학번·학과를 입력한 뒤 계정 프로필을 저장할 수 있어요.</string>
+    <string name="game_main_unconfigured">지금은 Google 로그인을 사용할 수 없어요. 로그인 없이 시작할 수 있어요.</string>
+</resources>

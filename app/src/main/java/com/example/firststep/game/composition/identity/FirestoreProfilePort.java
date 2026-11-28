@@ -89,8 +89,7 @@ public final class FirestoreProfilePort implements ProfilePort, AutoCloseable {
                 throw new FirebaseFirestoreException(
                     "Session changed", FirebaseFirestoreException.Code.ABORTED);
               DocumentSnapshot old = tx.get(ref);
-              Profile existing = parse(old, uid);
-              if (existing != null && existing.isComplete()) return null;
+              parse(old, uid); // Reject malformed existing records before preserving metadata.
               Map<String, Object> data = new HashMap<>();
               data.put("schemaVersion", 1);
               data.put("uid", uid);

@@ -101,7 +101,8 @@ public final class IdentityEmulatorSmokeTest {
         });
     boolean[] welcome = {false};
     s.onActivity(a -> welcome[0] = a.findViewById(R.id.game_identity_welcome).isShown());
-    if (welcome[0]) tap(R.id.game_identity_welcome_login);
+    if (welcome[0]) tap(R.id.game_identity_welcome_guest);
+    tap(R.id.game_nav_my);
     return s;
   }
 
@@ -133,6 +134,7 @@ public final class IdentityEmulatorSmokeTest {
             + runtime.loadFailure,
         value,
         state(s).getStage());
+    s.onActivity(a -> a.findViewById(R.id.game_nav_my).performClick());
   }
 
   private static ViewAction reveal() {
@@ -148,13 +150,14 @@ public final class IdentityEmulatorSmokeTest {
       public void perform(UiController ui, View v) {
         android.view.ViewParent p = v.getParent();
         while (p != null && !(p instanceof ScrollView)) p = p.getParent();
-        assertTrue(p instanceof ScrollView);
-        ScrollView scroll = (ScrollView) p;
-        Rect b = new Rect();
-        v.getDrawingRect(b);
-        scroll.offsetDescendantRectToMyCoords(v, b);
-        int h = scroll.getHeight() - scroll.getPaddingTop() - scroll.getPaddingBottom();
-        scroll.scrollTo(0, Math.max(0, b.centerY() - h / 2 - scroll.getPaddingTop()));
+        if (p instanceof ScrollView) {
+          ScrollView scroll = (ScrollView) p;
+          Rect b = new Rect();
+          v.getDrawingRect(b);
+          scroll.offsetDescendantRectToMyCoords(v, b);
+          int h = scroll.getHeight() - scroll.getPaddingTop() - scroll.getPaddingBottom();
+          scroll.scrollTo(0, Math.max(0, b.centerY() - h / 2 - scroll.getPaddingTop()));
+        }
         ui.loopMainThreadForAtLeast(200);
         assertTrue(isDisplayingAtLeast(90).matches(v));
       }
@@ -204,6 +207,7 @@ public final class IdentityEmulatorSmokeTest {
 
   @Test
   public void sdkServerProfileSurvivesFreshControllerAndRejectsOtherUid() throws Exception {
+    com.google.firebase.Timestamp created;
     try (ActivityScenario<IdentityActivity> s = launch()) {
       stage(s, SessionState.Stage.LOGGED_OUT);
       tap(R.id.game_identity_login);
@@ -223,6 +227,8 @@ public final class IdentityEmulatorSmokeTest {
               TimeUnit.SECONDS);
       assertEquals("000123", stored.getString("studentNumber"));
       assertFalse(stored.getMetadata().hasPendingWrites());
+      created = stored.getTimestamp("createdAt");
+      assertNotNull(created);
       capture(s, "server-confirmed-profile-fixture");
       try {
         Tasks.await(
@@ -247,6 +253,25 @@ public final class IdentityEmulatorSmokeTest {
       s.recreate();
       stage(s, SessionState.Stage.COMPLETE);
       assertEquals(DATA, state(s).getDraft());
+      tap(R.id.game_identity_begin_edit);
+      stage(s, SessionState.Stage.FORM);
+      assertTrue(state(s).canEdit());
+      Profile updated = new Profile("수정된 서버 예시", DATA.getStudentNumber(), DATA.getDepartment());
+      text(R.id.game_identity_name, updated.getName());
+      tap(R.id.game_identity_save);
+      stage(s, SessionState.Stage.COMPLETE);
+      assertEquals(updated, state(s).getDraft());
+      DocumentSnapshot updatedServer =
+          Tasks.await(
+              runtime.db.collection("users").document(runtime.uidA)
+                  .get(com.google.firebase.firestore.Source.SERVER),
+              15,
+              TimeUnit.SECONDS);
+      assertEquals(updated.getName(), updatedServer.getString("name"));
+      assertEquals(updated.getStudentNumber(), updatedServer.getString("studentNumber"));
+      assertEquals(updated.getDepartment(), updatedServer.getString("department"));
+      assertEquals(created, updatedServer.getTimestamp("createdAt"));
+      assertFalse(updatedServer.getMetadata().hasPendingWrites());
     }
   }
 
@@ -336,7 +361,7 @@ public final class IdentityEmulatorSmokeTest {
   }
 
   @Test
-  public void sdkConcurrentCompleteProfileIsCanonicalWithoutOverwrite() throws Exception {
+  public void sdkConcurrentExistingProfileIsUpdatedAndPreservesCreationTime() throws Exception {
     Profile server = new Profile("기존 서버 예시", "000999", "다른 서버 예시 학과");
     try (ActivityScenario<IdentityActivity> s = launch()) {
       tap(R.id.game_identity_login);
@@ -357,12 +382,15 @@ public final class IdentityEmulatorSmokeTest {
               .getTimestamp("createdAt");
       tap(R.id.game_identity_save);
       stage(s, SessionState.Stage.COMPLETE);
-      assertEquals(server, state(s).getDraft());
+      assertEquals(DATA, state(s).getDraft());
       DocumentSnapshot after =
           Tasks.await(ref.get(com.google.firebase.firestore.Source.SERVER), 15, TimeUnit.SECONDS);
-      assertEquals(server.getName(), after.getString("name"));
+      assertEquals(DATA.getName(), after.getString("name"));
+      assertEquals(DATA.getStudentNumber(), after.getString("studentNumber"));
+      assertEquals(DATA.getDepartment(), after.getString("department"));
       assertEquals(created, after.getTimestamp("createdAt"));
-      capture(s, "concurrent-server-canonical-no-overwrite-fixture");
+      assertFalse(after.getMetadata().hasPendingWrites());
+      capture(s, "concurrent-server-profile-updated-fixture");
     }
   }
 

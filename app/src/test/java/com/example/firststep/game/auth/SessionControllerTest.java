@@ -356,7 +356,7 @@ public class SessionControllerTest {
   }
 
   @Test
-  public void concurrentCompleteServerProfileWinsWithoutRewriting() {
+  public void differentCompleteServerProfileDoesNotConfirmSave() {
     Auth a = new Auth();
     a.uid = "A";
     Store p = new Store();
@@ -369,10 +369,53 @@ public class SessionControllerTest {
     p.loads.get(1).onResult(profile("Server"), ProfilePort.Source.CACHE, null);
     assertEquals(SessionState.Stage.SAVING, c.state().getStage());
     p.server(1, profile("Server"));
-    assertEquals(SessionState.Stage.COMPLETE, c.state().getStage());
-    assertEquals("Server", c.state().getDraft().getName());
-    assertFalse(c.state().canSave());
+    assertEquals(SessionState.Stage.PENDING_FAILURE, c.state().getStage());
+    assertEquals("Typed", c.state().getDraft().getName());
+    assertTrue(c.state().canSave());
     assertEquals(1, p.saves.size());
+  }
+
+  @Test
+  public void explicitEditRetainsDraftAndRequiresExactServerConfirmation() {
+    Auth a = new Auth(); a.uid = "A"; Store p = new Store();
+    List<String> owners = new ArrayList<>();
+    SessionController c = new SessionController(a, p, owners::add);
+    c.resume(); c.beginEdit();
+    assertEquals(SessionState.Stage.PROFILE_LOADING, c.state().getStage());
+    p.server(0, profile("old"));
+    c.beginEdit();
+    assertEquals(SessionState.Stage.FORM, c.state().getStage());
+    assertNull(owners.get(owners.size() - 1));
+    c.edit("new", "00023", "new department");
+    c.pause(); c.resume(); p.server(1, profile("old"));
+    assertEquals("00023", c.state().getDraft().getStudentNumber());
+    assertEquals(SessionState.Stage.FORM, c.state().getStage());
+    c.save(); p.saves.get(0).onResult(Failure.UNAVAILABLE);
+    assertEquals(SessionState.Stage.PENDING_FAILURE, c.state().getStage());
+    assertNull(owners.get(owners.size() - 1));
+    c.retry(); p.saves.get(1).onResult(null);
+    p.loads.get(2).onResult(new Profile("new", "00023", "new department"), ProfilePort.Source.CACHE, null);
+    assertEquals(SessionState.Stage.SAVING, c.state().getStage());
+    p.server(2, profile("old"));
+    assertEquals(SessionState.Stage.PENDING_FAILURE, c.state().getStage());
+    assertNull(owners.get(owners.size() - 1));
+    c.retry(); p.saves.get(2).onResult(null);
+    p.server(3, new Profile("new", "00023", "new department"));
+    assertEquals(SessionState.Stage.COMPLETE, c.state().getStage());
+    assertEquals("A", owners.get(owners.size() - 1));
+  }
+
+  @Test
+  public void editCannotCrossAccountsOrAcceptLateConfirmation() {
+    Auth a = new Auth(); a.uid = "A"; Store p = new Store();
+    SessionController c = new SessionController(a, p);
+    c.resume(); p.server(0, profile("old")); c.beginEdit(); c.edit("new", "001", "dept");
+    c.save(); p.saves.get(0).onResult(null); a.change("B");
+    p.server(1, profile("new"));
+    assertEquals("B", c.state().getUid());
+    assertNull(c.state().getDraft());
+    p.server(2, profile("B"));
+    assertEquals("B", c.state().getDraft().getName());
   }
 
   @Test
@@ -555,7 +598,7 @@ public class SessionControllerTest {
     p.saves.get(0).onResult(null);
     p.loads.get(1).onResult(profile("cached"), ProfilePort.Source.CACHE, null);
     assertFalse(owners.contains("A"));
-    p.server(1, profile("server"));
+    p.server(1, profile("name"));
     assertEquals("A", owners.get(owners.size() - 1));
     assertEquals(SessionState.Stage.COMPLETE, c.state().getStage());
   }

@@ -1,0 +1,14 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/game_main_navigation" android:layout_width="match_parent"
+    android:layout_height="wrap_content" android:orientation="horizontal"
+    android:background="@color/game_color_surface" android:paddingVertical="4dp">
+    <Button android:id="@+id/game_nav_home" style="@style/GameMainNavigationButton"
+        android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"
+        android:drawableTop="@drawable/game_guide_icon_college" android:text="@string/game_main_home" />
+    <Button android:id="@+id/game_nav_map" style="@style/GameMainNavigationButton"
+        android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"
+        android:drawableTop="@drawable/game_guide_icon_visit" android:text="@string/game_main_map" />
+    <Button android:id="@+id/game_nav_my" style="@style/GameMainNavigationButton"
+        android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"
+        android:drawableTop="@drawable/game_guide_icon_people" android:text="@string/game_main_my" />
+</LinearLayout>

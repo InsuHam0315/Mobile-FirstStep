@@ -1,0 +1,13 @@
+<resources>
+    <style name="Theme.FirstStep.Main" parent="Theme.FirstStep.GamePreview">
+        <item name="android:windowBackground">@drawable/game_reskin_artwork</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+    <style name="GameMainNavigationButton" parent="GameSecondaryButton">
+        <item name="backgroundTint">@color/game_main_nav_background</item>
+        <item name="android:textColor">@color/game_main_nav_text</item>
+        <item name="android:drawableTint">@color/game_main_nav_text</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:minHeight">64dp</item>
+    </style>
+</resources>

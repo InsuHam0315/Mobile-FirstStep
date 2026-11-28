@@ -24,6 +24,12 @@ import java.util.concurrent.Executors;
 public final class RouteMapActivity extends AppCompatActivity {
     private static final String EXTRA_BROWSE_ONLY = "firststep.campus_map.browse_only";
     private static final String EXTRA_FACILITY_ID = "firststep.campus_map.facility_id";
+    private static final String EXTRA_MAIN_NAV = "firststep.campus_map.main_navigation";
+
+    /** Main tab uses the approved browse-only map without constructing legacy missions. */
+    public static Intent mainBrowseIntent(Context context) {
+        return browseIntent(context).putExtra(EXTRA_MAIN_NAV, true);
+    }
 
     /** Opens campus map browsing without a legacy route or mission repository. */
     public static Intent browseIntent(Context context) {
@@ -65,6 +71,14 @@ public final class RouteMapActivity extends AppCompatActivity {
     }
     private void geographic() {
         setContentView(R.layout.activity_geographic_map);Ui.applyInsets(findViewById(R.id.map_root));
+        View navigation = findViewById(R.id.game_main_navigation);
+        boolean mainNavigation = browseOnly && getIntent().getBooleanExtra(EXTRA_MAIN_NAV, false);
+        navigation.setVisibility(mainNavigation ? View.VISIBLE : View.GONE);
+        if (mainNavigation) {
+            findViewById(R.id.game_nav_map).setSelected(true);
+            findViewById(R.id.game_nav_home).setOnClickListener(v -> returnToMain(false));
+            findViewById(R.id.game_nav_my).setOnClickListener(v -> returnToMain(true));
+        }
         map=findViewById(R.id.campus_map);status=findViewById(R.id.map_status);
         List<Mission> missions = browseOnly ? Collections.emptyList() : MissionRepository.getInstance(this).getMissions();
         map.configure(missions,new com.example.firststep.map.CampusMapView.Listener(){
@@ -123,6 +137,11 @@ public final class RouteMapActivity extends AppCompatActivity {
                 else context.setText(getString(R.string.map_facility_context_unverified, displayName));
             });
         });
+    }
+
+    private void returnToMain(boolean myPage) {
+        startActivity(com.example.firststep.game.ui.identity.IdentityActivity.tabIntent(this, myPage));
+        finish();
     }
 
     @Override protected void onSaveInstanceState(Bundle state) {

@@ -34,4 +34,5 @@
       android:visibility="gone" />
   <Button style="@style/GameMapButton" android:id="@+id/map_back" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="돌아가기" />
  </LinearLayout>
+ <include layout="@layout/game_main_navigation" android:visibility="gone" />
 </LinearLayout>

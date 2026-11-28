@@ -26,9 +26,13 @@ public final class IdentityConfigurationSmokeTest {
             assertEquals(SessionState.Stage.UNCONFIGURED, a.stateForTest().getStage());
             assertNull(a.stateForTest().getUid());
             assertTrue(a.findViewById(R.id.game_identity_welcome).isShown());
-            assertTrue(a.findViewById(R.id.game_identity_welcome_login).performClick());
+            assertFalse(a.findViewById(R.id.game_identity_welcome_login).isEnabled());
+            assertTrue(a.findViewById(R.id.game_identity_welcome_guest).performClick());
+            assertTrue(a.findViewById(R.id.game_main_dashboard).isShown());
+            assertTrue(a.findViewById(R.id.game_nav_my).performClick());
             assertTrue(a.findViewById(R.id.game_identity_login).isShown());
             assertFalse(a.findViewById(R.id.game_identity_login).isEnabled());
+            assertNull(a.stateForTest().getUid());
           });
     }
   }

@@ -1,0 +1,40 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/game_main_dashboard" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:fillViewport="true" android:visibility="gone">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical" android:padding="20dp">
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="@string/game_main_brand" android:textSize="16sp" android:textColor="#FFFFFF" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="@string/game_main_heading" android:textSize="36sp" android:textStyle="bold"
+            android:textColor="#FFFFFF" android:accessibilityHeading="true" android:layout_marginBottom="24dp" />
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical" android:padding="18dp" android:background="@drawable/game_welcome_panel">
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="@string/game_main_greeting" android:textStyle="bold" android:textSize="20sp"
+                android:textColor="@color/game_color_text" />
+            <TextView android:id="@+id/game_main_choice" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:layout_marginVertical="12dp"
+                android:textColor="@color/game_color_text" android:textSize="16sp" />
+            <Button android:id="@+id/game_main_open_guide" style="@style/GameActionButton"
+                android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_main_guide" />
+            <Button android:id="@+id/game_main_choose" style="@style/GameSecondaryButton"
+                android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_main_choose" />
+            <Button android:id="@+id/game_identity_open_campus" style="@style/GameSecondaryButton"
+                android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_main_browse" />
+            <com.google.android.material.button.MaterialButton android:id="@+id/game_main_google"
+                style="@style/GameIdentityGoogleButton" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="@string/game_identity_login" />
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="16dp" android:orientation="vertical" android:padding="18dp"
+            android:background="@drawable/game_welcome_panel">
+            <TextView android:id="@+id/game_main_progress" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:textColor="@color/game_color_text" android:textSize="16sp" />
+            <Button android:id="@+id/game_main_authored" style="@style/GameSecondaryButton"
+                android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_authored_entry" />
+            <Button android:id="@+id/game_main_progress_retry" style="@style/GameSecondaryButton"
+                android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/game_campus_progress_retry" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

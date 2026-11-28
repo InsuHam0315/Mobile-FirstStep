@@ -71,6 +71,10 @@ public final class KoreanGuideRouteTest {
          AutoCloseable children = trackGuideChildren()) {
       awaitActivity(IdentityActivity.class, a -> a.findViewById(R.id.game_identity_welcome).isShown());
       tap(R.id.game_identity_welcome_guest);
+      awaitActivity(IdentityActivity.class, a -> a.findViewById(R.id.game_main_dashboard).isShown());
+      tap(R.id.game_identity_open_campus);
+      awaitActivity(CampusHomeActivity.class, a -> a.findViewById(R.id.game_campus_home_guide).isEnabled());
+      tap(R.id.game_campus_home_guide);
       guide(GuideDecoder.DATASET_ID, "GUIDE");
       tap(R.id.game_guide_primary);
       guide(GuideDecoder.DATASET_ID, "PRACTICE");
@@ -138,7 +142,9 @@ public final class KoreanGuideRouteTest {
       tap(R.id.game_guide_quiz_back);
       guide(GuideDecoder.DATASET_ID, "GUIDE");
       tap(R.id.game_guide_close);
-      awaitActivity(IdentityActivity.class, a -> a.findViewById(R.id.game_identity_welcome).isShown());
+      awaitActivity(CampusHomeActivity.class, a -> a.findViewById(R.id.game_campus_home_guide).isShown());
+      androidx.test.espresso.Espresso.pressBack();
+      awaitActivity(IdentityActivity.class, a -> a.findViewById(R.id.game_main_dashboard).isShown());
     } finally {
       onMain(() -> { H07VariantFactory.setTestFactory(null); return null; });
     }
@@ -175,6 +181,10 @@ public final class KoreanGuideRouteTest {
          AutoCloseable children = trackGuideChildren()) {
       awaitActivity(IdentityActivity.class, a -> a.findViewById(R.id.game_identity_welcome).isShown());
       tap(R.id.game_identity_welcome_guest);
+      awaitActivity(IdentityActivity.class, a -> a.findViewById(R.id.game_main_dashboard).isShown());
+      tap(R.id.game_identity_open_campus);
+      awaitActivity(CampusHomeActivity.class, a -> a.findViewById(R.id.game_campus_home_guide).isEnabled());
+      tap(R.id.game_campus_home_guide);
       guide(GuideDecoder.DATASET_ID, "GUIDE");
       tap(R.id.game_guide_department_switch);
       guide(GuideDecoder.KOREAN_DATASET_ID, "GUIDE");
@@ -225,7 +235,9 @@ public final class KoreanGuideRouteTest {
       tap(R.id.game_guide_department_switch);
       guide(GuideDecoder.DATASET_ID, "GUIDE");
       tap(R.id.game_guide_close);
-      awaitActivity(IdentityActivity.class, a -> a.findViewById(R.id.game_identity_welcome).isShown());
+      awaitActivity(CampusHomeActivity.class, a -> a.findViewById(R.id.game_campus_home_guide).isShown());
+      androidx.test.espresso.Espresso.pressBack();
+      awaitActivity(IdentityActivity.class, a -> a.findViewById(R.id.game_main_dashboard).isShown());
     } finally {
       onMain(() -> { H07VariantFactory.setTestFactory(null); return null; });
     }
@@ -349,7 +361,8 @@ public final class KoreanGuideRouteTest {
   private AutoCloseable trackGuideChildren() throws Exception {
     Set<Activity> guides = new LinkedHashSet<>();
     ActivityLifecycleCallback observer = (activity, stage) -> {
-      if (!(activity instanceof GuideActivity) && !(activity instanceof NarrationActivity)) return;
+      if (!(activity instanceof GuideActivity) && !(activity instanceof NarrationActivity)
+          && !(activity instanceof CampusHomeActivity)) return;
       if (stage == Stage.PRE_ON_CREATE) guides.add(activity);
       if (stage == Stage.DESTROYED) guides.remove(activity);
     };

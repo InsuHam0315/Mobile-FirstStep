@@ -86,22 +86,29 @@ public final class ReskinVisualSmokeTest {
           activity.stateForTest().getStage() == SessionState.Stage.UNCONFIGURED
               && activity.stateForTest().getUid() == null
               && activity.findViewById(R.id.game_identity_welcome).isShown());
+      screen.onActivity(activity -> {
+        android.view.ViewGroup host = activity.findViewById(R.id.game_identity_host);
+        assertTrue(host.getChildAt(0) instanceof android.widget.ImageView);
+        assertNotNull(((android.widget.ImageView) host.getChildAt(0)).getDrawable());
+      });
+      onView(withId(R.id.game_identity_welcome_login)).perform(reveal())
+          .check(matches(allOf(not(isEnabled()), isDisplayed())));
+      onView(withId(R.id.game_identity_welcome_guest)).perform(reveal())
+          .check(matches(isDisplayed()));
       capture(IdentityActivity.class, "identity-welcome");
       tap(R.id.game_identity_welcome_guest);
-      ready(GuideActivity.class, activity ->
-          activity.guideForTest() != null && "GUIDE".equals(activity.panelForTest()));
-      androidx.test.espresso.Espresso.pressBack();
       ready(IdentityActivity.class, activity ->
-          activity.stateForTest().getUid() == null
-              && activity.findViewById(R.id.game_identity_welcome).isShown());
-      tap(R.id.game_identity_welcome_login);
-      capture(IdentityActivity.class, "identity-unconfigured");
+          activity.findViewById(R.id.game_main_dashboard).isShown());
+      onView(withId(R.id.game_nav_home)).check(matches(isDisplayed()));
+      onView(withId(R.id.game_nav_map)).check(matches(isDisplayed()));
+      onView(withId(R.id.game_nav_my)).check(matches(isDisplayed()));
+      capture(IdentityActivity.class, "identity-home");
+      tap(R.id.game_nav_my);
       onView(withId(R.id.game_identity_login)).perform(reveal()).check(matches(
           allOf(withText(R.string.game_identity_login), not(isEnabled()), isDisplayed())));
       onView(withId(R.id.game_identity_status)).perform(reveal())
-          .check(matches(withText(R.string.game_identity_unconfigured)));
+          .check(matches(withText(R.string.game_main_unconfigured)));
       capture(IdentityActivity.class, "identity-unconfigured-controls");
-      tap(R.id.game_identity_back);
     }
   }
 
